@@ -4,9 +4,10 @@ Extension generator as Joomla extension, model based on eJSL (JooMDD), with proj
 First the JooMDD model was ported to Jetbrain's MPS (eJSL-MPS) and based on that structure this was turned into a Jpomla extension, with HTML forms as input of the AST.
 
 # Information about the Extension Generator project
-
 8-5-2023
+
 Planned dates & features are estimates and will be adjusted in the process.
+
 **version 0.8.0**
 
 Current version - under construction.
