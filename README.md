@@ -8,13 +8,13 @@ First the JooMDD model was ported to Jetbrain's MPS (eJSL-MPS) and based on that
 
 Planned dates & features are estimates and will be adjusted in the process.
 
-**version 0.8.0**
+### version 0.8.0
 
 Current version - under construction.
 
 Only component backend generated.
 
-**version 0.8.1**
+### version 0.8.1
 
 Minimal Viable Product
 
@@ -28,17 +28,17 @@ features:
 * clean the mysql-files of com_extengen
 * install generated component in current Joomla 4 site (for testing)
 
-**version 0.9.0**
+### version 0.9.0
 
-planned for 14-5-2023
+planned for 15-5-2023
 
 features:
 
 * generator-generator: define and adjust generators
 
-**version 1.0.0**
+### version 1.0.0
 
-planned for 21-5-2023
+planned for 28-5-2023
 
 features:
 
@@ -50,27 +50,27 @@ features:
 * add dashboard page type
 * update-site for extengen; update from github
 
-**version 1.1.0**
+### version 1.1.0
 
-planned for 28-5-2023
+planned for 4-6-2023
 
 features:
 
 * one-to-many relations
 * add page-type detail with indices (for the multiple files)
 
-**version 1.2.0**
+### version 1.2.0
 
-planned for 4-6-2023
+planned for 11-6-2023
 
 features:
 
 * save versions on Git(hub)
 * update extengen info page(s) from github instead of shipping with component
 
-**version 1.3.0**
+### version 1.3.0
 
-planned for 11-6-2023
+planned for 18-6-2023
 
 features:
 
@@ -78,16 +78,16 @@ features:
 * generate plugins
 * CLI and API applications
 
-**version 1.4.0**
+### version 1.4.0
 
-planned for 18-6-2023
+planned for 25-6-2023
 
 features:
 
 * import & export projects
 * migrate older version projects
 
-**version 2.0.0**
+### version 2.0.0
 
 planned for 2-7-2023
 
@@ -95,7 +95,7 @@ features:
 
 * Initial WordPress generator
 
-**version 2.1.0**
+### version 2.1.0
 
 planned for 9-7-2023
 
@@ -103,7 +103,7 @@ features:
 
 * Joomla4 + Doctrine generator
 
-**version 2.2.0**
+### version 2.2.0
 
 planned for 16-7-2023
 
