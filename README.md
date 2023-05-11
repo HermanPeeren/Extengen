@@ -6,23 +6,21 @@ First the JooMDD model was ported to Jetbrain's MPS (eJSL-MPS) and based on that
 # Information about the Extension Generator project
 8-5-2023
 
-Planned dates & features are estimates and will be adjusted in the process.
+Planned features will be adjusted in the process.
 
 ### version 0.8.0
 
 Current version - under construction.
 
-Only component backend generated.
+Plain component backend generated.
 
 ### version 0.8.1
 
 Minimal Viable Product
 
-planned for 9-5-2023
-
 features:
 
-* component frontend generated
+* plain component frontend generated
 * fill entities & attributes dropdowns in extengen backend
 * get rid of fields and associations in the Extension Generator
 * clean the mysql-files of com_extengen
@@ -30,15 +28,13 @@ features:
 
 ### version 0.9.0
 
-planned for 15-5-2023
-
 features:
 
 * generator-generator: define and adjust generators
+* project forms generator: define and adjust project forms
+
 
 ### version 1.0.0
-
-planned for 28-5-2023
 
 features:
 
@@ -52,8 +48,6 @@ features:
 
 ### version 1.1.0
 
-planned for 4-6-2023
-
 features:
 
 * one-to-many relations
@@ -61,16 +55,12 @@ features:
 
 ### version 1.2.0
 
-planned for 11-6-2023
-
 features:
 
 * save versions on Git(hub)
 * update extengen info page(s) from github instead of shipping with component
 
 ### version 1.3.0
-
-planned for 18-6-2023
 
 features:
 
@@ -80,8 +70,6 @@ features:
 
 ### version 1.4.0
 
-planned for 25-6-2023
-
 features:
 
 * import & export projects
@@ -89,23 +77,17 @@ features:
 
 ### version 2.0.0
 
-planned for 2-7-2023
-
 features:
 
 * Initial WordPress generator
 
 ### version 2.1.0
 
-planned for 9-7-2023
-
 features:
 
 * Joomla4 + Doctrine generator
 
 ### version 2.2.0
-
-planned for 16-7-2023
 
 features:
 
