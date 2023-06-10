@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<extension type="component" method="upgrade">
+	<name>com_extengen</name>
+	<creationDate>26-12-2021</creationDate>
+	<author>Herman Peeren</author>
+	<authorEmail>herman@yepr.nl</authorEmail>
+	<authorUrl>https://yepr.nl</authorUrl>
+	<copyright>Yepr, Herman Peeren, 2022</copyright>
+	<license>GNU General Public License version 3 or later;</license>
+	<version>0.8.0</version>
+	<description>COM_EXTENGEN_XML_DESCRIPTION</description>
+	<namespace path="src">Yepr\Extengen</namespace>
+	<scriptfile>script.php</scriptfile>
+	<install> <!-- Runs on install -->
+		<sql>
+			<file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
+		</sql>
+	</install>
+	<uninstall> <!-- Runs on uninstall -->
+		<sql>
+			<file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
+		</sql>
+	</uninstall>
+	<update>  <!-- Runs on update -->
+		<schemas>
+			<schemapath type="mysql">sql/updates/mysql</schemapath>
+		</schemas>
+	</update>
+	<!-- Front-end files -->
+	<files folder="components/com_extengen">
+		<folder>language</folder>
+		<folder>src</folder>
+		<folder>tmpl</folder>
+	</files>
+    <media folder="media/com_extengen" destination="com_extengen">
+		<folder>js</folder>
+    </media>
+	<!-- Back-end files -->
+	<administration>
+		<!-- Menu entries -->
+		<menu view="extengen">COM_EXTENGEN</menu>
+		<submenu>
+			<menu link="option=com_extengen">COM_EXTENGEN</menu>
+			<menu link="option=com_categories&amp;extension=com_extengen"
+				view="categories" img="class:extengen-cat" alt="extengen/Categories">JCATEGORY</menu>
+		</submenu>
+		<files folder="administrator/components/com_extengen">
+			<filename>access.xml</filename>
+			<filename>extengen.xml</filename>
+			<filename>config.xml</filename>
+			<folder>forms</folder>
+			<folder>language</folder>
+			<folder>services</folder>
+			<folder>sql</folder>
+			<folder>src</folder>
+			<folder>tmpl</folder>
+		</files>
+	</administration>
+	<changelogurl>https://raw.githubusercontent.com/hermanpeeren/extengen/changelog.xml</changelogurl>
+	<updateservers>
+		<server type="extension" name="Extengen Updates">https://raw.githubusercontent.com/hermanpeeren/extengen/extengen_update.xml</server>
+	</updateservers>
+	<dlid prefix="dlid=" suffix="" />
+</extension>

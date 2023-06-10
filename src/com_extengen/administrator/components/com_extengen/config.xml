@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+	<fieldset
+		name="projects"
+		label="COM_EXTENGEN_PROJECT_FIELD_CONFIG_INDIVIDUAL_PROJECT_DISPLAY"
+		description="COM_EXTENGEN_PROJECT_FIELD_CONFIG_INDIVIDUAL_PROJECT_DESC"
+		>
+		<field
+			name="show_project_name_label"
+			type="list"
+			label="COM_EXTENGEN_PROJECT_FIELD_PROJECT_SHOW_CATEGORY_LABEL"
+			default="1"
+			>
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
+
+		<field
+			name="custom_fields_enable"
+			type="radio"
+			class="switcher"
+			label="JGLOBAL_CUSTOM_FIELDS_ENABLE_LABEL"
+			default="1"
+			>
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
+
+		<field
+			name="show_name"
+			type="radio"
+			label="COM_EXTENGEN_PROJECT_FIELD_PARAMS_NAME_LABEL"
+			default="1"
+			class="switcher"
+			>
+			<option value="0">JHIDE</option>
+			<option value="1">JSHOW</option>
+		</field>
+
+	</fieldset>
+	<fieldset
+		name="permissions"
+		label="JCONFIG_PERMISSIONS_LABEL"
+		description="JCONFIG_PERMISSIONS_DESC"
+		>
+		<field
+			name="rules"
+			type="rules"
+			label="JCONFIG_PERMISSIONS_LABEL"
+			validate="rules"
+			filter="rules"
+			component="COM_EXTENGEN"
+			section="component"
+		/>
+	</fieldset>
+</config>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<layout title="COM_EXTENGEN_PROJECT_VIEW_WITHHEAD_TITLE">
+		<message>
+			<![CDATA[COM_EXTENGEN_PROJECT_VIEW_WITHHEAD_DESC]]>
+		</message>
+	</layout>
+	<!-- Add fields to the request variables for the layout. -->
+	<fields name="request">
+		<fieldset name="request"
+			addfieldprefix="Yepr\Extengen\Administrator\Field"
+		>
+			<field
+				name="id"
+				type="modal_extengen"
+				label="COM_EXTENGEN_SELECT_PROJECT_LABEL"
+				required="true"
+				select="true"
+				new="true"
+				edit="true"
+				clear="true"
+			/>
+		</fieldset>
+	</fields>
+</metadata>
