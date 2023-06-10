@@ -26,12 +26,7 @@
 			<schemapath type="mysql">sql/updates/mysql</schemapath>
 		</schemas>
 	</update>
-	<!-- Front-end files -->
-	<files folder="components/com_extengen">
-		<folder>language</folder>
-		<folder>src</folder>
-		<folder>tmpl</folder>
-	</files>
+	<!-- Front-end files. No component-frontend, only media. -->
     <media folder="media/com_extengen" destination="com_extengen">
 		<folder>js</folder>
     </media>
