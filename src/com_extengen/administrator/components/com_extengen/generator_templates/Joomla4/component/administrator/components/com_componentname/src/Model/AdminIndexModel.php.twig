@@ -1,0 +1,423 @@
+<?php
+/**
+ * @package    {{ projectName }}
+ * @subpackage {{ componentName }}
+ * @version    {{ version }}
+ *
+ * @copyright  {{ copyright }}
+ * @license    {{ license }}
+ */
+
+namespace {{ company_namespace }}\Component\{{ componentName }}\Administrator\Model;
+
+defined('_JEXEC') or die;
+
+use Exception;
+
+use Joomla\CMS\MVC\Model\ListModel;
+use Joomla\CMS\Language\Associations;
+use Joomla\CMS\Factory;
+use Joomla\Utilities\ArrayHelper;
+use Joomla\Database\ParameterType;
+
+/**
+ * Methods supporting a list of {{ pageName }} records.
+ */
+class {{ pageName }}Model extends ListModel
+{
+    /**
+	 * Constructor.
+	 *
+	 * @param   array  $config  An optional associative array of configuration settings.
+	 *
+	 * @see     \JControllerLegacy
+	 */
+	public function __construct($config = [])
+	{
+		// TODO: ADD FILTER FIELDS (what happens if you omit this? How is it used precisely?)
+
+		/*$config['filter_fields'] = $config['filter_fields'] ?? [
+				// Sortable columns (also overlaps with filter columns)
+				'id', 'catid', 'status', 'title', 'alias', 'public', 'priority', 'origin', 'assigned_to', 'created',
+				'created_by', 'modified', 'modified_by', 'enabled', 'language',
+				// Sort–only fields
+				'title', 'created_name', 'cat_title', 'language_title',
+				// Filter–only fields
+				'search', 'user', 'since', 'to', 'tag',
+			];*/
+
+		parent::__construct($config);
+
+        // TODO: ADD THE CORRECT FIELDS
+
+		/*$this->setupStateFilters([
+			'search'      => 'string',
+			'user'        => 'string',
+			'created_by'  => 'int',
+			'assigned_to' => 'int',
+			'catid'       => 'array',
+//			'status'      => 'array',
+			'status'      => 'string',
+			'public'      => 'int',
+			'priority'    => 'int',
+			'origin'      => 'string',
+			'enabled'     => 'int',
+			'since'       => 'string',
+			'to'          => 'string',
+			'tag'         => 'ignore',
+			'access'      => 'ignore',
+			'language'    => 'ignore',
+		], 'modified', 'DESC');*/
+	}
+
+
+	/**
+	 * Build an SQL query to load the list data.
+	 *
+	 * @return  \JDatabaseQuery
+	 *
+	 * @since   __BUMP_VERSION__
+	 */
+	protected function getListQuery()
+	{
+		// Create a new query object.
+		$db = $this->getDbo();
+		$query = $db->getQuery(true);
+
+		// TODO: ADD THE CORRECT FIELDS
+		// TODO: ADD ASSOCIATED FIELDS WITH JOINS
+		// Select the required fields from the table.
+		$query->select('*');
+		$query->from($db->quoteName('#__{{ componentName|lower}}_{{ entityName|lower }}'));
+
+		// Add filters to query
+		{% for filter  in filters %}
+		// todo: Get the value of {{ filter.fieldName }}_filter here
+		// ${{ filter.fieldName }}_filter = $this->getState({{ filter.fieldName }}.filter)
+		$query
+			->where($db->quoteName('{{ filter.columnName }}') . ' LIKE '
+				. $db->quoteName('${{ filter.fieldName }}' . '_filter'));
+		{% endfor %}
+
+		return $query;
+	}
+
+	/*protected function getListQuery()
+	{
+		$db    = $this->getDbo();
+
+
+		$query = $db->getQuery(true)
+			->select([
+				$db->quoteName('t') . '.*',
+				$db->quoteName('c.language'),
+				$db->quoteName('c.title', 'cat_title'),
+				$db->quoteName('c.alias', 'cat_alias'),
+				$db->quoteName('c.path', 'cat_path'),
+				$db->quoteName('c.published', 'cat_published'),
+				$db->quoteName('c.params', 'cat_params'),
+				$db->quoteName('uc.name', 'created_name'),
+				$db->quoteName('l.title', 'language_title'),
+				$db->quoteName('l.image', 'language_image'),
+			])
+			->from($db->quoteName('#__ats_tickets', 't'))
+			->join(
+				'INNER',
+				$db->quoteName('#__categories', 'c'),
+				$db->quoteName('c.id') . ' = ' . $db->quoteName('t.catid')
+			)
+			->join(
+				'LEFT',
+				$db->quoteName('#__languages', 'l'), $db->quoteName('l.lang_code') . ' = ' . $db->quoteName('c.language')
+			)
+			->join(
+				'LEFT',
+				$db->quoteName('#__users', 'uc'),
+				$db->quoteName('uc.id') . ' = ' . $db->quoteName('t.created_by')
+			)
+			->where($db->quoteName('c.extension') . ' = ' . $db->quote('com_ats'));
+
+		// FILTER: Access Levels
+		$this->ensureAccessLevel();
+		$accessLevels = $this->getState('filter.access', []);
+		if (!empty($accessLevels))
+		{
+			$query->whereIn($db->quoteName('c.access'), $accessLevels, ParameterType::INTEGER);
+		}
+
+		// FILTER: Language
+		$this->ensureLanguage();
+		$filterLanguage = $this->getState('filter.language', ['*']);
+		$filterLanguage = ((empty($filterLanguage)) || ($filterLanguage === ['*'])) ? null : $filterLanguage;
+
+		if (is_array($filterLanguage))
+		{
+			$query->whereIn($db->quoteName('c.language'), $filterLanguage, ParameterType::STRING);
+		}
+
+		// FILTER: search (support prefixes id, title, category)
+		$fltSearch = $this->getState('filter.search');
+
+		if (!empty($fltSearch))
+		{
+			if (stripos($fltSearch, 'id:') === 0)
+			{
+				$ids = (int) substr($fltSearch, 3);
+				$query->where($db->quoteName('t.id') . ' = :id')
+					->bind(':id', $ids, ParameterType::INTEGER);
+			}
+			elseif (stripos($fltSearch, 'category:') === 0)
+			{
+				$fltSearch = '%' . substr($fltSearch, 9) . '%';
+				$query->where($db->quoteName('c.title') . ' LIKE :search')
+					->bind(':search', $fltSearch, ParameterType::STRING);
+			}
+			else
+			{
+				if (stripos($fltSearch, 'title:') === 0)
+				{
+					$fltSearch = substr($fltSearch, 6);
+				}
+				$fltSearch = '%' . $fltSearch . '%';
+				$query->where($db->quoteName('t.title') . ' LIKE :search')
+					->bind(':search', $fltSearch, ParameterType::STRING);
+			}
+		}
+
+		// FILTER: user (prefixes: username, name, email, id) / created_by
+		$fltUser      = $this->getState('filter.user');
+		$fltCreatedBy = $this->getState('filter.created_by');
+		$fltUser      = (!is_null($fltCreatedBy) && ($fltCreatedBy > 0)) ? ('id:' . (int) $fltCreatedBy) : $fltUser;
+
+		if (!empty($fltUser))
+		{
+			if (stripos($fltUser, 'id:') === 0)
+			{
+				$ids = (int) substr($fltUser, 3);
+				$query->where($db->quoteName('t.created_by') . ' = :id')
+					->bind(':id', $ids, ParameterType::INTEGER);
+			}
+			else
+			{
+				if (stripos($fltUser, 'username:') === 0)
+				{
+					$username = '%' . substr($fltUser, 9) . '%';
+					$query
+						->where($db->quoteName('uc.username') . ' LIKE :username')
+						->bind(':username', $username);
+				}
+				elseif (stripos($fltUser, 'name:') === 0)
+				{
+					$name = '%' . substr($fltUser, 5) . '%';
+					$query
+						->where($db->quoteName('uc.name') . ' LIKE :name')
+						->bind(':name', $name);
+				}
+				elseif (stripos($fltUser, 'email:') === 0)
+				{
+					$email = '%' . substr($fltUser, 6) . '%';
+					$query
+						->where($db->quoteName('uc.email') . ' LIKE :email')
+						->bind(':email', $email);
+				}
+				else
+				{
+					$username = '%' . $fltUser . '%';
+					$name     = $username;
+					$email    = $username;
+					$query
+						->extendWhere('AND', [
+							$db->quoteName('uc.username') . ' LIKE :username',
+							$db->quoteName('uc.name') . ' LIKE :name',
+							$db->quoteName('uc.email') . ' LIKE :email',
+						], 'OR')
+						->bind(':username', $username)
+						->bind(':name', $name)
+						->bind(':email', $email);
+				}
+			}
+		}
+
+		// FILTER: assigned_to
+		$fltAssignedTo = $this->getState('filter.assigned_to');
+
+		if (is_numeric($fltAssignedTo))
+		{
+			$fltAssignedTo = (int) $fltAssignedTo;
+			$query
+				->where($db->quoteName('t.assigned_to') . ' = :assigned_to')
+				->bind(':assigned_to', $fltAssignedTo, ParameterType::INTEGER);
+		}
+
+		// FILTER: catid
+		$fltCatId = $this->getState('filter.catid') ?: [];
+		$fltCatId = is_numeric($fltCatId) ? [$fltCatId] : $fltCatId;
+		$fltCatId = array_filter($fltCatId, function ($x) {
+			return !empty($x) && is_numeric($x) && ((int) $x > 0);
+		});
+
+		if (!empty($fltCatId))
+		{
+			$query->whereIn($db->quoteName('catid'), $fltCatId);
+		}
+
+		// FILTER: status
+		$fltStatus = $this->getState('filter.status');
+
+		if (!empty($fltStatus))
+		{
+			$query
+				//->whereIn($db->quoteName('t.status'), $fltStatus);
+				->where($db->quoteName('t.status') . ' = :status')
+				->bind(':status', $fltStatus, ParameterType::STRING);
+		}
+
+		// FILTER: public
+		$fltPublic = $this->getState('filter.public');
+
+		if (is_numeric($fltPublic))
+		{
+			$fltPublic = (int) $fltPublic;
+			$query
+				->where($db->quoteName('t.public') . ' = :public')
+				->bind(':public', $fltPublic, ParameterType::STRING);
+		}
+
+		// FILTER: priority
+		$fltPriority = $this->getState('filter.priority');
+
+		if (is_numeric($fltPriority))
+		{
+			$fltPriority = (int) $fltPriority;
+			$query
+				->where($db->quoteName('t.priority') . ' = :priority')
+				->bind(':priority', $fltPriority, ParameterType::STRING);
+		}
+
+		// FILTER: origin
+		$fltOrigin = $this->getState('filter.origin');
+
+		if (!empty($fltOrigin))
+		{
+			$query
+				->where($db->quoteName('t.origin') . ' = :origin')
+				->bind(':origin', $fltOrigin, ParameterType::STRING);
+		}
+
+		// FILTER: enabled
+		$fltEnabled = $this->getState('filter.enabled');
+
+		if (is_numeric($fltEnabled))
+		{
+			$fltEnabled = (int) $fltEnabled;
+			$query
+				->where($db->quoteName('t.enabled') . ' = :enabled')
+				->bind(':enabled', $fltEnabled, ParameterType::STRING);
+		}
+
+		// FILTER: since / to
+		$fltSince = $this->getState('filter.since', null);
+		$fltTo    = $this->getState('filter.to', null);
+		try
+		{
+			$fltSince = empty($fltSince) ? null : new Date($fltSince);
+		}
+		catch (Exception $e)
+		{
+			$fltSince = null;
+		}
+		try
+		{
+			$fltTo = empty($fltTo) ? null : new Date($fltTo);
+		}
+		catch (Exception $e)
+		{
+			$fltTo = null;
+		}
+
+		if (!empty($fltSince) && empty($fltTo))
+		{
+			$since = $fltSince->toSql();
+			$query
+				->where($db->quoteName('t.created') . ' >= :since')
+				->bind(':since', $since);
+		}
+		elseif (empty($fltSince) && !empty($fltTo))
+		{
+			$to = $fltTo->toSql();
+			$query
+				->where($db->quoteName('t.created') . ' <= :to')
+				->bind(':to', $to);
+		}
+		elseif (!empty($fltSince) && !empty($fltTo))
+		{
+			$since = $fltSince->toSql();
+			$to    = $fltTo->toSql();
+
+			if ($fltSince->diff($fltTo)->invert)
+			{
+				$temp  = $to;
+				$to    = $since;
+				$since = $to;
+				unset($temp);
+			}
+
+			$query
+				->where($db->quoteName('t.created') . ' >= :since')
+				->where($db->quoteName('t.created') . ' <= :to')
+				->bind(':since', $since)
+				->bind(':to', $to);
+		}
+
+		// FILTER: Tags
+		$tag = $this->getState('filter.tag');
+
+		if (!empty($tag))
+		{
+			// Run simplified query when filtering by one tag.
+			if (\is_array($tag) && \count($tag) === 1)
+			{
+				$tag = $tag[0];
+			}
+
+			if (\is_array($tag))
+			{
+				$tag = ArrayHelper::toInteger($tag);
+
+				$subQuery = $db->getQuery(true)
+					->select('DISTINCT ' . $db->quoteName('content_item_id'))
+					->from($db->quoteName('#__contentitem_tag_map'))
+					->whereIn($db->quoteName('tag_id'), $tag)
+					->where($db->quoteName('type_alias') . ' = ' . $db->quote('com_ats.ticket'));
+
+				$query->join(
+					'INNER',
+					'(' . $subQuery . ') AS ' . $db->quoteName('tagmap'),
+					$db->quoteName('tagmap.content_item_id') . ' = ' . $db->quoteName('t.id')
+				);
+			}
+			else
+			{
+				$tag = (int) $tag;
+				$query->join(
+					'INNER',
+					$db->quoteName('#__contentitem_tag_map', 'tagmap'),
+					$db->quoteName('tagmap.content_item_id') . ' = ' . $db->quoteName('t.id')
+				)
+					->where($db->quoteName('tagmap.type_alias') . ' = ' . $db->quote('com_ats.ticket'))
+					->where($db->quoteName('tag_id') . '= :tag')
+					->bind(':tag', $tag, ParameterType::INTEGER);
+			}
+		}
+
+		// List ordering clause
+		$orderCol  = $this->state->get('list.ordering', 'modified');
+		$orderDirn = $this->state->get('list.direction', 'DESC');
+		$ordering  = $db->escape($orderCol) . ' ' . $db->escape($orderDirn);
+
+		$query->order($ordering);
+
+		return $query;
+	}*/
+
+}

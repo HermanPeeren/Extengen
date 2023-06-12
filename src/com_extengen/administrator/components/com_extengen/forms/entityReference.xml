@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fieldset
+		addruleprefix="Yepr\Component\Extengen\Administrator\Rule"
+		addfieldprefix="Yepr\Component\Extengen\Administrator\Field"
+	>
+		<field
+			name="reference"
+			type="EntityReference"
+			label=""
+			id="reference"
+			class="custom-select-color-state EntityRef"
+			size="1"
+			onchange="backupConceptID(event)"
+			><!--
+			<option value="0">-&#45;&#45; choose entity -&#45;&#45;</option>
+			<option value="999999">create entities-list</option>-->
+		</field>
+
+		<field
+			name="reference_id"
+			type="hidden"
+		/>
+	</fieldset>
+</form>

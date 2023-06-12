@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<extension type="component" version="4.1" method="upgrade">
+	<name>com_{{ componentName|lower }}</name>
+	<creationDate>{{ creation_date }}</creationDate>
+	<author>{{ author_name }}</author>
+	<authorEmail>{{ author_email }}</authorEmail>
+	<authorUrl>{{ author_url }}</authorUrl>
+	<copyright>{{ copyright }}</copyright>
+	<license>{{ license }}</license>
+	<version>{{ version }}</version>
+	<description>COM_{{ componentName|upper }}_XML_DESCRIPTION</description>
+	<namespace path="src">{{ company_namespace }}\Component\{{ componentName }}</namespace>
+
+	<!-- Scripts to run on installation -->
+	<scriptfile>script.php</scriptfile>
+
+	<!-- Runs on install -->
+	<install>
+		<sql>
+			<file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
+		</sql>
+	</install>
+
+	<!-- Runs on uninstall -->
+	<uninstall>
+		<sql>
+			<file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
+		</sql>
+	</uninstall>
+
+	<!-- Runs on update -->
+	<update>
+		<schemas>
+			<schemapath type="mysql">sql/updates/mysql</schemapath>
+		</schemas>
+	</update>
+
+	<!-- Media files -->
+	<media folder="media/com_{{ componentName|lower }}" destination="com_{{ componentName|lower }}">
+
+		<folder>attachments</folder>
+		<folder>css</folder>
+		<folder>fonts</folder>
+		<folder>images</folder>
+		<folder>js</folder>
+
+		<filename>joomla.asset.json</filename>
+	</media>
+
+	<!-- Front-end files -->
+	<files folder="components/com_{{ componentName|lower }}">
+		<folder>forms</folder>
+		<folder>language</folder>
+		<folder>layouts</folder>
+		<folder>src</folder>
+		<folder>tmpl</folder>
+	</files>
+
+	<!-- Back-end files -->
+	<administration>
+		<!-- Menu entries -->
+		<menu view="foo">COM_{{ componentName|upper }}</menu>
+		<submenu>
+			<!--
+				Note that all & must be escaped to &amp; for the file to be valid
+				XML and be parsed by the installer
+			-->
+			<menu link="option=com_{{ componentName|lower }}">COM_{{ componentName|upper }}</menu>
+		</submenu>
+
+		<!-- Core files -->
+		<files folder="administrator/components/com_{{ componentName|lower }}">
+			<filename>access.xml</filename>
+			<filename>config.xml</filename>
+			<filename>version.php</filename>
+			<filename>LICENSE.txt</filename>
+
+			<folder>forms</folder>
+			<folder>language</folder>
+			<folder>layouts</folder>
+			<folder>services</folder>
+			<folder>sql</folder>
+			<folder>src</folder>
+			<folder>tmpl</folder>
+		</files>
+	</administration>
+
+	<!-- Update servers -->
+	<updateservers>
+		<server type="extension" priority="1" name="{{ projectName }}">{{ updateServerURL }}/{{ componentName|lower }}</server>
+	</updateservers>
+</extension>

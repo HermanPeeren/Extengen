@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--~
+  ~ @package   ats
+  ~ @copyright Copyright (c)2011-2022 Nicholas K. Dionysopoulos / Akeeba Ltd
+  ~ @license   GNU General Public License version 3, or later
+  -->
+<metadata>
+	<layout title="COM_ATS_VIEW_LATEST_LABEL">
+		<message>
+				<![CDATA[COM_ATS_VIEW_LATEST_DESC]]>
+		</message>
+	</layout>
+</metadata>

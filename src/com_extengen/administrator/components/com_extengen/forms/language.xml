@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fieldset
+		addruleprefix="Yepr\Component\Extengen\Administrator\Rule"
+		addfieldprefix="Yepr\Component\Extengen\Administrator\Field"
+	>
+		<field
+			name="language_code"
+			type="text"
+			label="Language code"
+			default="en"
+			description="ISO 639-1 language code, 2 characters, lower case"
+			size="2"
+		 />
+		<field
+			name="country_code"
+			type="text"
+			label="Country code"
+			default="GB"
+			description="ISO 3166-Alpha-2 country code, 2 characters, upper case"
+			size="2"
+		 />
+
+		<field
+			name="key_value_pairs"
+			type="subform"
+			formsource="administrator/components/com_extengen/forms/langKeyValue.xml"
+			multiple="true"
+			label="Language strings"
+			id="key_value_pairs"
+			layout="joomla.form.field.subform.repeatable"
+		/>
+	</fieldset>
+</form>

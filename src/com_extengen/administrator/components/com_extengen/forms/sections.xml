@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fieldset
+		addruleprefix="Yepr\Component\Extengen\Administrator\Rule"
+		addfieldprefix="Yepr\Component\Extengen\Administrator\Field"
+	>
+		<field
+			name="frontendsection"
+			type="subform"
+			formsource="administrator/components/com_extengen/forms/pageReference.xml"
+			multiple="true"
+			buttons="add,remove"
+			label="Frontend Section - Pages"
+			id="frontendsection"
+			layout="joomla.form.field.subform.repeatable-table"
+		/>
+		<field
+			name="backendsection"
+			type="subform"
+			formsource="administrator/components/com_extengen/forms/pageReference.xml"
+			multiple="true"
+			buttons="add,remove"
+			label="Backend  Section - Pages"
+			id="backendsection"
+			layout="joomla.form.field.subform.repeatable-table"
+		/>
+
+	</fieldset>
+</form>

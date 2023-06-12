@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fieldset
+		addruleprefix="Yepr\Component\Extengen\Administrator\Rule"
+		addfieldprefix="Yepr\Component\Extengen\Administrator\Field"
+	>
+		<field
+			name="link_name"
+			type="text"
+			label="Link name"
+			id="link_name"
+			size="20"
+		 />
+
+		<field
+			name="link_type"
+			type="list"
+			label="Type"
+			default="Details"
+			id="link_type"
+			class="custom-select-color-state"
+			>
+			<option value="Details">Link to details page for editing</option>
+			<option value="Index">Link to index page for list of items</option>
+		</field>
+
+		<!--todo: only show detail- or index-pages to choose from, depending on the link_type-->
+		<field
+			name="target_page"
+			type="subform"
+			formsource="administrator/components/com_extengen/forms/pageReference.xml"
+			label="Linked page"
+			id="target_page"
+			required="true"
+			layout="joomla.form.field.subform.default"
+		/>
+
+		<field
+			name="entity_field_reference"
+			type="subform"
+			formsource="administrator/components/com_extengen/forms/entityFieldReference.xml"
+			label="Entity-field that is linked"
+			id="entity_field_reference"
+			layout="joomla.form.field.subform.default"
+			showon="link_type:Details"
+		/>
+
+	</fieldset>
+</form>

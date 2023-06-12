@@ -5,5 +5,6 @@
 
 /src/com_extengen/administrator/components/com_extengen/generated
 /src/com_extengen/administrator/components/com_extengen/compilation_cache
+/src/com_extengen/administrator/components/com_extengen/test.json
 
 /src/com_extengen/components

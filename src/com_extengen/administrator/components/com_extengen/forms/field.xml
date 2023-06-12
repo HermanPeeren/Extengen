@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fieldset
+		addruleprefix="Yepr\Component\Extengen\Administrator\Rule"
+		addfieldprefix="Yepr\Component\Extengen\Administrator\Field"
+	>
+		<field
+			name="field_name"
+			type="text"
+			label="Field name"
+			id="field_name"
+			size="20"
+			required="false"
+			onchange="editChildConceptList(this);"
+			class="fieldName"
+		 />
+
+		<!-- A field is either a property or a reference to another entity -->
+		<field
+				name="field_type"
+				type="radio"
+				default="property"
+				label="COM_EXTENGEN_ATTRIBUTE_FIELD_PROPERTY_OR_REFERENCE_LABEL"
+				description="COM_EXTENGEN_ATTRIBUTE_FIELD_PROPERTY_OR_REFERENCE_DESC"
+		>
+				<option value="property">Property</option>
+				<option value="reference">Reference</option>
+		</field>
+
+		<field
+				name="property"
+				type="subform"
+				formsource="administrator/components/com_extengen/forms/property.xml"
+				label="Property"
+				id="property"
+				layout="joomla.form.field.subform.default"
+				showon="field_type:property"
+		/>
+
+		<field
+				name="reference"
+				type="subform"
+				formsource="administrator/components/com_extengen/forms/entityReferenceField.xml"
+				label="Reference"
+				id="reference"
+				layout="joomla.form.field.subform.default"
+				showon="field_type:reference"
+		/>
+
+		<field
+			name="field_id"
+			type="hidden"
+		/>
+
+		<!-- The id of the entity this field belongs to -->
+		<field
+			name="entity_id"
+			type="hidden"
+		/>
+	</fieldset>
+</form>

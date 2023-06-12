@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fieldset
+		addruleprefix="Yepr\Component\Extengen\Administrator\Rule"
+		addfieldprefix="Yepr\Component\Extengen\Administrator\Field"
+	>
+		<field
+			name="concept_name"
+			type="text"
+			label="Concept name"
+			size="40"
+			required="true"
+			onchange="editConceptsList();"
+			class="conceptName"
+		 />
+
+		<field
+			name="concept_property"
+			type="subform"
+			formsource="administrator/components/com_extengen/forms/concept_property.xml"
+			multiple="true"
+			label="Properties"
+			buttons="add,remove"
+			id="property"
+			layout="joomla.form.field.subform.repeatable-table"
+		/>
+
+		<field
+			name="concept_reference"
+			type="subform"
+			formsource="administrator/components/com_extengen/forms/entityReferenceField.xml"
+			multiple="true"
+			label="References"
+			id="concept_reference"
+			buttons="add,remove"
+			layout="joomla.form.field.subform.repeatable-table"
+		/>
+
+		<field
+			name="entity_id"
+			type="hidden"
+		/>
+	</fieldset>
+</form>

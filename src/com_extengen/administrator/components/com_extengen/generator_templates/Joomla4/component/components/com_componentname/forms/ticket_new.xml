@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--~
+  ~ @package   ats
+  ~ @copyright Copyright (c)2011-2022 Nicholas K. Dionysopoulos / Akeeba Ltd
+  ~ @license   GNU General Public License version 3, or later
+  -->
+<form addfieldprefix="Akeeba\Component\ATS\Administrator\Field">
+    <fieldset name="basic"
+              label="COM_ATS_TICKETS_LEGEND_BASIC"
+    >
+        <field name="name"
+               type="text"
+               label="COM_ATS_TICKET_LBL_NAME_LABEL"
+               description="COM_ATS_TICKET_LBL_NAME_DESC"
+               filter="text"
+               required="true"
+               size="30"
+        />
+
+        <field name="username"
+               type="text"
+               label="COM_ATS_TICKET_LBL_USERNAME_LABEL"
+               description="COM_ATS_TICKET_LBL_USERNAME_DESC"
+               class="validate-username"
+               filter="username"
+               message="COM_ATS_TICKET_LBL_USERNAME_MESSAGE"
+               required="true"
+               size="30"
+               validate="username"
+               autocomplete="username"
+        />
+
+        <field name="email"
+               type="email"
+               label="COM_ATS_TICKET_LBL_EMAIL_LABEL"
+               field="id"
+               filter="string"
+               required="true"
+               size="30"
+               unique="true"
+               validate="email"
+               validDomains="com_users.domains"
+               autocomplete="email"
+        />
+
+        <field name="created_by"
+               type="TicketUser"
+               label="COM_ATS_TICKETS_HEADING_USER"
+               validate="UserId"
+        />
+
+        <field name="catid"
+               type="category"
+               label="COM_ATS_TICKETS_HEADING_CATEGORY"
+               description="COM_ATS_TICKETS_LBL_SELECT_CATEGORY_DESC"
+               hint="JOPTION_SELECT_CATEGORY"
+               default=""
+               extension="com_ats"
+               action="1"
+               layout="joomla.form.field.list-fancy-select"
+               published="1"
+               required="true"
+               validate="options"
+               class="atsNewTicketChangeCategory"
+        >
+            <option value="">JOPTION_SELECT_CATEGORY</option>
+        </field>
+
+        <field name="title"
+               type="tickettitle"
+               label="COM_ATS_TICKETS_HEADING_TITLE"
+               default=""
+               required="true"
+               maxlength="255"
+        />
+
+        <field name="public"
+               type="list"
+               label="COM_ATS_TICKETS_HEADING_PUBLIC"
+               default="1"
+               required="true"
+               validate="options"
+        >
+            <option value="0">COM_ATS_TICKETS_PUBLIC_PRIVATE</option>
+            <option value="1">COM_ATS_TICKETS_PUBLIC_PUBLIC</option>
+        </field>
+
+        <field name="priority"
+               type="list"
+               label="COM_ATS_TICKET_PRIORITY"
+               default="5"
+               required="true"
+               validate="options"
+        >
+            <option value="0">COM_ATS_PRIORITIES_HIGH</option>
+            <option value="5">COM_ATS_PRIORITIES_NORMAL</option>
+            <option value="10">COM_ATS_PRIORITIES_LOW</option>
+        </field>
+
+        <field
+                name="captcha"
+                type="captcha"
+                hiddenLabel="true"
+                label="COM_ATS_TICKET_LBL_CAPTCHA_LABEL"
+                validate="captcha"
+        />
+    </fieldset>
+    <fieldset name="post">
+        <field name="content_html"
+               type="editor"
+               label="COM_ATS_TICKETS_LBL_REPLY_TEXT"
+               default=""
+               id="replyText"
+               cols="50"
+               rows="5"
+               filter="JComponentHelper::filterText"
+               buttons="true"
+               hiddenLabel="true"
+               required="true"
+        />
+
+        <field name="timespent"
+               type="timespent"
+               label="COM_ATS_TICKETS_HEADING_TIMESPENT"
+               default="0"
+               min="0"
+               max="525600"
+               step="0.1"
+        />
+
+        <field name="usertags"
+               type="tag"
+               label="COM_ATS_COMMON_USER_TAGS"
+               multiple="true"
+        />
+
+        <field name="attachments"
+               type="subform"
+               label="COM_ATS_TICKETS_HEADING_ATTACHMENTS"
+               description="COM_ATS_TICKETS_HEADING_ATTACHMENTS_DESC"
+               multiple="true"
+               layout="joomla.form.field.subform.repeatable-table"
+               min="0"
+               max="10"
+        >
+            <form>
+                <field name="file"
+                       type="file"
+                       label="COM_ATS_TICKETS_HEADING_ATTACHMENT"
+                       required="true"
+                />
+            </form>
+        </field>
+    </fieldset>
+
+</form>

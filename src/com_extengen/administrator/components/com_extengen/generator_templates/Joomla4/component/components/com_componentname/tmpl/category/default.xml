@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--~
+  ~ @package   ats
+  ~ @copyright Copyright (c)2011-2022 Nicholas K. Dionysopoulos / Akeeba Ltd
+  ~ @license   GNU General Public License version 3, or later
+  -->
+
+<metadata>
+    <layout
+            title="COM_ATS_VIEW_TICKETS_LABEL">
+        <message>
+            <![CDATA[COM_ATS_VIEW_TICKETS_DESC]]>
+        </message>
+    </layout>
+
+    <!-- Add fields to the request variables for the layout. -->
+    <fields name="request">
+        <fieldset
+                name="request"
+                addfieldprefix="Joomla\Component\Categories\Administrator\Field"
+        >
+
+            <field
+                    name="id"
+                    type="modal_category"
+                    label="JCATEGORY"
+                    extension="com_ats"
+                    required="true"
+                    select="true"
+                    new="false"
+                    edit="true"
+                    clear="true"
+            />
+
+        </fieldset>
+
+    </fields>
+
+    <fields name="params">
+        <fieldset name="categories"
+                  label="COM_ATS_CONFIG_CATEGORIES_LABEL"
+                  description="COM_ATS_CONFIG_CATEGORIES_DESC"
+        >
+
+            <field name="cats_show_empty_message"
+                   type="list"
+                   useglobal="true"
+                   class="form-select-color-state"
+                   label="COM_ATS_CONFIG_CATS_SHOW_EMPTY_MESSAGE_LABEL"
+            >
+                <option value="0">JHIDE</option>
+                <option value="1">JSHOW</option>
+            </field>
+
+            <field name="cats_show_title"
+                   type="list"
+                   useglobal="true"
+                   class="form-select-color-state"
+                   label="JGLOBAL_SHOW_TITLE_LABEL"
+                   validate="options"
+            >
+                <option value="0">JHIDE</option>
+                <option value="1">JSHOW</option>
+            </field>
+
+            <field name="cats_link_title"
+                   type="list"
+                   useglobal="true"
+                   class="form-select-color-state"
+                   label="JGLOBAL_LINKED_TITLES_LABEL"
+                   validate="options"
+            >
+                <option value="0">JNO</option>
+                <option value="1">JYES</option>
+            </field>
+
+            <field name="cats_show_buttons"
+                   type="list"
+                   useglobal="true"
+                   class="form-select-color-state"
+                   label="COM_ATS_CONFIG_CATS_SHOW_BUTTONS_LABEL"
+                   description="COM_ATS_CONFIG_CATS_SHOW_BUTTONS_DESC"
+                   validate="options"
+            >
+                <option value="0">JNO</option>
+                <option value="1">JYES</option>
+            </field>
+
+            <field name="cats_show_description"
+                   type="list"
+                   useglobal="true"
+                   class="form-select-color-state"
+                   label="JGLOBAL_SHOW_CATEGORY_DESCRIPTION_LABEL"
+                   validate="options"
+            >
+                <option value="0">JHIDE</option>
+                <option value="1">JSHOW</option>
+            </field>
+
+            <field name="cats_show_description_image"
+                   type="list"
+                   useglobal="true"
+                   class="form-select-color-state"
+                   label="JGLOBAL_SHOW_CATEGORY_IMAGE_LABEL"
+                   validate="options"
+            >
+                <option value="0">JHIDE</option>
+                <option value="1">JSHOW</option>
+            </field>
+
+            <field name="cats_show_tags"
+                   type="list"
+                   useglobal="true"
+                   class="form-select-color-state"
+                   label="JGLOBAL_SHOW_TAGS_LABEL"
+                   validate="options"
+            >
+                <option value="0">JHIDE</option>
+                <option value="1">JSHOW</option>
+            </field>
+
+            <field name="cats_show_subcats"
+                   type="list"
+                   useglobal="true"
+                   class="form-select-color-state"
+                   label="COM_ATS_CONFIG_CATS_SHOW_SUBCATS_LABEL"
+            >
+                <option value="0">JHIDE</option>
+                <option value="1">JSHOW</option>
+            </field>
+
+            <field name="cats_show_subcats_maxLevel"
+                   type="list"
+                   useglobal="true"
+                   label="JGLOBAL_MAXIMUM_CATEGORY_LEVELS_LABEL"
+                   validate="options"
+            >
+                <option value="-1">JALL</option>
+                <option value="0">JNONE</option>
+                <option value="1">J1</option>
+                <option value="2">J2</option>
+                <option value="3">J3</option>
+                <option value="4">J4</option>
+                <option value="5">J5</option>
+            </field>
+
+            <field name="cats_show_subcats_desc"
+                   type="list"
+                   useglobal="true"
+                   class="form-select-color-state"
+                   label="COM_ATS_CONFIG_CATS_SHOW_SUBCATS_DESC_LABEL"
+                   showon="cats_show_subcats:1[AND]cats_show_subcats_maxLevel:-1,1,2,3,4,5"
+            >
+                <option value="0">JHIDE</option>
+                <option value="1">JSHOW</option>
+            </field>
+        </fieldset>
+
+        <fieldset name="category"
+                  label="COM_ATS_CONFIG_CATEGORY_LABEL">
+
+            <field name="cat_show_title"
+                   type="list"
+                   useglobal="true"
+                   class="form-select-color-state"
+                   label="JGLOBAL_SHOW_TITLE_LABEL"
+            >
+                <option value="0">JHIDE</option>
+                <option value="1">JSHOW</option>
+            </field>
+
+            <field name="cat_show_parent"
+                   type="list"
+                   useglobal="true"
+                   class="form-select-color-state"
+                   label="JGLOBAL_SHOW_PARENT_CATEGORY_LABEL"
+            >
+                <option value="0">JHIDE</option>
+                <option value="1">JSHOW</option>
+            </field>
+
+            <field name="cat_show_tags"
+                   type="list"
+                   useglobal="true"
+                   class="form-select-color-state"
+                   label="JGLOBAL_SHOW_TAGS_LABEL"
+            >
+                <option value="0">JHIDE</option>
+                <option value="1">JSHOW</option>
+            </field>
+
+            <field name="cat_show_description"
+                   type="list"
+                   useglobal="true"
+                   class="form-select-color-state"
+                   label="JGLOBAL_SHOW_CATEGORY_DESCRIPTION_LABEL"
+            >
+                <option value="0">JHIDE</option>
+                <option value="1">JSHOW</option>
+            </field>
+
+            <field name="cat_show_description_image"
+                   type="list"
+                   useglobal="true"
+                   class="form-select-color-state"
+                   label="JGLOBAL_SHOW_CATEGORY_IMAGE_LABEL"
+            >
+                <option value="0">JHIDE</option>
+                <option value="1">JSHOW</option>
+            </field>
+
+            <field name="cat_show_subcats"
+                   type="list"
+                   useglobal="true"
+                   class="form-select-color-state"
+                   label="COM_ATS_CONFIG_CATS_SHOW_SUBCATS_LABEL"
+            >
+                <option value="0">JHIDE</option>
+                <option value="1">JSHOW</option>
+            </field>
+
+            <field name="cat_show_subcats_maxLevel"
+                   type="list"
+                   label="JGLOBAL_MAXIMUM_CATEGORY_LEVELS_LABEL"
+                   useglobal="true"
+                   validate="options"
+            >
+                <option value="-1">JALL</option>
+                <option value="0">JNONE</option>
+                <option value="1">J1</option>
+                <option value="2">J2</option>
+                <option value="3">J3</option>
+                <option value="4">J4</option>
+                <option value="5">J5</option>
+            </field>
+
+            <field name="cat_show_subcats_desc"
+                   type="list"
+                   useglobal="true"
+                   class="form-select-color-state"
+                   label="COM_ATS_CONFIG_CATS_SHOW_SUBCATS_DESC_LABEL"
+            >
+                <option value="0">JHIDE</option>
+                <option value="1">JSHOW</option>
+            </field>
+
+            <field name="cat_show_newticket_button"
+                   type="list"
+                   useglobal="true"
+                   class="form-select-color-state"
+                   label="COM_ATS_CONFIG_CAT_SHOW_NEWTICKET_BUTTON_LABEL"
+            >
+                <option value="0">JNO</option>
+                <option value="1">JYES</option>
+            </field>
+
+            <field name="cat_show_tickets"
+                   type="list"
+                   useglobal="true"
+                   class="form-select-color-state"
+                   label="COM_ATS_CONFIG_CAT_SHOW_TICKETS_LABEL"
+            >
+                <option value="0">JNO</option>
+                <option value="1">JYES</option>
+            </field>
+
+            <field name="tickets_display_num"
+                   type="list"
+                   label="COM_ATS_CONFIG_TICKETS_DISPLAY_NUM_LABEL"
+                   useglobal="true"
+                   validate="options"
+            >
+                <option value="5">J5</option>
+                <option value="10">J10</option>
+                <option value="15">J15</option>
+                <option value="20">J20</option>
+                <option value="25">J25</option>
+                <option value="30">J30</option>
+                <option value="50">J50</option>
+                <option value="75">J75</option>
+                <option value="100">J100</option>
+                <option value="150">J150</option>
+                <option value="200">J200</option>
+                <option value="250">J250</option>
+                <option value="300">J300</option>
+                <option value="0">JALL</option>
+            </field>
+
+            <field name="initial_sort"
+                   type="list"
+                   label="JGLOBAL_SORT_BY"
+                   useglobal="true"
+                   default="modified DESC"
+                   validate="options"
+            >
+                <option value="t.id ASC">JGRID_HEADING_ID_ASC</option>
+                <option value="t.id DESC">JGRID_HEADING_ID_DESC</option>
+                <option value="created_name ASC">JGLOBAL_NAME_ASC</option>
+                <option value="created_name DESC">JGLOBAL_NAME_DESC</option>
+                <option value="t.state ASC">JSTATUS_ASC</option>
+                <option value="t.state DESC">JSTATUS_DESC</option>
+                <option value="t.title ASC">JGLOBAL_TITLE_ASC</option>
+                <option value="t.title DESC">JGLOBAL_TITLE_DESC</option>
+                <option value="public ASC">COM_ATS_TICKETS_LBL_SORT_PUBLIC_ASC</option>
+                <option value="public DESC">COM_ATS_TICKETS_LBL_SORT_PUBLIC_DESC</option>
+                <option value="priority ASC">COM_ATS_TICKETS_LBL_SORT_PRIORITY_ASC</option>
+                <option value="priority DESC">COM_ATS_TICKETS_LBL_SORT_PRIORITY_DESC</option>
+                <option value="created ASC">COM_ATS_TICKETS_LBL_SORT_CREATED_ASC</option>
+                <option value="created DESC">COM_ATS_TICKETS_LBL_SORT_CREATED_DESC</option>
+                <option value="modified ASC">COM_ATS_TICKETS_LBL_SORT_MODIFIED_ASC</option>
+                <option value="modified DESC">COM_ATS_TICKETS_LBL_SORT_MODIFIED_DESC</option>
+            </field>
+
+            <field name="cat_show_notickets"
+                   type="list"
+                   useglobal="true"
+                   class="form-select-color-state"
+                   label="COM_ATS_CONFIG_CAT_SHOW_NOTICKETS_LABEL"
+            >
+                <option value="0">JNO</option>
+                <option value="1">JYES</option>
+            </field>
+
+            <field name="show_pagination"
+                   type="list"
+                   useglobal="true"
+                   class="form-select-color-state"
+                   label="JGLOBAL_PAGINATION_LABEL"
+                   description="JGLOBAL_PAGINATION_DESC"
+            >
+                <option value="0">JHIDE</option>
+                <option value="1">JSHOW</option>
+            </field>
+
+            <field name="show_pagination_limit"
+                   type="list"
+                   useglobal="true"
+                   class="form-select-color-state"
+                   label="JGLOBAL_DISPLAY_SELECT_LABEL"
+                   description="JGLOBAL_DISPLAY_SELECT_DESC"
+            >
+                <option value="0">JHIDE</option>
+                <option value="1">JSHOW</option>
+            </field>
+
+            <field name="show_pagination_results"
+                   type="list"
+                   useglobal="true"
+                   class="form-select-color-state"
+                   label="JGLOBAL_PAGINATION_RESULTS_LABEL"
+                   description="JGLOBAL_PAGINATION_RESULTS_DESC"
+            >
+                <option value="0">JHIDE</option>
+                <option value="1">JSHOW</option>
+            </field>
+
+        </fieldset>
+    </fields>
+</metadata>

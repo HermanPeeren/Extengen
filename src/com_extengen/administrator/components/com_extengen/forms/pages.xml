@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fieldset
+		addruleprefix="Yepr\Component\Extengen\Administrator\Rule"
+		addfieldprefix="Yepr\Component\Extengen\Administrator\Field"
+	>
+		<field
+			name="indexpage"
+			type="subform"
+			formsource="administrator/components/com_extengen/forms/indexpage.xml"
+			multiple="true"
+			buttons="add,remove"
+			label="Index Page"
+			id="indexpage"
+			layout="joomla.form.field.subform.repeatable"
+		/>
+		<field
+			name="detailspage"
+			type="subform"
+			formsource="administrator/components/com_extengen/forms/detailspage.xml"
+			multiple="true"
+			buttons="add,remove"
+			label="Details Page"
+			id="detailspage"
+			layout="joomla.form.field.subform.repeatable"
+		/>
+
+	</fieldset>
+</form>

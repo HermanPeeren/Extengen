@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fieldset
+		addruleprefix="Yepr\Component\Extengen\Administrator\Rule"
+		addfieldprefix="Yepr\Component\Extengen\Administrator\Field"
+	>
+		<field
+			name="page_reference"
+			type="PageReference"
+			label=""
+			id="page_reference"
+			class="custom-select-color-state PageRef"
+			size="1"
+			onchange="backupConceptID(event)"
+			><!--
+			<option value="0">-&#45;&#45; choose page -&#45;&#45;</option>
+			<option value="999999">create pages-list</option>-->
+		</field>
+
+		<field
+			name="page_reference_id"
+			type="hidden"
+		/>
+	</fieldset>
+</form>

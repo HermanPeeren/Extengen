@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fieldset
+		addruleprefix="Yepr\Component\Extengen\Administrator\Rule"
+		addfieldprefix="Yepr\Component\Extengen\Administrator\Field"
+	>
+
+		<field
+				name="page_name"
+				type="text"
+				label="Page name"
+				size="40"
+				required="false"
+				onchange="editPagesList();"
+				class="pageName"
+		/>
+
+		<field
+				name="entity_ref"
+				type="subform"
+				formsource="administrator/components/com_extengen/forms/entityReference.xml"
+				multiple="true"
+				min="0"
+				label="Entities"
+				id="entity_ref"
+				layout="joomla.form.field.subform.repeatable-table"
+		/>
+
+		<field
+				name="filters"
+				type="subform"
+				formsource="administrator/components/com_extengen/forms/entityFieldReference.xml"
+				label="Filters"
+				id="filters"
+				multiple="true"
+				min="0"
+				layout="joomla.form.field.subform.repeatable"
+		/>
+
+		<field
+				name="links"
+				type="subform"
+				formsource="administrator/components/com_extengen/forms/internalLink.xml"
+				label="Links"
+				id="links"
+				multiple="true"
+				min="0"
+				buttons="add,remove"
+				layout="joomla.form.field.subform.repeatable"
+		/>
+
+		<field
+				name="page_type"
+				type="hidden"
+				default="indexpage"
+		/>
+
+		<field
+				name="page_id"
+				type="hidden"
+		/>
+
+	</fieldset>
+</form>

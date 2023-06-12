@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fieldset
+		addruleprefix="Yepr\Component\Extengen\Administrator\Rule"
+		addfieldprefix="Yepr\Component\Extengen\Administrator\Field"
+	>
+		<field
+			name="concept_property_name"
+			type="text"
+			label="Property name"
+			id="property_name"
+			size="20"
+			required="true"
+			onchange="editConceptFieldsList(this);"
+			class="conceptFieldName"
+		 />
+
+		<field
+			name="concept_property_type"
+			type="list"
+			label="Type"
+			default="Short_Text"
+			id="concept_property_type"
+			class="custom-select-color-state"
+			size="1"
+			>
+			<option value="Integer">Integer</option>
+			<option value="Boolean">Boolean</option>
+			<option value="Text">Text</option>
+			<option value="Short_Text">Short Text</option>
+			<option value="Decimal">Decimal</option>
+			<option value="Float">Floating point</option>
+			<option value="Time">Time</option>
+			<option value="Date">Date</option>
+			<option value="DateTime">DateTime</option>
+		</field>
+
+		<field
+			name="concept_property_id"
+			type="hidden"
+		/>
+
+		<!-- The id of the entity this property belongs to -->
+		<field
+			name="concept_id"
+			type="hidden"
+		/>
+	</fieldset>
+</form>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fieldset
+		addruleprefix="Yepr\Component\Extengen\Administrator\Rule"
+		addfieldprefix="Yepr\Component\Extengen\Administrator\Field"
+	>
+
+		<field
+			name="copyright"
+			type="text"
+			label="Copyright"
+			id="copyright"
+			size="60"
+			required="false"
+		 />
+
+		<field
+			name="license"
+			type="text"
+			label="License"
+			id="license"
+			size="60"
+			required="false"
+		 />
+
+		<field
+			name="link"
+			type="text"
+			label="Link"
+			id="link"
+			size="60"
+			required="false"
+		 />
+
+		<field
+			name="version"
+			type="text"
+			label="Version"
+			id="version"
+			size="60"
+			required="false"
+		 />
+
+		<field
+			name="author_name"
+			type="text"
+			label="Author Name"
+			id="author_name"
+			size="60"
+			required="false"
+		 />
+
+		<field
+			name="author_email"
+			type="text"
+			label="Author Email"
+			id="author_email"
+			size="60"
+			required="false"
+		 />
+
+		<field
+			name="author_url"
+			type="text"
+			label="Author URL"
+			id="author_url"
+			size="60"
+			required="false"
+		 />
+
+		<field
+			name="creation_date"
+			type="calendar"
+			default="NOW"
+			label="Creation Date"
+			id="creation_date"
+			size="60"
+			required="false"
+		 />
+
+		<field
+			name="company_namespace"
+			type="text"
+			label="Company namespace prefix"
+			id="company_namespace"
+			size="60"
+			required="false"
+		 />
+
+	</fieldset>
+</form>

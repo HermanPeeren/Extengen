@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fieldset
+		addruleprefix="Yepr\Component\Extengen\Administrator\Rule"
+		addfieldprefix="Yepr\Component\Extengen\Administrator\Field"
+	>
+
+		<field
+			name="type"
+			type="list"
+			label="Type"
+			default="Integer"
+			id="type"
+			class="custom-select-color-state"
+			size="1"
+			>
+			<option value="Integer">Integer</option>
+			<option value="Boolean">Boolean</option>
+			<option value="Text">Text</option>
+			<option value="Short_Text">Short Text</option>
+			<option value="Decimal">Decimal</option>
+			<option value="Currency">Currency</option>
+			<option value="Float">Floating point</option>
+			<option value="Time">Time</option>
+			<option value="Date">Date</option>
+			<option value="DateTime">DateTime</option>
+			<option value="File">File</option>
+			<option value="Link">Link</option>
+			<option value="Image">Image</option>
+		</field>
+
+		<field
+				name="isunique"
+				type="checkbox"
+				label="COM_EXTENGEN_ATTRIBUTE_FIELD_ISUNIQUE_LABEL"
+		/>
+
+		<field
+				name="isprimary"
+				type="checkbox"
+				label="COM_EXTENGEN_ATTRIBUTE_FIELD_ISPRIMARY_LABEL"
+				showon="isunique:1"
+		/>
+
+		<field
+				name="default_ref_display"
+				type="checkbox"
+				label="COM_EXTENGEN_ATTRIBUTE_FIELD_DEFAULT_REF_DISPLAY_LABEL"
+		/>
+
+	</fieldset>
+</form>

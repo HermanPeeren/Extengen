@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+	<fieldset
+			name="projects"
+			label="{{ addLanguageString('PROJECT_FIELD_CONFIG_COMMON_DISPLAY', 'Use custom fields', componentName) }}"
+			description="{{ addLanguageString('PROJECT_FIELD_CONFIG_COMMON_DESC', 'Add custom fields to project', componentName) }}"
+	>
+		<field
+				name="custom_fields_enable"
+				type="radio"
+				class="switcher"
+				label="JGLOBAL_CUSTOM_FIELDS_ENABLE_LABEL"
+				default="1"
+		>
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
+
+	</fieldset>
+	<fieldset
+			name="permissions"
+			label="JCONFIG_PERMISSIONS_LABEL"
+			description="JCONFIG_PERMISSIONS_DESC"
+	>
+		<field
+				name="rules"
+				type="rules"
+				label="JCONFIG_PERMISSIONS_LABEL"
+				validate="rules"
+				filter="rules"
+				component="com_{{ componentName|lower }}"
+				section="component"
+		/>
+	</fieldset>
+</config>

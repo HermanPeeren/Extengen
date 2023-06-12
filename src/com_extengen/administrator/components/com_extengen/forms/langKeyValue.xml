@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fieldset
+		addruleprefix="Yepr\Component\Extengen\Administrator\Rule"
+		addfieldprefix="Yepr\Component\Extengen\Administrator\Field"
+	>
+		<field
+			name="language_string"
+			type="text"
+			label="Language string"
+			description="The language string to be transformed into text."
+		 />
+		<field
+			name="locale_string"
+			type="textarea"
+			label="Local text"
+			description="The text to be displayed in a specific language for the language string"
+		 />
+	</fieldset>
+</form>

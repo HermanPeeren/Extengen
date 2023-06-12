@@ -1,0 +1,50 @@
+<?php
+/**
+ * @package    {{ projectName }}
+ * @subpackage {{ componentName }}
+ * @version    {{ version }}
+ *
+ * @copyright  {{ copyright }}
+ * @license    {{ license }}
+ */
+
+namespace {{ company_namespace }}\Component\{{ componentName }}\Administrator\Controller;
+
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\Router\Route;
+
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
+
+/**
+ * Component Controller
+ *
+ * @since  1.5
+ */
+class DisplayController extends BaseController
+{
+    /**
+     * The default view.
+     *
+     * @var    string
+     * @since  1.6
+     */
+    protected $default_view = '{{ defaultView }}';
+
+    /**
+     * Method to display a view.
+     *
+     * @param   boolean  $cachable   If true, the view output will be cached
+     * @param   array    $urlparams  An array of safe URL parameters and their variable types, for valid values see {@link JFilterInput::clean()}.
+     *
+     * @return  BaseController|boolean  This object to support chaining.
+     *
+     * @since   1.5
+     */
+    public function display($cachable = false, $urlparams = [])
+    {
+        return parent::display();
+    }
+}

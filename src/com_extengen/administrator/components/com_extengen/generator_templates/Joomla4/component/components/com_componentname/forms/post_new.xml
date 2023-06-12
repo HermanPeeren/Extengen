@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--~
+  ~ @package   ats
+  ~ @copyright Copyright (c)2011-2022 Nicholas K. Dionysopoulos / Akeeba Ltd
+  ~ @license   GNU General Public License version 3, or later
+  -->
+<form addfieldprefix="Akeeba\Component\ATS\Administrator\Field">
+    <fieldset name="basic">
+        <field name="enabled"
+               type="hidden"
+               id="enabled_post"
+               default="1"
+        />
+
+        <field name="ticket_id"
+               type="hidden"
+               id="ticket_id_post"
+        />
+
+        <field name="content_html"
+               type="editor"
+               label="COM_ATS_TICKETS_LBL_REPLY_TEXT"
+               default=""
+               id="replyText"
+               cols="50"
+               rows="5"
+               filter="JComponentHelper::filterText"
+               buttons="true"
+               hiddenLabel="true"
+               required="true"
+        />
+
+        <field name="timespent"
+               type="timespent"
+               label="COM_ATS_TICKETS_HEADING_TIMESPENT"
+               id="timespent_post"
+               default="0"
+               min="0"
+               max="525600"
+               step="0.1"
+        />
+
+        <field name="usertags"
+               type="tag"
+               label="COM_ATS_COMMON_USER_TAGS"
+               multiple="true"
+        />
+
+        <field name="attachments"
+               type="subform"
+               label="COM_ATS_TICKETS_HEADING_ATTACHMENTS"
+               description="COM_ATS_TICKETS_HEADING_ATTACHMENTS_DESC"
+               multiple="true"
+               layout="joomla.form.field.subform.repeatable-table"
+               min="0"
+               max="10"
+        >
+            <form>
+                <field name="file"
+                       type="file"
+                       label="COM_ATS_TICKETS_HEADING_ATTACHMENT"
+                       required="true"
+                />
+            </form>
+        </field>
+    </fieldset>
+</form>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fieldset
+		addruleprefix="Yepr\Component\Extengen\Administrator\Rule"
+		addfieldprefix="Yepr\Component\Extengen\Administrator\Field"
+	>
+		<field
+			name="component_name"
+			type="text"
+			label="Component name"
+			size="40"
+			required="true"
+			class="componentName"
+		/>
+
+		<field
+			name="Sections"
+			type="subform"
+			formsource="administrator/components/com_extengen/forms/sections.xml"
+			multiple="false"
+			min="1"
+			label="Sections"
+			id="component"
+			layout="joomla.form.field.subform.default"
+		/>
+
+		<field
+			name="manifest"
+			type="subform"
+			formsource="administrator/components/com_extengen/forms/manifest.xml"
+			multiple="false"
+			min="1"
+			label="Manifest"
+			id="manifest"
+			layout="joomla.form.field.subform.default"
+		/>
+
+		<field
+			name="languages"
+			type="subform"
+			formsource="administrator/components/com_extengen/forms/language.xml"
+			multiple="true"
+			min="1"
+			label="Languages"
+			id="languages"
+			layout="joomla.form.field.subform.repeatable"
+		/>
+
+	</fieldset>
+</form>

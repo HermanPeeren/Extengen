@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- this concept was called DetailPageField in JooMDD; zero or more in editFields property of DetailsPage -->
+<form>
+	<fieldset
+		addruleprefix="Yepr\Component\Extengen\Administrator\Rule"
+		addfieldprefix="Yepr\Component\Extengen\Administrator\Field"
+	>
+
+		<field
+				name="attribute"
+				type="subform"
+				formsource="administrator/components/com_extengen/forms/entityFieldReference.xml"
+				multiple="false"
+				min="1"
+				label="Edit field for:"
+				id="attribute"
+				layout="joomla.form.field.subform.default"
+		/>
+
+		<field
+				name="htmltype"
+				type="htmltypes"
+				id="htmltype"
+				default="text"
+				label="HTML type for editing"
+		/>
+
+		<field
+				name="parameters"
+				type="subform"
+				formsource="administrator/components/com_extengen/forms/keyValue.xml"
+				multiple="true"
+				min="0"
+				label="Parameters"
+				id="parameters"
+				layout="joomla.form.field.subform.repeatable"
+		/>
+
+	</fieldset>
+</form>

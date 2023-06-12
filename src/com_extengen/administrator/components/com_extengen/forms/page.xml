@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fieldset
+		addruleprefix="Yepr\Component\Extengen\Administrator\Rule"
+		addfieldprefix="Yepr\Component\Extengen\Administrator\Field"
+	>
+
+		<field
+				name="page_name"
+				type="text"
+				label="Page name"
+				size="40"
+				required="false"
+				onchange="updateConceptReferencesList('Page');"
+				class="pageName"
+		/>
+
+		<field
+				name="page_type"
+				type="list"
+				label="Page type"
+				default="detailspage"
+				id="page_type"
+				class="custom-select-color-state"
+				size="1"
+		>
+			<option value="detailspage">Detail page</option>
+			<option value="indexpage">List page</option>
+			<option value="dashboard" disabled="true">todo: Dashboard</option>
+			<option value="detailsindex" disabled="true">todo: Detail page with lists embedded</option>
+		</field>
+
+
+		<field
+				name="entity_ref"
+				type="subform"
+				formsource="administrator/components/com_extengen/forms/entityReference.xml"
+				multiple="true"
+				min="0"
+				label="Entities"
+				id="entity_ref"
+				layout="joomla.form.field.subform.repeatable-table"
+		/>
+
+		<field
+				name="filters"
+				type="subform"
+				formsource="administrator/components/com_extengen/forms/entityFieldReference.xml"
+				label="Filters"
+				id="filters"
+				multiple="true"
+				min="0"
+				layout="joomla.form.field.subform.repeatable"
+				showon="page_type:indexpage"
+		/>
+
+		<field
+				name="presentationcolumns"
+				type="subform"
+				formsource="administrator/components/com_extengen/forms/entityFieldReference.xml"
+				multiple="true"
+				min="0"
+				label="Presentation columns"
+				id="presentationcolumns"
+				layout="joomla.form.field.subform.repeatable"
+				showon="page_type:indexpage"
+		/>
+
+
+		<field
+				name="editfields"
+				type="subform"
+				formsource="administrator/components/com_extengen/forms/editfield.xml"
+				multiple="true"
+				min="0"
+				label="Editfields"
+				id="editfields"
+				layout="joomla.form.field.subform.repeatable"
+				showon="page_type:detailspage"
+		/>
+
+		<field
+				name="links"
+				type="subform"
+				formsource="administrator/components/com_extengen/forms/internalLink.xml"
+				label="Links"
+				id="links"
+				multiple="true"
+				min="0"
+				buttons="add,remove"
+				layout="joomla.form.field.subform.repeatable"
+		/>
+
+		<field
+				name="page_id"
+				type="hidden"
+		/>
+
+	</fieldset>
+</form>
