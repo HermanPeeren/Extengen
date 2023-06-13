@@ -1,0 +1,17 @@
+<updates>
+    <update>
+        <name>Extengen</name>
+        <description>com_extengen 0.7.10</description>
+        <element>com_extengen</element>
+        <type>component</type>
+        <version>0.7.10</version>
+        <downloads>
+            <!--<downloadurl type="full" format="zip">No download available</downloadurl>-->
+        </downloads>
+        <maintainer>Yepr - Herman Peeren</maintainer>
+        <maintainerurl>http://www.yepr.nl</maintainerurl>
+        <targetplatform name="joomla" version="4.3"/>
+        <client>administrator</client>
+		<php_minimum>7.4</php_minimum>
+    </update>
+</updates>
