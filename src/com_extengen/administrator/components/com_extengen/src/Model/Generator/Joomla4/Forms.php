@@ -135,16 +135,11 @@ class Forms extends Generator
 				$entity_id = $page->entity_ref->entity_ref0->reference;
 				$entity = $entityMap[$entity_id];
 
-				// TODO: editFields. Now only map to standard HtmlFields
-				// Loop over the attributes in that entity
-				// Check if that attribute is in editFields (the HtmlType) of the page
-				// if not in there, put it there:
-				//      - if it is a referenced attribute (foreign key): put the custom select field in the edit fields
-				//      - otherwise add the editField based on a standard mapping from standardType to htmlType
-
 				// Loop over the fields in that entity and map them to HtmlFields
 				foreach ($entity->field as $field)
 				{
+					// todo: possibility (in editFields) to exclude fields from the form.
+
 					// fieldname: field->field_name
 					// label = ucfirst(fieldname) todo: add labels to editfields if you want other names
 
@@ -160,12 +155,25 @@ class Forms extends Generator
 					//    - Property
 					if (($field->field_type)=="property")
 					{
+						// By default use a standard HtmlType.
 						$property = $field->property;
+						$type = $this->standard2HtmlTypes($property->type);
+
+						// Is this field in the editFields?
+						foreach ($page->editfields as $editfield)
+						{
+							// The current field is in the editfields
+							if (($editfield->attribute->field_reference)==$field->field_id)
+							{
+								// If in editfields, then use the HtmlType defined there.
+								$type = $editfield->htmltype;
+							}
+						}
+
 						// HtmlField-type: $this->standard2HtmlTypes($property->type);
-						$type = new \DOMAttr('type', $this->standard2HtmlTypes($property->type));
+						$type = new \DOMAttr('type', $type);
 						$formField->setAttributeNode($type);
 					}
-
 
 					//    - Reference (n:1)
 					if (($field->field_type)=="reference")
