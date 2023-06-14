@@ -24,7 +24,7 @@ use Joomla\CMS\Extension\Service\Provider\ComponentDispatcherFactory;
 use Joomla\CMS\Extension\Service\Provider\MVCFactory;
 use Joomla\CMS\HTML\Registry;
 use Yepr\Component\Extengen\Administrator\Extension\ExtengenComponent;
-use Yepr\Component\Extengen\Administrator\Helper\AssociationsHelper;
+//use Yepr\Component\Extengen\Administrator\Helper\AssociationsHelper;
 use Joomla\DI\Container;
 use Joomla\CMS\Extension\Service\Provider\RouterFactory;
 
@@ -42,7 +42,7 @@ return new class implements ServiceProviderInterface
 	 */
 	public function register(Container $container)
 	{
-		$container->set(AssociationExtensionInterface::class, new AssociationsHelper());
+		//$container->set(AssociationExtensionInterface::class, new AssociationsHelper());
 
 		$container->registerServiceProvider(new CategoryFactory('\\Yepr\\Component\\Extengen'));
 		$container->registerServiceProvider(new MVCFactory('\\Yepr\\Component\\Extengen'));
@@ -58,7 +58,7 @@ return new class implements ServiceProviderInterface
 				$component->setRegistry($container->get(Registry::class));
 				$component->setMVCFactory($container->get(MVCFactoryInterface::class));
 				$component->setCategoryFactory($container->get(CategoryFactoryInterface::class));
-				$component->setAssociationExtension($container->get(AssociationExtensionInterface::class));
+				//$component->setAssociationExtension($container->get(AssociationExtensionInterface::class));
                 $component->setRouterFactory($container->get(RouterFactoryInterface::class));
 
 				return $component;

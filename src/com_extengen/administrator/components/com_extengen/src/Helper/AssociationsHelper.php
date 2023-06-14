@@ -16,7 +16,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Association\AssociationExtensionHelper;
 use Joomla\CMS\Language\Associations;
 use Joomla\CMS\Table\Table;
-use Yepr\Component\Extengen\Site\Helper\AssociationHelper;
+//use Yepr\Component\Extengen\Site\Helper\AssociationHelper;
 
 /**
  * Extengen associations helper.
