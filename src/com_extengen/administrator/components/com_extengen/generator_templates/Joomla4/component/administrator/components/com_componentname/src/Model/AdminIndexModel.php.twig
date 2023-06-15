@@ -19,6 +19,7 @@ use Joomla\CMS\Language\Associations;
 use Joomla\CMS\Factory;
 use Joomla\Utilities\ArrayHelper;
 use Joomla\Database\ParameterType;
+use Joomla\Database\QueryInterface;
 
 /**
  * Methods supporting a list of {{ pageName }} records.
@@ -74,14 +75,14 @@ class {{ pageName }}Model extends ListModel
 	/**
 	 * Build an SQL query to load the list data.
 	 *
-	 * @return  \JDatabaseQuery
+	 * @return  QueryInterface
 	 *
 	 * @since   __BUMP_VERSION__
 	 */
 	protected function getListQuery()
 	{
 		// Create a new query object.
-		$db = $this->getDbo();
+		$db = $this->getDatabase();
 		$query = $db->getQuery(true);
 
 		// TODO: ADD THE CORRECT FIELDS
@@ -92,11 +93,12 @@ class {{ pageName }}Model extends ListModel
 
 		// Add filters to query
 		{% for filter  in filters %}
-		// todo: Get the value of {{ filter.fieldName }}_filter here
-		// ${{ filter.fieldName }}_filter = $this->getState({{ filter.fieldName }}.filter)
+
+		// Get the value of {{ filter.fieldName }}_filter here // todo: check if this works
+		${{ filter.fieldName }}_filter = $this->getState('{{ filter.fieldName }}.filter');
 		$query
 			->where($db->quoteName('{{ filter.columnName }}') . ' LIKE '
-				. $db->quoteName('${{ filter.fieldName }}' . '_filter'));
+				. $db->quoteName(${{ filter.fieldName }}_filter));
 		{% endfor %}
 
 		return $query;

@@ -126,7 +126,59 @@ class AdminMVC extends Generator
 				// Create Model, View or Controller  // todo: reorganise for Views: in subfolder with different names...
 				if ($MVCtype!='View')
 				{
-					// todo: add filters to templateVariables when making an index model
+
+					// Filters, only for index-pages
+					if ($pageType=='Index')
+					{
+						// Per filter make an associative array for the template: [fieldName, columnName]
+						// Where
+						//      * fieldName  = the local field name of the entity
+						//      * columnName = the name of the column in the table, which can be  different from fieldName in case of a foreign key
+						$filtersInTemplate = [];
+
+						// Loop over the filters in the AST and make variables for the AdminIndexModel-template
+						// Todo: make this more general for similar cases in generators, when building the generator in Extengen
+						foreach ($page->filters as $filter)
+						{
+							$entity_id = $filter->entity_reference;
+							$entity    = $entityMap[$entity_id];
+
+							$field_id = $filter->field_reference;
+							$field    = $fieldMap[$field_id];
+
+							$fieldName = $field->field_name;
+
+							// ColumnName depends on this being a property of this entity or a reference (foreign key)
+
+							//    - Property: the fieldName and columnName are the same
+							if (($field->field_type) == "property")
+							{
+								$filtersInTemplate[] = [
+									'fieldName'  => $fieldName,
+									'columnName' => $fieldName
+								];
+
+							}
+
+							//    - Reference (n:1): the columnName is the foreign key
+							if (($field->field_type) == "reference")
+							{
+								$reference = $field->reference;
+
+								$refEntity_id = $reference->reference_id;
+								$refEntity    = $entityMap[$refEntity_id];
+
+								$columnName = strtolower($refEntity->entity_name) . '_id';
+
+								$filtersInTemplate[] = [
+									'fieldName'  => $fieldName,
+									'columnName' => $columnName
+								];
+							}
+						}
+
+						$templateVariables['filters'] = $filtersInTemplate;
+					}
 
 					$templateFileName = 'Admin' . $pageType . $MVCtype . '.php.twig';
 					$generatedFileName = $pageName . $MVCtype . '.php';
@@ -151,56 +203,6 @@ class AdminMVC extends Generator
 			// Create tmpl-file for the Index-View
 			if ($pageType=='Index')
 			{
-				// Filters
-				// Per filter make an associative array for the template: [fieldName, columnName]
-				// Where
-				//      * fieldName  = the local field name of the entity
-				//      * columnName = the name of the column in the table, which can be  different from fieldName in case of a foreign key
-				$filtersInTemplate = [];
-
-				// Loop over the filters in the AST and make variables for the AdminIndexModel-template
-				// Todo: make this more general for similar cases in generators, when building the generator in Extengen
-				foreach ($page->filters as $filter)
-				{
-					$entity_id = $filter->entity_reference;
-					$entity    = $entityMap[$entity_id];
-
-					$field_id = $filter->field_reference;
-					$field    = $fieldMap[$field_id];
-
-					$fieldName = $field->field_name;
-
-					// ColumnName depends on this being a property of this entity or a reference (foreign key)
-
-					//    - Property: the fieldName and columnName are the same
-					if (($field->field_type) == "property")
-					{
-						$filtersInTemplate[] = [
-							'fieldName'  => $fieldName,
-							'columnName' => $fieldName
-						];
-
-					}
-
-					//    - Reference (n:1): the columnName is the foreign key
-					if (($field->field_type) == "reference")
-					{
-						$reference = $field->reference;
-
-						$refEntity_id = $reference->reference_id;
-						$refEntity    = $entityMap[$refEntity_id];
-
-						$columnName = strtolower($refEntity->entity_name) . '_id';
-
-						$filtersInTemplate[] = [
-							'fieldName'  => $fieldName,
-							'columnName' => $columnName
-						];
-					}
-
-					$templateVariables['filters'] = $filtersInTemplate;
-				}
-
 				$templateFileName = 'default.php.twig';
 				$generatedFileName = 'default.php';
 				$templateFilePath = $templateFilePathRoot . 'tmpl/index/';

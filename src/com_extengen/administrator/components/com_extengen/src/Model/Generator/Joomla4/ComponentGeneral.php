@@ -46,6 +46,28 @@ class ComponentGeneral extends Generator
 		$generatedFilePath = $baseGeneratedFilePath;
 		$templateVariables = ['componentName' => $componentName];
 
+		// Loop over the pages to make a map of page_id to page-definition
+		$pageMap = [];
+		foreach ($project->pages as $page)
+		{
+			$pageMap[$page->page_id] = $page;
+		}
+
+		// Backend index pages (for admin-menu-items) and the default view
+		$backendIndexViews = [];
+		foreach ($project->extensions->component->Sections->backendsection as $backendpageRef)
+		{
+			$page = $pageMap[$backendpageRef->page_reference];
+			if ($page->page_type == 'indexpage')
+			{
+				$backendIndexViews[] = $page->page_name;
+			}
+		}
+		$templateVariables['backendIndexViews'] = $backendIndexViews;
+		$templateVariables['defaultBackendView'] =
+			$pageMap[$project->extensions->component->Sections->backenddefaultpage->page_reference]->page_name;
+
+
 		// --- create component manifest file ---
 		$templateFileName = 'componentManifest.xml';
 		$generatedFileName = strtolower($componentName).'.xml';
@@ -57,6 +79,8 @@ class ComponentGeneral extends Generator
 		$templateVariables['license'] = $manifest->license;
 		$templateVariables['company_namespace'] = $manifest->company_namespace;
 		$templateVariables['projectName'] = $project->name;
+		$templateVariables['version'] = $manifest->version;
+		$templateVariables['creation_date'] = $manifest->creation_date;
 
 		$logAppend($this->generateFileWithTemplate($templateFilePath, $templateFileName, $generatedFilePath, $generatedFileName, $templateVariables));
 

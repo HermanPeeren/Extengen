@@ -15,6 +15,14 @@
 			layout="joomla.form.field.subform.repeatable-table"
 		/>
 		<field
+			name="frontenddefaultpage"
+			type="subform"
+			formsource="administrator/components/com_extengen/forms/pageReference.xml"
+			label="Frontend Default Page"
+			id="frontenddefaultpage"
+			layout="joomla.form.field.subform.default"
+		/>
+		<field
 			name="backendsection"
 			type="subform"
 			formsource="administrator/components/com_extengen/forms/pageReference.xml"
@@ -23,6 +31,14 @@
 			label="Backend  Section - Pages"
 			id="backendsection"
 			layout="joomla.form.field.subform.repeatable-table"
+		/>
+		<field
+			name="backenddefaultpage"
+			type="subform"
+			formsource="administrator/components/com_extengen/forms/pageReference.xml"
+			label="Backend Default Page"
+			id="backenddefaultpage"
+			layout="joomla.form.field.subform.default"
 		/>
 
 	</fieldset>

@@ -60,13 +60,12 @@
 	<!-- Back-end files -->
 	<administration>
 		<!-- Menu entries -->
-		<menu view="foo">COM_{{ componentName|upper }}</menu>
+		<menu view="{{ defaultBackendView }}">{{ addLanguageString("MENUNAME", '%componentName%', componentName) }}</menu>
 		<submenu>
-			<!--
-				Note that all & must be escaped to &amp; for the file to be valid
-				XML and be parsed by the installer
-			-->
-			<menu link="option=com_{{ componentName|lower }}">COM_{{ componentName|upper }}</menu>
+			<!-- all backend index pages as submenu item -->
+			{% for view  in backendIndexViews %}
+			<menu link="option=com_{{ view|lower }}">{{ addLanguageString("SUBMENUNAME_pageName", '%pageName%', componentName, view) }}</menu>
+			{% endfor %}
 		</submenu>
 
 		<!-- Core files -->
@@ -87,7 +86,7 @@
 	</administration>
 
 	<!-- Update servers -->
-	<updateservers>
+	<!--<updateservers>
 		<server type="extension" priority="1" name="{{ projectName }}">{{ updateServerURL }}/{{ componentName|lower }}</server>
-	</updateservers>
+	</updateservers>-->
 </extension>

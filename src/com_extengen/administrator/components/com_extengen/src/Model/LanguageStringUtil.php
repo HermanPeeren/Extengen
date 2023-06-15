@@ -246,7 +246,7 @@ class LanguageStringUtil extends AbstractExtension
 			$keyValuePair->language_string = $langstring;
 
 			// TEST automatic translation for other languages todo: proper translation API
-			$locale_string = ucfirst(str_replace(["%pageName%", "%fieldName%"],[strtolower($pageName),strtolower($fieldName)], $english));
+			$locale_string = ucfirst(str_replace(["%componentName%", "%pageName%", "%fieldName%"],[strtolower($componentName),strtolower($pageName),strtolower($fieldName)], $english));
 
 			$locale_string_translated = $locale_string;
 
