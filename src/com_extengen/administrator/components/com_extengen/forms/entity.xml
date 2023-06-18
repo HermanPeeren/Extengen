@@ -9,10 +9,10 @@
 			type="text"
 			label="Entity name"
 			size="40"
-			required="true"
 			onchange="updateConceptReferencesList('Entity');"
 			class="entityName"
 		 />
+		<!--required="true"-->
 
 		<field
 			name="field"

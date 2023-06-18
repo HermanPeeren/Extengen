@@ -33,15 +33,19 @@ class PageReferenceField extends ListField
 	 */
 	public function getOptions()
 	{
-		// Get the entities that are currently in the model.
-		// todo: cache this (in the AST) and in the project-model
-		$AST = $this->initiateAST();
 		$pageNameMap = [];
 		$pageNameMap[0] = '&nbsp;';
-		foreach ($AST->pages as $page)
+
+		// Get the pages that are currently in the model.
+		// todo: cache this (in the AST) and in the project-model
+		$AST = $this->initiateAST();
+		if (!is_null($AST))
 		{
-			$pageType = $page->page_type;
-			$pageNameMap[$page->page_id] = $pageType . ': ' . ucfirst($page->page_name);
+			foreach ($AST->pages as $page)
+			{
+				$pageType = $page->page_type;
+				$pageNameMap[$page->page_id] = $pageType . ': ' . ucfirst($page->page_name);
+			}
 		}
 
         // use a for each to iterate over the $pageNameMap
@@ -61,9 +65,9 @@ class PageReferenceField extends ListField
 	/**
 	 * Get the (json-encoded) form-data of the project that form the AST.
 	 *
-	 * @return object
+	 * @return object|null
 	 */
-	private function initiateAST(): object
+	private function initiateAST(): ?object
 	{
 		// Which project?
 		// todo: better use a hidden variable in the form, but do you need to set it in every subform?
@@ -73,15 +77,20 @@ class PageReferenceField extends ListField
 		$input = Factory::getApplication()->input;
 		$projectId = $input->getInt('id');
 
-		$db = $this->getDatabase();
-		$getASTquery = $db->getQuery(true)
-			->select($db->quoteName('form_data'))
-			->from($db->quoteName('#__extengen_projects'))
-			->where($db->quoteName('id') . ' = :id')
-			->bind(':id', $projectId, ParameterType::INTEGER);
-		$db->setQuery($getASTquery);
+		if ($projectId)
+		{
+			$db = $this->getDatabase();
+			$getASTquery = $db->getQuery(true)
+				->select($db->quoteName('form_data'))
+				->from($db->quoteName('#__extengen_projects'))
+				->where($db->quoteName('id') . ' = :id')
+				->bind(':id', $projectId, ParameterType::INTEGER);
+			$db->setQuery($getASTquery);
 
-		return json_decode($db->loadResult());
+			return json_decode($db->loadResult());
+		}
+
+		return null;
 	}
 
 }

@@ -73,19 +73,19 @@ if ($saveOrder && !empty($this->items)) {
                                 <td class="text-center">
 									<?php echo HTMLHelper::_('grid.id', $i, $item->id); ?>
                                 </td>
-{% for property in entity.property %}
-{% if property.default_ref_display is defined %}
+
+                                {% for field in entity.field %}
+                                {% if field.default_ref_display is defined %}
                                 <td>
                                 <a class="hasTooltip" href="<?php echo Route::_('index.php?option=com_{{componentName|lower }}&task={{  linkPageName|lower }}.edit&id=' . (int) $item->id); // todo: resolve 'foo' to correct linked detailspage ?>" title="<?php echo Text::_('JACTION_EDIT'); ?> <?php echo $this->escape(addslashes($item->name)); ?>">
-		                            <?php //echo $editIcon; ?><?php echo $this->escape($item->{{property.property_name}}); ?></a>
+		                            <?php //echo $editIcon; ?><?php echo $this->escape($item->{{field.field_name}}); ?></a>
                                 </td>
-{% else %}
+                                {% else %}
                                 <td scope="col" style="width:1%" class="text-center d-none d-md-table-cell">
-	                                <?php echo $item->{{property.property_name}}; ?>
+	                                <?php echo $item->{{field.field_name}}; ?>
                                 </td>
-{% endif %}
-{% endfor %}
-{#todo: references#}
+                                {% endif %}
+                                {% endfor %}
 
                             </tr>
 						<?php endforeach; ?>
@@ -101,8 +101,8 @@ if ($saveOrder && !empty($this->items)) {
 							'title'  => Text::_('{{ addLanguageString("BATCH_OPTIONS_pageName", 'Batch process the selected %pageName%', componentName, pageName) }}'),
 							'footer' => $this->loadTemplate('batch_footer'),
 						],
-						$this->loadTemplate('batch_body')*/
-					); ?>
+						$this->loadTemplate('batch_body')
+					);*/ ?>
 
 				<?php endif; ?>
                 <input type="hidden" name="task" value="">

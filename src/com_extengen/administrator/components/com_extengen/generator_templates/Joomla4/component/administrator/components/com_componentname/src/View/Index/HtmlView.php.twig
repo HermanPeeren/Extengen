@@ -161,33 +161,33 @@ class HtmlView extends BaseHtmlView
 				->buttonClass('btn btn-action')
 				->listCheck(true);
 			$childBar = $dropdown->getChildToolbar();
-			$childBar->publish('{{ componentName|lower }}.publish')->listCheck(true);
-			$childBar->unpublish('{{ componentName|lower }}.unpublish')->listCheck(true);
+			$childBar->publish('{{pageName|lower }}.publish')->listCheck(true);
+			$childBar->unpublish('{{pageName|lower }}.unpublish')->listCheck(true);
 
 			$childBar->standardButton('featured')
 				->text('JFEATURE')
-				->task('{{ componentName|lower }}.featured')
+				->task('{{pageName|lower }}.featured')
 				->listCheck(true);
 			$childBar->standardButton('unfeatured')
 				->text('JUNFEATURE')
-				->task('{{ componentName|lower }}.unfeatured')
+				->task('{{pageName|lower }}.unfeatured')
 				->listCheck(true);
 
-			$childBar->archive('{{ componentName|lower }}.archive')->listCheck(true);
+			$childBar->archive('{{pageName|lower }}.archive')->listCheck(true);
 
 			if ($user->authorise('core.admin'))
 			{
-				$childBar->checkin('{{ componentName|lower }}.checkin')->listCheck(true);
+				$childBar->checkin('{{pageName|lower }}.checkin')->listCheck(true);
 			}
 
 			if ($this->state->get('filter.published') != -2)
 			{
-				$childBar->trash('{{ componentName|lower }}.trash')->listCheck(true);
+				$childBar->trash('{{pageName|lower }}.trash')->listCheck(true);
 			}
 
 			if ($this->state->get('filter.published') == -2 && $canDo->get('core.delete'))
 			{
-				$childBar->delete('{{ componentName|lower }}.delete')
+				$childBar->delete('{{pageName|lower }}.delete')
 					->text('JTOOLBAR_EMPTY_TRASH')
 					->message('JGLOBAL_CONFIRM_DELETE')
 					->listCheck(true);

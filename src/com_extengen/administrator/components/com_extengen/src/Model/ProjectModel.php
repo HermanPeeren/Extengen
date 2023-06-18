@@ -114,6 +114,8 @@ class ProjectModel extends AdminModel
         // deserialise all data
         $data = json_decode($item->form_data);
 
+		//if (($item->id) == 0) $data = ['id' => 0, 'datamodel' => null, 'pages' => null, 'extensions' => null];
+
 		return $data;
 	}
 
@@ -145,6 +147,12 @@ class ProjectModel extends AdminModel
 				}
 			}
 		}
+
+		/*if (is_null($item->id))
+		{
+			$item->id = 0;
+			//$item->form_data = '{}';
+		}*/
 
 		return $item;
 	}

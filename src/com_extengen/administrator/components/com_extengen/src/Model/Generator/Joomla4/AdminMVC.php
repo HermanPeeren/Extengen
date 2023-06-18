@@ -118,6 +118,9 @@ class AdminMVC extends Generator
 			$entityName = $entity?$entity->entity_name:"";
 			$templateVariables['entityName'] = $entityName;
 
+			// Joined entities n:1 relations // todo: other type of relations
+
+
 			// todo: editFields for the detailspage and representationcolumns for the indexpage: they can overwrite the default fields from the entity.
 
 			// Per page-reference: make a Model, View and Controller

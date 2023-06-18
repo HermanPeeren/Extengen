@@ -32,17 +32,18 @@ class FieldReferenceField extends ListField
 	 */
 	public function getOptions()
 	{
-		// Get the entities that are currently in the model.
-		// todo: cache this (in the AST) and in the project-model
-		$AST = $this->initiateAST();
 		$fieldNameMap = [];
 		$fieldNameMap[0] = '&nbsp;';
+
+		// Get the entities and fields that are currently in the model.
+		// todo: cache this (in the AST) and in the project-model
+		$AST = $this->initiateAST();
 		
 		// Get the id of the entity for which we want to show the fields
 		$entityId    = $this->form->getValue('entity_id');
 		
 		// Only add fields when an entity is selected
-		if ($entityId!=0)
+		if (($entityId!=0) && !is_null($AST))
 		{
 			// Find the entity
 			$currentEntity = null;
@@ -81,9 +82,9 @@ class FieldReferenceField extends ListField
 	/**
 	 * Get the (json-encoded) form-data of the project that form the AST.
 	 *
-	 * @return object
+	 * @return object|null
 	 */
-	private function initiateAST(): object
+	private function initiateAST(): ?object
 	{
 		// Which project?
 		// todo: better use a hidden variable in the form, but do you need to set it in every subform?
@@ -93,15 +94,19 @@ class FieldReferenceField extends ListField
 		$input = Factory::getApplication()->input;
 		$projectId = $input->getInt('id');
 
-		$db = $this->getDatabase();
-		$getASTquery = $db->getQuery(true)
-			->select($db->quoteName('form_data'))
-			->from($db->quoteName('#__extengen_projects'))
-			->where($db->quoteName('id') . ' = :id')
-			->bind(':id', $projectId, ParameterType::INTEGER);
-		$db->setQuery($getASTquery);
+		if ($projectId)
+		{
+			$db = $this->getDatabase();
+			$getASTquery = $db->getQuery(true)
+				->select($db->quoteName('form_data'))
+				->from($db->quoteName('#__extengen_projects'))
+				->where($db->quoteName('id') . ' = :id')
+				->bind(':id', $projectId, ParameterType::INTEGER);
+			$db->setQuery($getASTquery);
 
-		return json_decode($db->loadResult());
+			return json_decode($db->loadResult());
+		}
+
+		return null;
 	}
-
 }

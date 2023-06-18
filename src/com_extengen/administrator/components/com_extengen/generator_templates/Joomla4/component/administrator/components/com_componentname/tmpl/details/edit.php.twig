@@ -47,10 +47,10 @@ $tmpl = $input->get('tmpl', '', 'cmd') === 'component' ? '&tmpl=component' : '';
                 <div class="row">
                     <div class="col-md-6">
 
-{% for property in entity.property %}
-                        <?php echo $this->getForm()->renderField('{{ property.property_name|lower }}'); ?>
-{% endfor %}
-{#todo: references#}
+                        {% for field in entity.field %}
+                        <?php echo $this->getForm()->renderField('{{ field.field_name|lower }}'); ?>
+                        {% endfor %}
+
                         <?php //echo $this->form->getInput('id'); ?>
                     </div>
                 </div>

@@ -51,7 +51,11 @@ class HtmlView extends BaseHtmlView
 	 */
 	public function display($tpl = null)
 	{
-		$this->item = $this->get('Item');
+		$this->form  = $this->get('Form');
+		echo '<pre>';
+		//print_r($this->form);
+		echo '</pre>';
+		$this->item  = $this->get('Item');
 
 		// If we are forcing a language in modal (used for associations).
 		if ($this->getLayout() === 'modal' && $forcedLanguage = Factory::getApplication()->input->get('forcedLanguage', '', 'cmd'))
@@ -80,7 +84,7 @@ class HtmlView extends BaseHtmlView
 
 		$user = Factory::getUser();
 		$userId = $user->id;
-		$isNew = ($this->item->id == 0);
+		$isNew = (is_null($this->item->id) || ($this->item->id == 0));
 
 		ToolbarHelper::title($isNew ? Text::_('COM_EXTENGEN_MANAGER_PROJECT_NEW') : Text::_('COM_EXTENGEN_MANAGER_PROJECT_EDIT'), 'project');
 

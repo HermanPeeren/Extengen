@@ -32,7 +32,7 @@
 				type="subform"
 				formsource="administrator/components/com_extengen/forms/property.xml"
 				label="Property"
-				id="property"
+			id="property"
 				layout="joomla.form.field.subform.default"
 				showon="field_type:property"
 		/>

@@ -35,40 +35,21 @@ class {{ pageName }}Model extends ListModel
 	 */
 	public function __construct($config = [])
 	{
-		// TODO: ADD FILTER FIELDS (what happens if you omit this? How is it used precisely?)
+		// Add filter fields
+		if (empty($config['filter_fields']))
+		{
+			$config['filter_fields'] = [
+			{% for filter  in filters %}
+				'{{ filter.columnName }}',
+			{% endfor %}
+			];
 
-		/*$config['filter_fields'] = $config['filter_fields'] ?? [
-				// Sortable columns (also overlaps with filter columns)
-				'id', 'catid', 'status', 'title', 'alias', 'public', 'priority', 'origin', 'assigned_to', 'created',
-				'created_by', 'modified', 'modified_by', 'enabled', 'language',
-				// Sort–only fields
-				'title', 'created_name', 'cat_title', 'language_title',
-				// Filter–only fields
-				'search', 'user', 'since', 'to', 'tag',
-			];*/
+			// Todo: Add fields for standard Joomla filtering, like categories, language, published, ordering etc.
+			// Todo: Those standard  Joomla features have to be added to the AST first.
+			// Todo: Association filter field, if ($assoc)
+		}
 
 		parent::__construct($config);
-
-        // TODO: ADD THE CORRECT FIELDS
-
-		/*$this->setupStateFilters([
-			'search'      => 'string',
-			'user'        => 'string',
-			'created_by'  => 'int',
-			'assigned_to' => 'int',
-			'catid'       => 'array',
-//			'status'      => 'array',
-			'status'      => 'string',
-			'public'      => 'int',
-			'priority'    => 'int',
-			'origin'      => 'string',
-			'enabled'     => 'int',
-			'since'       => 'string',
-			'to'          => 'string',
-			'tag'         => 'ignore',
-			'access'      => 'ignore',
-			'language'    => 'ignore',
-		], 'modified', 'DESC');*/
 	}
 
 
@@ -85,20 +66,27 @@ class {{ pageName }}Model extends ListModel
 		$db = $this->getDatabase();
 		$query = $db->getQuery(true);
 
-		// TODO: ADD THE CORRECT FIELDS
-		// TODO: ADD ASSOCIATED FIELDS WITH JOINS
 		// Select the required fields from the table.
 		$query->select('*');
+		// Todo: add the presentation fields from the joined tables
+
 		$query->from($db->quoteName('#__{{ componentName|lower}}_{{ entityName|lower }}'));
+		// Todo: add joined tables
 
 		// Add filters to query
 		{% for filter  in filters %}
 
 		// Get the value of {{ filter.fieldName }}_filter here // todo: check if this works
 		${{ filter.fieldName }}_filter = $this->getState('{{ filter.fieldName }}.filter');
-		$query
-			->where($db->quoteName('{{ filter.columnName }}') . ' LIKE '
-				. $db->quoteName(${{ filter.fieldName }}_filter));
+		if (!empty(${{ filter.fieldName }}_filter))
+		{
+			{#echo '---<br /><pre>';
+			print_r(${{ filter.fieldName }}_filter);
+			echo '---<br /></pre>';#}
+			$query
+				->where($db->quoteName('{{ filter.columnName }}') . ' LIKE '
+					. $db->quoteName(${{ filter.fieldName }}_filter));
+		}
 		{% endfor %}
 
 		return $query;

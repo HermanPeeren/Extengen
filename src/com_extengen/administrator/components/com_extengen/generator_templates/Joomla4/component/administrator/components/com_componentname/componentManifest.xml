@@ -59,12 +59,18 @@
 
 	<!-- Back-end files -->
 	<administration>
-		<!-- Menu entries -->
-		<menu view="{{ defaultBackendView }}">{{ addLanguageString("MENUNAME", '%componentName%', componentName) }}</menu>
+		<!-- Menu entries --><!--todo: sys-language-string?  , '', 'Administrator', true-->
+		<menu view="{{ defaultBackendView|lower }}">{{ addLanguageString("MENUNAME", '%componentName%', componentName) }}</menu>
 		<submenu>
 			<!-- all backend index pages as submenu item -->
 			{% for view  in backendIndexViews %}
-			<menu link="option=com_{{ view|lower }}">{{ addLanguageString("SUBMENUNAME_pageName", '%pageName%', componentName, view) }}</menu>
+
+			<menu link="option=com_{{ componentName|lower }}&amp;view={{ view|lower }}">{{ addLanguageString("SUBMENUNAME_pageName", '%pageName%', componentName, view) }}
+			<params>
+				<menu-quicktask-title>{{ addLanguageString("SUBMENUNAME_pageName", '%pageName%', componentName, view) }}</menu-quicktask-title>
+				<menu-quicktask>index.php?option=com_{{ componentName|lower }}&amp;view={{ view|lower }}</menu-quicktask>
+			</params>
+			</menu>
 			{% endfor %}
 		</submenu>
 

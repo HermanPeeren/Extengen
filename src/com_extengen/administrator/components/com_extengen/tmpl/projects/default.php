@@ -28,7 +28,7 @@ if ($saveOrder && !empty($this->items))
 	$saveOrderingUrl = 'index.php?option=com_extengen&task=projects.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1';
 }
 ?>
-<form action="<?php echo Route::_('index.php?option=com_extengen'); ?>" method="post" name="adminForm" id="adminForm">
+<form action="<?php echo Route::_('index.php?option=com_extengen&view=projects'); ?>" method="post" name="adminForm" id="adminForm">
 	<div class="row">
 		<?php if (!empty($this->sidebar)) : ?>
 			<div id="j-sidebar-container" class="col-md-2">

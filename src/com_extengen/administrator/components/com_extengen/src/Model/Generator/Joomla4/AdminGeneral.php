@@ -62,7 +62,6 @@ class AdminGeneral extends Generator
 		$templateFileName = 'version.php';
 		$generatedFileName = 'version.php';
 
-		$templateVariables['version'] = $manifest->version;
 		$templateVariables['creation_date'] = $manifest->creation_date;
 
 		$logAppend($this->generateFileWithTemplate($templateFilePath, $templateFileName, $generatedFilePath, $generatedFileName, $templateVariables));*/
@@ -77,12 +76,13 @@ class AdminGeneral extends Generator
 /*
 		$templateVariables['author_name'] = $manifest->author_name;
 		$templateVariables['author_email'] = $manifest->author_email;
-		$templateVariables['author_url'] = $manifest->author_url;
+		$templateVariables['author_url'] = $manifest->author_url;*/
+
+		$templateVariables['version'] = $manifest->version;
+		$templateVariables['projectName'] = $project->name;
+		$templateVariables['company_namespace'] = $manifest->company_namespace;
 		$templateVariables['copyright'] = $manifest->copyright;
 		$templateVariables['license'] = $manifest->license;
-		$templateVariables['company_namespace'] = $manifest->company_namespace;
-		$templateVariables['projectName'] = $project->name;*/
-
 
 		// --- create services/provider file of component ---
 		$templateFilePath = $baseTemplateFilePath . 'services/';
