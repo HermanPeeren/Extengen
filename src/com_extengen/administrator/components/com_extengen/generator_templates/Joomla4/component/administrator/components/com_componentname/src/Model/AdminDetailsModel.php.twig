@@ -99,6 +99,13 @@ class {{ pageName }}Model extends AdminModel
 
 		//$this->preprocessData($this->typeAlias, $data);
 
+{% if foreign|length > 0 %}
+		// Add foreign key column names
+{% for reference  in foreign %}
+		$data->{{ reference.fieldName }} = $data->{{ reference.columnName }};
+{% endfor %}
+{% endif %}
+
 		return $data;
 	}
 
@@ -115,7 +122,8 @@ class {{ pageName }}Model extends AdminModel
 
 		// TODO: associations
 		// Load associated {{ pageName|lower }} items
-		$assoc = Associations::isEnabled();
+		//$assoc = Associations::isEnabled();
+		$assoc = false;
 
 		if ($assoc)
 		{
@@ -142,6 +150,24 @@ class {{ pageName }}Model extends AdminModel
 		}*/
 
 		return $item;
+	}
+
+	public function save($data)
+	{
+{% if foreign|length > 0 %}
+		// Add foreign key column names
+{% for reference  in foreign %}
+		$data['{{ reference.columnName }}'] = $data['{{ reference.fieldName }}'];
+{% endfor %}
+{% endif %}
+
+		return parent::save($data);
+	}
+
+	// Override getTable to be sure the right table name is used (especially when page name is different from entity name).
+	public function getTable($name = '{{ entityName }}', $prefix = '', $options = [])
+	{
+	return parent::getTable($name, $prefix, $options);
 	}
 
 }

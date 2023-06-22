@@ -23,10 +23,26 @@ use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\Input\Input;
 
+/**
+ * {{ pageName }} controller class.
+ *
+ * @version {{ version }}
+ */
 class {{ pageName }}Controller extends FormController
 {
-	// todo: add $this->applyReturnUrl(); See Nic's PostController + ReturnURLAware mixin
 	/**
+	  * Override constructor to indicate the right list-view
+	  * (especially with different names for views than standard entity-names)
+	  *
+	  * Alternatieve: Add $this->applyReturnUrl(); See Nic's PostController + ReturnURLAware mixin
+	  */
+	public function __construct($config = array(), MVCFactoryInterface $factory = null, $app = null, $input = null)
+	{
+		$this->view_list = '{{ linkPageName }}';
+		parent::__construct($config, $factory, $app, $input);
+	}
+
+/**
 	 * Method to run batch operations.
 	 *
 	 * @param   object  $model  The model.

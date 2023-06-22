@@ -50,18 +50,17 @@ if ($saveOrder && !empty($this->items)) {
                             <td style="width:1%" class="text-center">
 		                        <?php echo HTMLHelper::_('grid.checkall'); ?>
                             </td>
-{% for property in entity.property %}
+{% for field in entity.field %}
                             <th scope="col" style="width:1%" class="text-center d-none d-md-table-cell">
 		                        <?php echo HTMLHelper::_('searchtools.sort',
-		                        'COM_{{componentName|upper }}_TABLE_{{ entity.entity_name|upper }}_TABLEHEAD_{{ property.property_name|upper }}', '{{ property.property_name|lower }}', $listDirn, $listOrder);
-// todo: addTo LangStrings!!!?>
+		                        '{{ addLanguageString("TABLE_pageName_TABLEHEAD_fieldName", '%fieldName%', componentName, entity.entity_name, field.field_name) }}', $listDirn, $listOrder);
+                                ?>
                             </th>
 {% endfor %}
-{#todo: references#}
-
+{#
                             <th scope="col">
 								<?php echo HTMLHelper::_('searchtools.sort', 'JGRID_HEADING_ID', 'id', $listDirn, $listOrder); ?>
-                            </th>
+                            </th>#}
                         </tr>
                         </thead>
                         <tbody>
@@ -74,18 +73,18 @@ if ($saveOrder && !empty($this->items)) {
 									<?php echo HTMLHelper::_('grid.id', $i, $item->id); ?>
                                 </td>
 
-                                {% for field in entity.field %}
-                                {% if field.default_ref_display is defined %}
+{% for field in entity.field %}
+{% if field.property.default_ref_display is defined %}
                                 <td>
-                                <a class="hasTooltip" href="<?php echo Route::_('index.php?option=com_{{componentName|lower }}&task={{  linkPageName|lower }}.edit&id=' . (int) $item->id); // todo: resolve 'foo' to correct linked detailspage ?>" title="<?php echo Text::_('JACTION_EDIT'); ?> <?php echo $this->escape(addslashes($item->name)); ?>">
+                                <a class="hasTooltip" href="<?php echo Route::_('index.php?option=com_{{componentName|lower }}&task={{  linkPageName|lower }}.edit&id=' . (int) $item->id); ?>" title="<?php echo Text::_('JACTION_EDIT'); ?> <?php echo $this->escape(addslashes($item->name)); ?>">
 		                            <?php //echo $editIcon; ?><?php echo $this->escape($item->{{field.field_name}}); ?></a>
                                 </td>
-                                {% else %}
-                                <td scope="col" style="width:1%" class="text-center d-none d-md-table-cell">
+{% else %}
+                                <td class="text-center d-none d-md-table-cell">
 	                                <?php echo $item->{{field.field_name}}; ?>
                                 </td>
-                                {% endif %}
-                                {% endfor %}
+{% endif %}
+ {% endfor %}
 
                             </tr>
 						<?php endforeach; ?>

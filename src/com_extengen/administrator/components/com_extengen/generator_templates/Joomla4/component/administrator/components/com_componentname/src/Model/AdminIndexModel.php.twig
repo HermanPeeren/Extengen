@@ -67,27 +67,38 @@ class {{ pageName }}Model extends ListModel
 		$query = $db->getQuery(true);
 
 		// Select the required fields from the table.
-		$query->select('*');
-		// Todo: add the presentation fields from the joined tables
+		$query->select([
+{% for propertyFieldName  in propertyFieldNames %}
+			$db->quoteName('{{ entityName|lower }}.{{ propertyFieldName|lower }}'),
+{% endfor %}
+			$db->quoteName('{{ entityName|lower }}.id')
+		]);
+		$query->from($db->quoteName('#__{{ componentName|lower}}_{{ entityName|lower }}', '{{ entityName|lower }}'));
 
-		$query->from($db->quoteName('#__{{ componentName|lower}}_{{ entityName|lower }}'));
-		// Todo: add joined tables
+{% if foreign|length > 0 %}
+		// Add the presentation fields from the joined tables
+{% for reference  in foreign %}
+		$query->select($db->quoteName('{{ reference.refEntityName|lower }}.{{ reference.foreignFieldName|lower }}', '{{ reference.fieldName|lower }}'));
+		$query->join(
+			'LEFT',
+			$db->quoteName('#__{{ componentName|lower}}_{{ reference.refEntityName|lower }}', '{{ reference.refEntityName|lower }}'), $db->quoteName('{{ reference.refEntityName|lower }}.id') . ' = ' . $db->quoteName('{{ entityName|lower }}.{{ reference.columnName|lower }}')
+		);
+{% endfor %}
+{% endif %}
 
+{% if filters|length > 0 %}
 		// Add filters to query
-		{% for filter  in filters %}
-
+{% for filter  in filters %}
 		// Get the value of {{ filter.fieldName }}_filter here // todo: check if this works
 		${{ filter.fieldName }}_filter = $this->getState('{{ filter.fieldName }}.filter');
 		if (!empty(${{ filter.fieldName }}_filter))
 		{
-			{#echo '---<br /><pre>';
-			print_r(${{ filter.fieldName }}_filter);
-			echo '---<br /></pre>';#}
 			$query
-				->where($db->quoteName('{{ filter.columnName }}') . ' LIKE '
+				->where($db->quoteName('{{ entityName|lower }}.{{ filter.columnName }}') . ' LIKE '
 					. $db->quoteName(${{ filter.fieldName }}_filter));
 		}
-		{% endfor %}
+{% endfor %}
+{% endif %}
 
 		return $query;
 	}

@@ -96,9 +96,8 @@ class AdminMVC extends Generator
 
 			$templateVariables['pageName'] = $pageName;
 
-			// Get links. Now only used in index view and tmpl to link to the detailspage
-			// Todo: put in detailsControler to be able to redirect to its indexpage; also see Nic's ReturnURLAware-mixin
-			// Todo: multiple links possible. Now only one (on field with default_ref_display) and here we give the detailspage
+			// Get links.
+			// Only one link possible from a page. Todo: adjust model to only give one link (or use multiple links)
 			// Todo: what if links is (still) empty? ==> check if links not empty! Otherwise: get another linkPageName: current pageName;
 			$linkPageRef = $page->links->links0->target_page->page_reference;
 			$linkPage    = $pageMap[$linkPageRef];
@@ -119,7 +118,6 @@ class AdminMVC extends Generator
 			$templateVariables['entityName'] = $entityName;
 
 			// Joined entities n:1 relations // todo: other type of relations
-
 
 			// todo: editFields for the detailspage and representationcolumns for the indexpage: they can overwrite the default fields from the entity.
 
@@ -181,6 +179,85 @@ class AdminMVC extends Generator
 						}
 
 						$templateVariables['filters'] = $filtersInTemplate;
+
+						// Get all property fields
+						$propertyFieldNames = [];
+						// Add fields for joined tables
+						$foreign = [];
+						foreach ($entity->field as $field)
+						{
+							if (($field->field_type) == "property")
+							{
+								$propertyFieldNames[] = $field->field_name;
+							}
+							if (($field->field_type) == "reference")
+							{
+								$fieldName = $field->field_name;
+								$reference = $field->reference;
+
+								$refEntity_id = $reference->reference_id;
+								$refEntity    = $entityMap[$refEntity_id];
+
+								$columnName = strtolower($refEntity->entity_name) . '_id';
+
+								// Find the presentation column of the foreign entity
+								// todo: use representation-column if specified
+								// for now only take a default_ref_field of the foreign entity (or id if none is specified)
+
+								$refDisplayFieldName = '';
+								foreach ($refEntity->field as $foreignField)
+								{
+									if ((($foreignField->field_type)=="property") && property_exists($foreignField->property,'default_ref_display'))
+									{
+										$refDisplayFieldName = $foreignField->field_name;
+										break;
+									}
+								}
+
+								// display the id if no display-field available
+								if (empty($refDisplayFieldName))
+								{
+									$refDisplayFieldName = 'id';
+								}
+
+								$foreign[] = [
+									'fieldName'        => $fieldName,
+									'columnName'       => $columnName,
+									'foreignFieldName' => $refDisplayFieldName,
+									'refEntityName'    => $refEntity->entity_name
+								];
+							}
+						}
+						$templateVariables['propertyFieldNames'] = $propertyFieldNames;
+						$templateVariables['foreign']            = $foreign;
+					}
+
+
+					// associate local field names (= field names in form) and foreign keys (= column name in db-table)
+					if ($pageType=='Details')
+					{
+						$foreign = [];
+						foreach ($entity->field as $field)
+						{
+							if (($field->field_type) == "reference")
+							{
+								$fieldName = $field->field_name;
+								$reference = $field->reference;
+
+								$refEntity_id = $reference->reference_id;
+								$refEntity    = $entityMap[$refEntity_id];
+
+								$columnName = strtolower($refEntity->entity_name) . '_id';
+
+								$foreign[] = [
+									'fieldName'  => $fieldName,
+									'columnName' => $columnName
+								];
+							}
+						}
+						$templateVariables['foreign'] = $foreign;
+
+						$templateVariables['entityName'] = $entity->entity_name;
 					}
 
 					$templateFileName = 'Admin' . $pageType . $MVCtype . '.php.twig';

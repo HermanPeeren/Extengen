@@ -167,11 +167,54 @@ class Forms extends Generator
 							{
 								// If in editfields, then use the HtmlType defined there.
 								$type = $editfield->htmltype;
+
+								// Process parameters of editfield, if not empty
+								if (!empty($editfield->parameters))
+								{
+									switch ($type)
+									{
+										case 'list':
+										case 'checkboxes':
+										case 'radio':
+
+											// Default empty choice as first option
+											$option = $form->createElement('option');
+											$key = new \DOMAttr('value', 0);
+											$option->setAttributeNode($key);
+											$option->textContent = '&nbsp;';
+											$formField->appendChild($option);
+
+											// Add options to the list-field
+											foreach ($editfield->parameters as $parameter)
+											{
+												$option = $form->createElement('option');
+												$key = new \DOMAttr('value', $parameter->key);
+												$option->setAttributeNode($key);
+												$option->textContent = $parameter->value;
+												$formField->appendChild($option);
+											}
+											break;
+										default:
+											// Add the parameters as attributes to the formField
+											foreach ($editfield->parameters as $parameter)
+											{
+												$key_value = new \DOMAttr($parameter->key, $parameter->value);
+												$formField->setAttributeNode($key_value);
+											}
+
+
+									}
+								}
 							}
 						}
 
 						// HtmlField-type: $this->standard2HtmlTypes($property->type);
 						$type = new \DOMAttr('type', $type);
+						$formField->setAttributeNode($type);
+
+						// DateTime: add time to date.  format = "%Y-%m-%d %H:%M"
+						// todo: if specified in editfields, then use that, not this!
+						$type = new \DOMAttr('format', '%Y-%m-%d %H:%M');
 						$formField->setAttributeNode($type);
 					}
 
@@ -202,7 +245,7 @@ class Forms extends Generator
 
 						// Make the custom sql to get the values for the dropdown-list todo $db->quoteName i.s.o. directly backticks
 						$table = '#__' . strtolower($componentName) . "_" . strtolower($refEntity->entity_name);
-						$query="SELECT id, `" . $refDisplayFieldName . "` as text FROM `" . $table . "`";
+						$query="SELECT id, `" . $refDisplayFieldName . "` FROM `" . $table . "`";
 
 						// Type
 						$type = new \DOMAttr('type', 'sql');
@@ -211,6 +254,18 @@ class Forms extends Generator
 						// Query
 						$query = new \DOMAttr('query', $query);
 						$formField->setAttributeNode($query);
+
+						// Empty choice on top of options
+						$header = new \DOMAttr('header', '&nbsp;');
+						$formField->setAttributeNode($header);
+
+						// Key-field
+						$keyField = new \DOMAttr('key_field', 'id');
+						$formField->setAttributeNode($keyField);
+
+						// Value-field
+						$valueField = new \DOMAttr('value_field', $refDisplayFieldName);
+						$formField->setAttributeNode($valueField);
 					}
 
 					// Label language-string: COM_componentname_formName_FIELD_fieldname_LABEL
@@ -311,6 +366,7 @@ class Forms extends Generator
 							// Make the custom sql to get the values for the dropdown-list todo $db->quoteName i.s.o. directly backticks
 							$table = '#__' . strtolower($componentName) . "_" . strtolower($entity->entity_name);
 							$query="SELECT id, `" . $field->field_name . "` as text FROM `" . $table . "`";
+							$refDisplayFieldName = $field->field_name;
 
 						}
 
@@ -346,6 +402,18 @@ class Forms extends Generator
 
 						$query = new \DOMAttr('query', $query);
 						$formField->setAttributeNode($query);
+
+						// Empty choice on top of options
+						$header = new \DOMAttr('header', '&nbsp;');
+						$formField->setAttributeNode($header);
+
+						// Key-field
+						$keyField = new \DOMAttr('key_field', 'id');
+						$formField->setAttributeNode($keyField);
+
+						// Value-field
+						$valueField = new \DOMAttr('value_field', $refDisplayFieldName);
+						$formField->setAttributeNode($valueField);
 
 						// Label language-string: COM_componentname_formName_FIELD_fieldname_LABEL
 						$label = new \DOMAttr('label',
