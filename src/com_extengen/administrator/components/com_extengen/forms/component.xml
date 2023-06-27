@@ -12,6 +12,11 @@
 			required="true"
 			class="componentName"
 		/>
+		<field
+			name="component_description"
+			type="editor"
+			label="Component description"
+		/>
 
 		<field
 			name="Sections"

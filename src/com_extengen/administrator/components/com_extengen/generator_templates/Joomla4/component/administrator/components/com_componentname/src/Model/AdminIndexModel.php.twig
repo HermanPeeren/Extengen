@@ -40,8 +40,9 @@ class {{ pageName }}Model extends ListModel
 		{
 			$config['filter_fields'] = [
 			{% for filter  in filters %}
-				'{{ filter.columnName }}',
+				'{{ filter.columnName }}','{{ entityName|lower }}.{{ filter.columnName }}',
 			{% endfor %}
+				'id','{{ entityName|lower }}.id'
 			];
 
 			// Todo: Add fields for standard Joomla filtering, like categories, language, published, ordering etc.
@@ -89,13 +90,13 @@ class {{ pageName }}Model extends ListModel
 {% if filters|length > 0 %}
 		// Add filters to query
 {% for filter  in filters %}
-		// Get the value of {{ filter.fieldName }}_filter here // todo: check if this works
-		${{ filter.fieldName }}_filter = $this->getState('{{ filter.fieldName }}.filter');
-		if (!empty(${{ filter.fieldName }}_filter))
+		// Get the value of {{ filter.fieldName }} filter here
+		${{ filter.fieldName }} = $this->getState('filter.{{ filter.fieldName }}');
+		if (!empty(${{ filter.fieldName }}))
 		{
 			$query
 				->where($db->quoteName('{{ entityName|lower }}.{{ filter.columnName }}') . ' LIKE '
-					. $db->quoteName(${{ filter.fieldName }}_filter));
+					. $db->quote(${{ filter.fieldName }}));
 		}
 {% endfor %}
 {% endif %}

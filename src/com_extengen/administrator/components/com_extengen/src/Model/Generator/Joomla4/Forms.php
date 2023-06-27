@@ -302,7 +302,7 @@ class Forms extends Generator
 			}
 
 
-			// Generate the index page filter-forms
+			// Generate the index page FILTER-forms
 			if (($page->page_type)=="indexpage")
 			{
 				// Do we have any filters on this page?
@@ -318,10 +318,14 @@ class Forms extends Generator
 
 					// Add a fields-tag
 					$fields = $form->createElement('fields');
+
+					// With name="filter"
+					$fieldsname = new \DOMAttr('name', "filter");
+					$fields->setAttributeNode($fieldsname);
+
 					$root->appendChild($fields);
 
 					// Add search-field to the fields-tag
-					// todo
 					/*<field
 						name="search"
 						type="text"
@@ -330,6 +334,32 @@ class Forms extends Generator
 						description="COM_FOOS_FILTER_SEARCH_DESC"
 						hint="JSEARCH_FILTER"
 					/>*/
+					$searchField = $form->createElement('field');
+					// Name
+					$name = new \DOMAttr('name', 'search');
+					$searchField->setAttributeNode($name);
+					// Type
+					$type = new \DOMAttr('type', 'text');
+					$searchField->setAttributeNode($type);
+					// Inputmode
+					$inputmode = new \DOMAttr('inputmode', 'search');
+					$searchField->setAttributeNode($inputmode);
+					// Label
+					$label = new \DOMAttr('label',
+						$addLanguageString(
+							"pageName_FIELD_SEARCH_LABEL", 'Search',$componentName, $formName));
+					$searchField->setAttributeNode($label);
+					// Description
+					//todo: longer description how to use search-string; see com_content)
+					$description = new \DOMAttr('description',
+						$addLanguageString(
+							"pageName_FIELD_SEARCH_DESC", 'Search',$componentName, $formName));
+					$searchField->setAttributeNode($description);
+					// Hint
+					$hint = new \DOMAttr('hint', 'JSEARCH_FILTER');
+					$searchField->setAttributeNode($hint);
+
+					$fields->appendChild($searchField);
 
 					// todo: general joomla filter-possibilities like language, categories, tags, etc.
 
@@ -347,7 +377,7 @@ class Forms extends Generator
 						$formField = $form->createElement('field');
 
 						// Name
-						$name = new \DOMAttr('name', $field->field_name . "_filter");
+						$name = new \DOMAttr('name', $field->field_name);
 						$formField->setAttributeNode($name);
 
 						// Type
@@ -359,13 +389,13 @@ class Forms extends Generator
 						$type = new \DOMAttr('type', 'sql');
 						$formField->setAttributeNode($type);
 
-						// Make the query
+						// Make the query todo: when another value is stored in the db, we need another value for the selected text
 						//    - Property: query the table of this entity
 						if (($field->field_type)=="property")
 						{
 							// Make the custom sql to get the values for the dropdown-list todo $db->quoteName i.s.o. directly backticks
 							$table = '#__' . strtolower($componentName) . "_" . strtolower($entity->entity_name);
-							$query="SELECT id, `" . $field->field_name . "` as text FROM `" . $table . "`";
+							$query="SELECT DISTINCT `" . $field->field_name . "` AS value, `" . $field->field_name . "` AS text FROM `" . $table . "`";
 							$refDisplayFieldName = $field->field_name;
 
 						}
@@ -397,22 +427,27 @@ class Forms extends Generator
 
 							// Make the custom sql to get the values for the dropdown-list todo $db->quoteName i.s.o. directly backticks
 							$table = '#__' . strtolower($componentName) . "_" . strtolower($refEntity->entity_name);
-							$query="SELECT id, `" . $refDisplayFieldName . "` as text FROM `" . $table . "`";
+							$query="SELECT `id` AS value, `" . $refDisplayFieldName . "` AS text FROM `" . $table . "`";
 						}
 
 						$query = new \DOMAttr('query', $query);
 						$formField->setAttributeNode($query);
 
-						// Empty choice on top of options
-						$header = new \DOMAttr('header', '&nbsp;');
+						// Empty choice with field name on top of options
+						$header = new \DOMAttr('header', $addLanguageString(
+							"pageName_FILTER_FIELD_fieldName_HEADER", '- Select %fieldName% -',$componentName, $formName, $field->field_name));
 						$formField->setAttributeNode($header);
 
+						// Submit on change
+						$keyField = new \DOMAttr('onchange', 'this.form.submit();');
+						$formField->setAttributeNode($keyField);
+
 						// Key-field
-						$keyField = new \DOMAttr('key_field', 'id');
+						$keyField = new \DOMAttr('key_field', 'value');
 						$formField->setAttributeNode($keyField);
 
 						// Value-field
-						$valueField = new \DOMAttr('value_field', $refDisplayFieldName);
+						$valueField = new \DOMAttr('value_field', 'text');
 						$formField->setAttributeNode($valueField);
 
 						// Label language-string: COM_componentname_formName_FIELD_fieldname_LABEL

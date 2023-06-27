@@ -46,6 +46,8 @@ class ComponentGeneral extends Generator
 		$generatedFilePath = $baseGeneratedFilePath;
 		$templateVariables = ['componentName' => $componentName];
 
+		$templateVariables['description'] = $project->extensions->component->component_description;
+
 		// Loop over the pages to make a map of page_id to page-definition
 		$pageMap = [];
 		foreach ($project->pages as $page)
