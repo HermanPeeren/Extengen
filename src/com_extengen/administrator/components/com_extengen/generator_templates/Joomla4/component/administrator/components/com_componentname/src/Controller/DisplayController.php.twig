@@ -31,7 +31,7 @@ class DisplayController extends BaseController
      * @var    string
      * @since  1.6
      */
-    protected $default_view = '{{ defaultView }}';
+    protected $default_view = '{{ defaultView|lower }}';
 
     /**
      * Method to display a view.
