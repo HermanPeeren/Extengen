@@ -164,8 +164,8 @@ class AdminGeneral extends Generator
 			$componentName, 'Administrator', true);
 
 		// front-end
-		$this->languageStringUtil->addLanguageStringFromView($componentName, '', '',
-			$componentName,'Site');
+		/*$this->languageStringUtil->addLanguageStringFromView($componentName, '', '',
+			$componentName,'Site');*/
 
 		return $log;
 	}

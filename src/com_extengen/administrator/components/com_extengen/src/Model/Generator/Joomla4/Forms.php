@@ -627,7 +627,7 @@ class Forms extends Generator
 		switch ($standardType)
 		{
 			case ('Integer'):
-				$htmlDef = "integer";
+				$htmlDef = "number";
 				break;
 			case ('Boolean'):
 				$htmlDef = "yes_no_buttons"; // but can also be other options, like show/hide

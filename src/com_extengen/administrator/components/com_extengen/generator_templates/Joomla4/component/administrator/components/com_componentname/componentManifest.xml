@@ -49,13 +49,13 @@
 	</media>
 
 	<!-- Front-end files -->
-	<files folder="components/com_{{ componentName|lower }}">
-		<folder>language</folder>
+	<!--<files folder="components/com_{{ componentName|lower }}">-->
+		<!--<folder>language</folder>-->
 		<!--<folder>forms</folder>
 		<folder>layouts</folder>
 		<folder>src</folder>
 		<folder>tmpl</folder>-->
-	</files>
+	<!--</files>-->
 
 	<!-- Back-end files -->
 	<administration>
