@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fieldset
+		addruleprefix="Yepr\Component\Extengen\Administrator\Rule"
+		addfieldprefix="Yepr\Component\Extengen\Administrator\Field\LIonCore_M3"
+	>
+
+		<field
+				name="extends"
+				type="ConceptInterfaceReference"
+				label="COM_EXTENGEN_PROJECTFORM_CONCEPT_FIELD_EXTENDS_LABEL"
+				id="extends"
+				class="custom-select-color-state QualifierRef"
+				size="1"
+				onchange="backupClassifierKey(event)"
+		/><!--Todo: backupClassifierKey(event)-->
+
+		<field
+				name="LIonWeb_key"
+				value="LanguageEntity.Classifier.ConceptInterface"
+				type="hidden"
+		/>
+	</fieldset>
+</form>

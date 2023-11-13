@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- INamed interface in LIonCore-M3-->
+<form>
+	<fieldset
+		addruleprefix="Yepr\Component\Extengen\Administrator\Rule"
+		addfieldprefix="Yepr\Component\Extengen\Administrator\Field"
+	>
+		<field
+			name="name"
+			type="text"
+			label="Name"
+			id="name"
+			size="20"
+			required="true"
+			onchange="editConceptFieldsList(this);"
+			class="conceptFieldName"
+		 />
+
+		<!-- The extends-field is hidden and empty -->
+		<field
+			name="extends"
+			type="hidden"
+			value=""
+		/>
+	</fieldset>
+</form>

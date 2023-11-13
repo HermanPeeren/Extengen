@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- IKeyed interface in LIonCore-M3-->
+<form>
+	<fieldset
+		addruleprefix="Yepr\Component\Extengen\Administrator\Rule"
+		addfieldprefix="Yepr\Component\Extengen\Administrator\Field"
+	>
+
+		<!-- The extends-field is hidden. IKeyed extends INamed -->
+		<field
+				name="extends"
+				type="hidden"
+				value="INamed"
+		/>
+
+		<!-- The key = id -->
+		<field
+			name="key"
+			type="hidden"
+			value="IKeyed"
+		/>
+	</fieldset>
+</form>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fieldset
+		addruleprefix="Yepr\Component\Extengen\Administrator\Rule"
+		addfieldprefix="Yepr\Component\Extengen\Administrator\Field"
+	>
+
+		<field
+				name="literals"
+				type="subform"
+				formsource="administrator/components/com_extengen/forms/metaProjectForms/LIonCore_M3/enumerationLiteral.xml"
+				multiple="true"
+				buttons="add,remove,move"
+				label="COM_EXTENGEN_PROJECTFORM_ENUMERATION_FIELD_LITERALS_LABEL"
+				id="literals"
+		/>
+
+		<field
+				name="extends"
+				value="DataType"
+				type="hidden"
+		/>
+
+		<field
+				name="LIonWeb_key"
+				value="LanguageEntity.DataType.Enumeration"
+				type="hidden"
+		/>
+
+	</fieldset>
+</form>

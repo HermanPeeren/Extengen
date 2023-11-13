@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fieldset
+		addruleprefix="Yepr\Component\Extengen\Administrator\Rule"
+		addfieldprefix="Yepr\Component\Extengen\Administrator\Field\LIonCore_M3"
+	>
+
+		<field
+				name="extends"
+				value="Link"
+				type="hidden"
+		/>
+
+		<field
+				name="LIonWeb_key"
+				value="Feature.Link.Containment"
+				type="hidden"
+		/>
+
+	</fieldset>
+</form>

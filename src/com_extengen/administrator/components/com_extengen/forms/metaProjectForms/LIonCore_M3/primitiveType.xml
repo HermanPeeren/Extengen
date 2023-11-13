@@ -4,23 +4,14 @@
 		addruleprefix="Yepr\Component\Extengen\Administrator\Rule"
 		addfieldprefix="Yepr\Component\Extengen\Administrator\Field"
 	>
-		<field
-			name="concept_property_name"
-			type="text"
-			label="Property name"
-			id="property_name"
-			size="20"
-			required="true"
-			onchange="editConceptFieldsList(this);"
-			class="conceptFieldName"
-		 />
+<!--
 
 		<field
-			name="concept_property_type"
+			name="type"
 			type="list"
 			label="Type"
-			default="Short_Text"
-			id="concept_property_type"
+			default="Integer"
+			id="type"
 			class="custom-select-color-state"
 			size="1"
 			>
@@ -29,21 +20,28 @@
 			<option value="Text">Text</option>
 			<option value="Short_Text">Short Text</option>
 			<option value="Decimal">Decimal</option>
+			<option value="Currency">Currency</option>
 			<option value="Float">Floating point</option>
 			<option value="Time">Time</option>
 			<option value="Date">Date</option>
 			<option value="DateTime">DateTime</option>
+			<option value="File">File</option>
+			<option value="Link">Link</option>
+			<option value="Image">Image</option>
 		</field>
+-->
 
 		<field
-			name="concept_property_id"
-			type="hidden"
+				name="extends"
+				value="DataType"
+				type="hidden"
 		/>
 
-		<!-- The id of the entity this property belongs to -->
 		<field
-			name="concept_id"
-			type="hidden"
+				name="LIonWeb_key"
+				value="LanguageEntity.DataType.PrimitiveType"
+				type="hidden"
 		/>
+
 	</fieldset>
 </form>

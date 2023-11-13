@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fieldset
+		addruleprefix="Yepr\Component\Extengen\Administrator\Rule"
+		addfieldprefix="Yepr\Component\Extengen\Administrator\Field\LIonCore_M3"
+	>
+
+		<field
+			name="type"
+			type="DataTypeReference"
+			label="COM_EXTENGEN_PROJECTFORM_PROPERTY_FIELD_TYPE_LABEL"
+			id="type"
+			onchange="backupDataTypeKey(event)"
+			/>
+
+		<field
+				name="typeReference_key"
+				type="hidden"
+		/>
+
+		<field
+				name="LIonWeb_key"
+				value="Feature.Property"
+				type="hidden"
+		/>
+
+	</fieldset>
+</form>

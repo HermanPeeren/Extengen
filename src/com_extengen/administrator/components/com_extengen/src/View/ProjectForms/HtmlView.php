@@ -3,7 +3,7 @@
  * @package     Extengen
 
  * @subpackage  Extengen component
- * @version     0.8.0
+ * @version     0.9.0
  *
  * @copyright   Copyright (C) Yepr, Herman Peeren, 2023. All rights reserved.
  * @license     GNU General Public License version 3 or later; see LICENSE.txt
@@ -24,12 +24,52 @@ use Yepr\Component\Extengen\Administrator\Helper\ExtengenHelper;
 use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\MVC\View\GenericDataException;
 
-
 /**
- * View class to manage generators.
+ * View class for a list of projectForms.
  */
 class HtmlView extends BaseHtmlView
 {
+	/**
+	 * An array of items
+	 *
+	 * @var  array
+	 */
+	protected $items;
+
+	/**
+	 * The pagination object
+	 *
+	 * @var  Pagination
+	 */
+	protected $pagination;
+
+	/**
+	 * The model state
+	 *
+	 * @var  \JObject
+	 */
+	protected $state;
+
+	/**
+	 * Form object for search filters
+	 *
+	 * @var  \JForm
+	 */
+	public $filterForm;
+
+	/**
+	 * The active search filters
+	 *
+	 * @var  array
+	 */
+	public $activeFilters;
+
+	/**
+	 * The sidebar markup
+	 *
+	 * @var  string
+	 */
+	protected $sidebar;
 
 	/**
 	 * Method to display the view.
@@ -41,41 +81,56 @@ class HtmlView extends BaseHtmlView
 	 */
 	public function display($tpl = null): void
 	{
+		$this->items = $this->get('Items');
+		$this->pagination = $this->get('Pagination');
+		$this->filterForm = $this->get('FilterForm');
+		$this->activeFilters = $this->get('ActiveFilters');
+		$this->state = $this->get('State');
 
-		ExtengenHelper::addSubmenu('projectforms');
-		$this->addToolbar();
-		$this->sidebar = \JHtmlSidebar::render();
+        /*if (!\count($this->items) && $this->isEmptyState = $this->get('IsEmptyState')) {
+            $this->setLayout('emptystate');*/
 
-		echo "<h2>Project Forms will be listed here</h2>";
-		echo '<p>A project form is the nested set of forms (with 1 root form) to define the project. It is so to say the DSL in which the model is written. The current (static) project form is the project form. We will make a project <b>type</b>, that indicates what subform will be used in this project. In that way we can define different subforms and hence different "modelling languages".</p>';
-		echo '<p>TODO! Project forms can be copied and adjusted. New project forms can be defined and... generated.</p>';
-		echo '<p>Planned for version 0.9</p>';
-		echo '<p>&nbsp</p>';
-		echo '<p>At the moment, version 0.8, only one project form: <b>ER1</b>.</p>';
-		echo '<p>This is a nested set of forms, with momentarily  as root: <b>project.xml</b>, and specifically the fieldset "entities" in that (which should be ported to a subform), with the three subforms: datamodel, pages & extensions.</p>';
+		// Check for errors.
+		if (count($errors = $this->get('Errors')))
+		{
+			throw new Genericdataexception(implode("\n", $errors), 500);
+		}
 
-		echo "<h2>The current ER1 project forms:</h2>";
-		$dir = \JUri::root() . "/administrator/components/com_extengen/src/View/ProjectForms/";
-		echo '<p><img src="' . $dir .'projectforms_ER1.png" /></p>';
-		echo '<p>&nbsp</p>';
-		echo '<p>To migrate from the current static project form to dynamic project forms, the following steps will be taken:
-				<ul>
-				<li>keep the current forms under project.xml (so I can for now keep the same project data)</li>
-				<li>copy the current project forms to a subfolder (er1) of forms and add a new root-form (er1)</li>
-				<li>if everything works: add the data of the current example project to the new forms and kill the old forms</li>
-				<li>make a test-project-form in which this new project subform can be tested</li>
-				<li>get the AST from the project = from the new root subtemplate down. Adjust all generators, js, etc to be sure the right variables are selected</li>
-				<li>generate new subforms, with 1 project root, in a subfolder of forms (or in db?)</li>
-				<li>first project to generate will be the same as the current root-project (to test the results)</li>
-				</ul></p>';
+		// Preprocess the list of items to find ordering divisions.
+		// TODO: Complete the ordering stuff with nested sets
+		foreach ($this->items as &$item)
+		{
+			$item->order_up = true;
+			$item->order_dn = true;
+		}
 
+		// We don't need toolbar in the modal window.
+		if ($this->getLayout() !== 'modal')
+		{
+			ExtengenHelper::addSubmenu('project');
+			$this->addToolbar();
+			$this->sidebar = \JHtmlSidebar::render();
+		}
+		else
+		{
+			// In project associations modal we need to remove language filter if forcing a language.
+			// We also need to change the category filter to show show categories with All or the forced language.
+			if ($forcedLanguage = Factory::getApplication()->input->get('forcedLanguage', '', 'CMD'))
+			{
+				// If the language is forced we can't allow to select the language, so transform the language selector filter into a hidden field.
+				$languageXml = new \SimpleXMLElement('<field name="language" type="hidden" default="' . $forcedLanguage . '" />');
+				$this->filterForm->setField($languageXml, 'filter', true);
 
-		echo '<p>&nbsp</p>';
+				// Also, unset the active language filter so the search tools is not open by default with this filter.
+				unset($this->activeFilters['language']);
 
-		//parent::display($tpl);
+				// One last changes needed is to change the category filter to just show categories with All language or with the forced language.
+				$this->filterForm->setFieldAttribute('category_id', 'language', '*,' . $forcedLanguage, 'filter');
+			}
+		}
+
+		parent::display($tpl);
 	}
-
-
 
 	/**
 	 * Add the page title and toolbar.
@@ -84,22 +139,21 @@ class HtmlView extends BaseHtmlView
 	 */
 	protected function addToolbar()
 	{
-		//$canDo = ContentHelper::getActions('com_extengen', 'category', $this->state->get('filter.category_id'));
-
+		$canDo = ContentHelper::getActions('com_extengen', 'category', $this->state->get('filter.category_id'));
 		$user  = Factory::getUser();
 
 		// Get the toolbar object instance
 		$toolbar = Toolbar::getInstance('toolbar');
 
-		ToolbarHelper::title(Text::_('COM_EXTENGEN_MANAGER_GENERATORS'), 'gnerators');
+		ToolbarHelper::title(Text::_('COM_EXTENGEN_MANAGER_PROJECTFORMS'), 'projectforms');
 
-		//if ($canDo->get('core.create') || count($user->getAuthorisedCategories('com_extengen', 'core.create')) > 0)
-		//{
-			$toolbar->addNew('generator.add');
-		//}
+		if ($canDo->get('core.create') || count($user->getAuthorisedCategories('com_extengen', 'core.create')) > 0)
+		{
+			$toolbar->addNew('projectform.add');
+		}
 
-		//if ($canDo->get('core.edit.state'))
-		//{
+		if ($canDo->get('core.edit.state'))
+		{
 			$dropdown = $toolbar->dropdownButton('status-group')
 				->text('JTOOLBAR_CHANGE_STATUS')
 				->toggleSplit(false)
@@ -117,27 +171,27 @@ class HtmlView extends BaseHtmlView
 
 			if ($user->authorise('core.admin'))
 			{
-				$childBar->checkin('generators.checkin')->listCheck(true);
+				$childBar->checkin('projectforms.checkin')->listCheck(true);
 			}
 
-			//if ($this->state->get('filter.published') != -2)
-			//{
+			if ($this->state->get('filter.published') != -2)
+			{
 				$childBar->trash('extengen.trash')->listCheck(true);
-			//}
-		//}
+			}
+		}
 
 		$toolbar->popupButton('batch')
 			->text('JTOOLBAR_BATCH')
 			->selector('collapseModal')
 			->listCheck(true);
 
-		//if ($this->state->get('filter.published') == -2 && $canDo->get('core.delete'))
-		//{
-			$toolbar->delete('projects.delete')
+		if ($this->state->get('filter.published') == -2 && $canDo->get('core.delete'))
+		{
+			$toolbar->delete('projectforms.delete')
 				->text('JTOOLBAR_EMPTY_TRASH')
 				->message('JGLOBAL_CONFIRM_DELETE')
 				->listCheck(true);
-		//}
+		}
 
 		if ($user->authorise('core.admin', 'com_extengen') || $user->authorise('core.options', 'com_extengen'))
 		{
@@ -147,6 +201,24 @@ class HtmlView extends BaseHtmlView
 		ToolbarHelper::divider();
 		ToolbarHelper::help('', false, 'https://yepr.nl');
 
-		HTMLHelper::_('sidebar.setAction', 'index.php?option=com_extengen');
+		HTMLHelper::_('sidebar.setAction', 'index.php?option=com_extengen&view=projectforms');
+	}
+
+	/**
+	 * Returns an array of fields the table can be sorted by
+	 *
+	 * @return  array  Array containing the field name to sort by as the key and display text as value
+	 */
+	protected function getSortFields()
+	{
+		return array(
+			'a.ordering'     => Text::_('JGRID_HEADING_ORDERING'),
+			'a.published'    => Text::_('JSTATUS'),
+			'a.name'         => Text::_('JGLOBAL_TITLE'),
+			'category_title' => Text::_('JCATEGORY'),
+			'a.access'       => Text::_('JGRID_HEADING_ACCESS'),
+			'a.language'     => Text::_('JGRID_HEADING_LANGUAGE'),
+			'a.id'           => Text::_('JGRID_HEADING_ID'),
+		);
 	}
 }
