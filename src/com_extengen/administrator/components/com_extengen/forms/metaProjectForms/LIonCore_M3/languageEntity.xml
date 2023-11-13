@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fieldset
+		addruleprefix="Yepr\Component\Extengen\Administrator\Rule"
+		addfieldprefix="Yepr\Component\Extengen\Administrator\Field\LIonCore_M3"
+	>
+		<field
+				name="name"
+				type="text"
+				label="COM_EXTENGEN_PROJECTFORM_LANGUAGEENTITY_FIELD_NAME_LABEL"
+				size="40"
+				class="languageEntityName"
+		/>
+
+		<field
+				name="key"
+				type="text"
+				label="COM_EXTENGEN_PROJECTFORM_LANGUAGEENTITY_FIELD_KEY_LABEL"
+				size="40"
+		/>
+
+		<!-- LanguageEntity_type: a LanguageEntity is either a Classifier or a DataType -->
+		<field
+				name="languageEntity_type"
+				type="radio"
+				default="Classifier"
+				label="COM_EXTENGEN_PROJECTFORM_LANGUAGEENTITY_FIELD_LANGUAGEENTITY_TYPE_LABEL"
+				description="COM_EXTENGEN_PROJECTFORM_LANGUAGEENTITY_FIELD_LANGUAGEENTITY_TYPE_DESC"
+		>
+			<option value="Classifier">COM_EXTENGEN_PROJECTFORM_LANGUAGEENTITY_FIELD_CLASSIFIER_LABEL</option>
+			<option value="DataType">COM_EXTENGEN_PROJECTFORM_LANGUAGEENTITY_FIELD_DATATYPE_LABEL</option>
+		</field>
+
+		<field
+				name="classifier"
+				type="subform"
+				formsource="administrator/components/com_extengen/forms/metaProjectForms/LIonCore_M3/classifier.xml"
+				label="COM_EXTENGEN_PROJECTFORM_LANGUAGEENTITY_FIELD_CLASSIFIER_LABEL"
+				id="classifier"
+				layout="joomla.form.field.subform.default"
+				showon="languageEntity_type:Classifier"
+		/>
+
+		<field
+				name="datatype"
+				type="subform"
+				formsource="administrator/components/com_extengen/forms/metaProjectForms/LIonCore_M3/dataType.xml"
+				label="COM_EXTENGEN_PROJECTFORM_LANGUAGEENTITY_FIELD_DATATYPE_LABEL"
+				id="datatype"
+				layout="joomla.form.field.subform.default"
+				showon="languageEntity_type:DataType"
+		/>
+		<!-- /LanguageEntity_type-->
+
+		<field
+			name="LIonWeb_key"
+			value="LanguageEntity"
+			type="hidden"
+		/>
+	</fieldset>
+</form>

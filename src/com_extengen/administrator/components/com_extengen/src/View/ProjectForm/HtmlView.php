@@ -93,18 +93,18 @@ class HtmlView extends BaseHtmlView
 			// For new records, check the create permission.
 			//if ($isNew && (count($user->getAuthorisedCategories('com_extengen', 'core.create')) > 0))
 			//{
-				ToolbarHelper::apply('project.apply');
+				ToolbarHelper::apply('projectform.apply');
 
 				ToolbarHelper::saveGroup(
 					[
-						['save', 'project.save'],
-						['save2new', 'project.save2new']
+						['save', 'projectform.save'],
+						['save2new', 'projectform.save2new']
 					],
 					'btn-success'
 				);
 			//}
 
-			ToolbarHelper::cancel('project.cancel'); // TODO: I want 'Close' on the button, not 'Cancel'
+			ToolbarHelper::cancel('projectform.cancel'); // TODO: I want 'Close' on the button, not 'Cancel'
 		}
 		else
 		{
@@ -116,21 +116,21 @@ class HtmlView extends BaseHtmlView
 			// Can't save the record if it's not editable
 			//if ($itemEditable)
 			//{
-				ToolbarHelper::apply('project.apply');
+				ToolbarHelper::apply('projectform.apply');
 
-				$toolbarButtons[] = ['save', 'project.save'];
+				$toolbarButtons[] = ['save', 'projectform.save'];
 
 				// We can save this record, but check the create permission to see if we can return to make a new one.
 				if ($canDo->get('core.create'))
 				{
-					$toolbarButtons[] = ['save2new', 'project.save2new'];
+					$toolbarButtons[] = ['save2new', 'projectform.save2new'];
 				}
 			//}
 
 			// If checked out, we can still save
 			if ($canDo->get('core.create'))
 			{
-				$toolbarButtons[] = ['save2copy', 'project.save2copy'];
+				$toolbarButtons[] = ['save2copy', 'projectform.save2copy'];
 			}
 
 			ToolbarHelper::saveGroup(
@@ -143,7 +143,7 @@ class HtmlView extends BaseHtmlView
 				ToolbarHelper::custom('project.editAssociations', 'contract', 'contract', 'JTOOLBAR_ASSOCIATIONS', false, false);
 			}*/
 
-			ToolbarHelper::cancel('project.cancel', 'JTOOLBAR_CLOSE'); // TODO: I want 'Close' on the button, not 'Cancel'
+			ToolbarHelper::cancel('projectform.cancel', 'JTOOLBAR_CLOSE'); // TODO: I want 'Close' on the button, not 'Cancel'
 		}
 
 		ToolbarHelper::divider();

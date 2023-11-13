@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fieldset
+		addruleprefix="Yepr\Component\Extengen\Administrator\Rule"
+		addfieldprefix="Yepr\Component\Extengen\Administrator\Fieldclassifier.xml"
+	>
+
+		<!-- DataType_type: a DataType is either a PrimitiveType or an Enumeration -->
+		<field
+				name="dataType_type"
+				type="radio"
+				default="PrimitiveType"
+				label="COM_EXTENGEN_PROJECTFORM_DATATYPE_FIELD_DATATYPE_TYPE_LABEL"
+				description="COM_EXTENGEN_PROJECTFORM_DATATYPE_FIELD_DATATYPE_TYPE_DESC"
+		>
+			<option value="PrimitiveType">COM_EXTENGEN_PROJECTFORM_DATATYPE_FIELD_PRIMITIVETYPE_LABEL</option>
+			<option value="Enumeration">COM_EXTENGEN_PROJECTFORM_DATATYPE_FIELD_ENUMERATION_LABEL</option>
+		</field>
+
+		<field
+				name="primitiveType"
+				type="subform"
+				formsource="administrator/components/com_extengen/forms/metaProjectForms/LIonCore_M3/primitiveType.xml"
+				label="COM_EXTENGEN_PROJECTFORM_DATATYPE_FIELD_PRIMITIVETYPE_LABEL"
+				id="primitiveType"
+				layout="joomla.form.field.subform.default"
+				showon="dataType_type:PrimitiveType"
+		/>
+
+		<field
+				name="enumeration"
+				type="subform"
+				formsource="administrator/components/com_extengen/forms/metaProjectForms/LIonCore_M3/enumeration.xml"
+				label="COM_EXTENGEN_PROJECTFORM_DATATYPE_FIELD_ENUMERATION_LABEL"
+				id="enumeration"
+				layout="joomla.form.field.subform.default"
+				showon="dataType_type:Enumeration"
+		/>
+		<!-- /DataType_type-->
+
+		<field
+			name="extends"
+			value="LanguageEntity"
+			type="hidden"
+		/>
+
+		<field
+			name="LIonWeb_key"
+			value="LanguageEntity.DataType"
+			type="hidden"
+		/>
+	</fieldset>
+</form>

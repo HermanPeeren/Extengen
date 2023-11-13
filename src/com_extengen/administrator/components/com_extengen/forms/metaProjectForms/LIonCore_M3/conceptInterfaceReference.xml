@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Use this subform multiple times to indicate what ConceptInterfaces are implemented-->
+<form>
+	<fieldset
+		addruleprefix="Yepr\Component\Extengen\Administrator\Rule"
+		addfieldprefix="Yepr\Component\Extengen\Administrator\Field\LIonCore_M3"
+	>
+
+		<field
+				name="conceptInterface"
+				type="ConceptInterfaceReference"
+				label="Concept Interface"
+				id="conceptInterface"
+				class="custom-select-color-state ConceptInterfaceRef"
+				size="1"
+				onchange="backupID(event)"
+		/><!--TODO:backupID(event): store the ID of the selected ConceptInterface -->
+
+	</fieldset>
+</form>

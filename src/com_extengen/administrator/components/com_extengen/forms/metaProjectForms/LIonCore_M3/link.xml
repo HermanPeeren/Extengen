@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fieldset
+		addruleprefix="Yepr\Component\Extengen\Administrator\Rule"
+		addfieldprefix="Yepr\Component\Extengen\Administrator\Field\LIonCore_M3"
+	>
+
+		<field
+				name="type"
+				type="ClassifierReference"
+				label="COM_EXTENGEN_PROJECTFORM_LINK_FIELD_TYPE_LABEL"
+				id="type"
+				onchange="backupClassifierKey(event)"
+		/>
+
+		<field
+				name="is_multiple"
+				type="checkbox"
+				label="COM_EXTENGEN_ATTRIBUTE_FIELD_ISMULTIPLE_LABEL"
+				description=""
+		/>
+
+		<!-- A Link to another Classifier is either a Containment ("child") or a Reference -->
+		<field
+				name="link_type"
+				type="radio"
+				default="property"
+				label="COM_EXTENGEN_LINK_FIELD_CONTAINMENT_OR_REFERENCE_LABEL"
+				description="COM_EXTENGEN_LINK_FIELD_CONTAINMENT_OR_REFERENCE_DESC"
+		>
+			<option value="Containment">COM_EXTENGEN_LINK_FIELD_CONTAINMENT</option>
+			<option value="Reference">COM_EXTENGEN_LINK_FIELD_REFERENCE</option>
+		</field>
+
+		<field
+				name="containment"
+				type="subform"
+				formsource="administrator/components/com_extengen/forms/metaProjectForms/LIonCore_M3/containment.xml"
+				label="COM_EXTENGEN_LINK_FIELD_CONTAINMENT_LABEL"
+				id="containment"
+				layout="joomla.form.field.subform.default"
+				showon="link_type:Containment"
+		/>
+
+		<field
+				name="link"
+				type="subform"
+				formsource="administrator/components/com_extengen/forms/metaProjectForms/LIonCore_M3/reference.xml"
+				label="COM_EXTENGEN_LINK_FIELD_REFERENCE_LABEL"
+				id="link"
+				layout="joomla.form.field.subform.default"
+				showon="link_type:Reference"
+		/>
+		<!-- /feature_type-->
+
+		<!--description="COM_EXTENGEN_ATTRIBUTE_FIELD_ISMULTIPLE_DESC"-->
+
+		<field
+			name="typeReference_key"
+			type="hidden"
+		/>
+
+		<field
+				name="extends"
+				value="Feature"
+				type="hidden"
+		/>
+
+		<field
+				name="LIonWeb_key"
+				value="Feature.Link"
+				type="hidden"
+		/>
+
+	</fieldset>
+</form>

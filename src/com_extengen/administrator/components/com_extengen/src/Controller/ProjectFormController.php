@@ -15,12 +15,24 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\MVC\Controller\FormController;
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 
 /**
  * Controller for a single project form
  */
 class ProjectFormController extends FormController
 {
+	/**
+	 * Override constructor to indicate the right list-view
+	 *
+	 * Alternatieve: Add $this->applyReturnUrl(); See Nic's PostController + ReturnURLAware mixin
+	 */
+	public function __construct($config = array(), MVCFactoryInterface $factory = null, $app = null, $input = null)
+	{
+		$this->view_list = 'projectforms';
+		parent::__construct($config, $factory, $app, $input);
+	}
+
 	/**
 	 * Method to run batch operations.
 	 *
@@ -32,7 +44,7 @@ class ProjectFormController extends FormController
 	{
 		$this->checkToken();
 
-		$model = $this->getModel('Project', '', array());
+		$model = $this->getModel('ProjectForm', '', array());
 
 		// Preset the redirect
 		$this->setRedirect(Route::_('index.php?option=com_extengen&view=projectforms' . $this->getRedirectToListAppend(), false));

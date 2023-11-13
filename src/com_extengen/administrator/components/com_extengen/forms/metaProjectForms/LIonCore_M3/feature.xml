@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fieldset
+		addruleprefix="Yepr\Component\Extengen\Administrator\Rule"
+		addfieldprefix="Yepr\Component\Extengen\Administrator\Field"
+	>
+		<field
+			name="name"
+			type="text"
+			label="COM_EXTENGEN_PROJECTFORM_FEATURE_FIELD_NAME_LABEL"
+			id="feature_name"
+			size="20"
+			required="false"
+			onchange="editChildConceptList(this);"
+			class="featureName"
+		 />
+
+		<field
+				name="key"
+				type="text"
+				label="COM_EXTENGEN_PROJECTFORM_FEATURE_FIELD_KEY_LABEL"
+				size="40"
+		/>
+
+		<field
+				name="is_optional"
+				type="checkbox"
+				label="COM_EXTENGEN_FEATURE_FIELD_ISOPTIONAL_LABEL"
+				description="COM_EXTENGEN_FEATURE_FIELD_ISOPTIONAL_DESC"
+		/>
+
+		<!-- A feature is either a Property or a link to another Classifier -->
+		<field
+				name="feature_type"
+				type="radio"
+				default="property"
+				label="COM_EXTENGEN_FEATURE_FIELD_PROPERTY_OR_LINK_LABEL"
+				description="COM_EXTENGEN_FEATURE_FIELD_PROPERTY_OR_LINK_DESC"
+		>
+				<option value="Property">COM_EXTENGEN_FEATURE_FIELD_PROPERTY</option>
+				<option value="Link">COM_EXTENGEN_FEATURE_FIELD_LINK</option>
+		</field>
+
+		<field
+				name="property"
+				type="subform"
+				formsource="administrator/components/com_extengen/forms/metaProjectForms/LIonCore_M3/property.xml"
+				label="COM_EXTENGEN_FEATURE_FIELD_PROPERTY"
+			    id="property"
+				layout="joomla.form.field.subform.default"
+				showon="feature_type:Property"
+		/>
+
+		<field
+				name="link"
+				type="subform"
+				formsource="administrator/components/com_extengen/forms/metaProjectForms/LIonCore_M3/link.xml"
+				label="COM_EXTENGEN_FEATURE_FIELD_LINK"
+				id="link"
+				layout="joomla.form.field.subform.default"
+				showon="feature_type:Link"
+		/>
+		<!-- /feature_type-->
+
+		<!-- The key of the classifier this field belongs to -->
+		<field
+			name="classifier_key"
+			type="hidden"
+		/>
+
+		<field
+				name="LIonWeb_key"
+				value="Feature"
+				type="hidden"
+		/>
+
+	</fieldset>
+</form>

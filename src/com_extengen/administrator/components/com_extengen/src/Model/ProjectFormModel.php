@@ -3,7 +3,7 @@
  * @package     Extengen
 
  * @subpackage  Extengen component
- * @version     0.8.0
+ * @version     0.9.0
  *
  * @copyright   Copyright (C) Yepr, Herman Peeren, 2023. All rights reserved.
  * @license     GNU General Public License version 3 or later; see LICENSE.txt
@@ -18,6 +18,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Associations;
 use Joomla\CMS\Language\LanguageHelper;
 use Joomla\CMS\Form\Form;
+use Joomla\CMS\Form\FormHelper;
 // todo: clean up unused use clauses
 use Joomla\CMS\Date\Date;
 use Joomla\CMS\Event\AbstractEvent;
@@ -77,6 +78,25 @@ class ProjectFormModel extends AdminModel
 		'assetgroup_id' => 'batchAccess',
 		'language_id'   => 'batchLanguage',
 	);
+
+
+	/**
+	 * Constructor.
+	 *
+	 * @param   array                 $config       An array of configuration options (name, state, dbo, table_path, ignore_request).
+	 * @param   MVCFactoryInterface   $factory      The factory.
+	 * @param   FormFactoryInterface  $formFactory  The form factory.
+	 *
+	 * @throws  \Exception
+	 */
+	public function __construct($config = [], MVCFactoryInterface $factory = null, FormFactoryInterface $formFactory = null)
+	{
+		parent::__construct($config, $factory, $formFactory);
+
+		// Add the namespace to find the meta-forms (a.t.m. only LIonCore_M3) to define the project-forms
+		//FormHelper::addFormPrefix('Yepr\\Component\\Extengen\\Administrator\\MetaProjectForm\\LIonCore_M3');
+		FormHelper::addFormPath(JPATH_ROOT . '/administrator/components/com_extengen/forms/metaProjectForms/LIonCore_M3/');
+	}
 
 	/**
 	 * Method to get the row form.
@@ -204,7 +224,9 @@ class ProjectFormModel extends AdminModel
      */
     public function save($data)
     {
-        $form_data = json_encode($data);
+        // Todo: Pruning of empty subforms after switch
+
+		$form_data = json_encode($data);
         $data['form_data'] = $form_data;
 
         return parent::save($data);

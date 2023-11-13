@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A concrete Concept > Classifier > LanguageEntity -->
+<form>
+	<fieldset
+		addruleprefix="Yepr\Component\Extengen\Administrator\Rule"
+		addfieldprefix="Yepr\Component\Extengen\Administrator\Field\LIonCore_M3"
+	>
+		<field
+				name="name"
+				type="text"
+				label="COM_EXTENGEN_PROJECTFORM_LANGUAGEENTITY_FIELD_NAME_LABEL"
+				size="40"
+				class="languageEntityName"
+		/>
+
+		<field
+				name="key"
+				type="text"
+				label="COM_EXTENGEN_PROJECTFORM_LANGUAGEENTITY_FIELD_KEY_LABEL"
+				size="40"
+		/>
+
+		<!-- LanguageEntity_type: a Concept is a Classifier -->
+		<field
+				name="languageEntity_type"
+				type="hidden"
+				value="Classifier"
+		/>
+
+		<!-- subform: Classifier-->
+		<form>
+			<fieldset
+					addruleprefix="Yepr\Component\Extengen\Administrator\Rule"
+					addfieldprefix="Yepr\Component\Extengen\Administrator\Fieldclassifier.xml"
+			>
+
+				<!-- Classifier_type: a Concept -->
+				<field
+						name="classifier_type"
+						type="hidden"
+						default="Concept"
+						label="COM_EXTENGEN_PROJECTFORM_CLASSIFIER_FIELD_CLASSIFIER_TYPE_LABEL"
+						description="COM_EXTENGEN_PROJECTFORM_CLASSIFIER_FIELD_CLASSIFIER_TYPE_DESC"
+				/>
+
+				<field
+						name="concept"
+						type="subform"
+						formsource="administrator/components/com_extengen/forms/metaProjectForms/LIonCore_M3/concept.xml"
+						label=""
+						id="concept"
+						layout="joomla.form.field.subform.default"
+						showon="classifier_type:Concept"
+				/>
+				<!-- /Classifier_type-->
+
+				<!-- A Classifier can have zero or more Features -->
+				<field
+						name="feature"
+						type="subform"
+						formsource="administrator/components/com_extengen/forms/metaProjectForms/LIonCore_M3/feature.xml"
+						multiple="true"
+						label="COM_EXTENGEN_FIELD_FEATURES_LABEL"
+						buttons="add,remove,move"
+						id="feature"
+						layout="joomla.form.field.subform.repeatable"
+				/>
+
+				<field
+						name="extends"
+						value="LanguageEntity"
+						type="hidden"
+				/>
+
+				<field
+						name="LIonWeb_key"
+						value="LanguageEntity.Classifier"
+						type="hidden"
+				/>
+			</fieldset>
+		</form>
+		<!-- /Classifier-->
+
+
+		<field
+			name="LIonWeb_key"
+			value="LanguageEntity"
+			type="hidden"
+		/>
+	</fieldset>
+</form>

@@ -10,11 +10,15 @@ Planned features will be adjusted in the process.
 
 ### version 0.8.0
 
-Current version - under construction.
-
 Plain component backend generated.
 
 ### version 0.8.1
+
+Current version - under construction.
+
+Projectforms-branch merged
+
+### version 0.8.2
 
 Minimal Viable Product
 

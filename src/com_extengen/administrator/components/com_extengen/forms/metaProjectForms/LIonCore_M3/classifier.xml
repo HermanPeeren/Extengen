@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fieldset
+		addruleprefix="Yepr\Component\Extengen\Administrator\Rule"
+		addfieldprefix="Yepr\Component\Extengen\Administrator\Fieldclassifier.xml"
+	>
+
+		<!-- Classifier_type: a Classifier is either a Concept, a ConceptInterface or an Annotation -->
+		<field
+				name="classifier_type"
+				type="radio"
+				default="Concept"
+				label="COM_EXTENGEN_PROJECTFORM_CLASSIFIER_FIELD_CLASSIFIER_TYPE_LABEL"
+				description="COM_EXTENGEN_PROJECTFORM_CLASSIFIER_FIELD_CLASSIFIER_TYPE_DESC"
+		>
+			<option value="Concept">COM_EXTENGEN_PROJECTFORM_CLASSIFIER_FIELD_CONCEPT_LABEL</option>
+			<option value="ConceptInterface">COM_EXTENGEN_PROJECTFORM_CLASSIFIER_FIELD_CONCEPTINTERFACE_LABEL</option>
+			<option value="Annotation">COM_EXTENGEN_PROJECTFORM_CLASSIFIER_FIELD_ANNOTATION_LABEL</option>
+		</field>
+
+		<field
+				name="concept"
+				type="subform"
+				formsource="administrator/components/com_extengen/forms/metaProjectForms/LIonCore_M3/concept.xml"
+				label="COM_EXTENGEN_PROJECTFORM_CLASSIFIER_FIELD_CONCEPT_LABEL"
+				id="concept"
+				layout="joomla.form.field.subform.default"
+				showon="classifier_type:Concept"
+		/>
+
+		<field
+				name="conceptInterface"
+				type="subform"
+				formsource="administrator/components/com_extengen/forms/metaProjectForms/LIonCore_M3/conceptInterface.xml"
+				label="COM_EXTENGEN_PROJECTFORM_CLASSIFIER_FIELD_CONCEPTINTERFACE_LABEL"
+				id="conceptInterface"
+				layout="joomla.form.field.subform.default"
+				showon="classifier_type:ConceptInterface"
+		/>
+
+		<field
+				name="annotation"
+				type="subform"
+				formsource="administrator/components/com_extengen/forms/metaProjectForms/LIonCore_M3/annotation.xml"
+				label="COM_EXTENGEN_PROJECTFORM_CLASSIFIER_FIELD_ANNOTATION_LABEL"
+				id="annotation"
+				layout="joomla.form.field.subform.default"
+				showon="classifier_type:Annotation"
+		/>
+		<!-- /Classifier_type-->
+
+		<!-- A Classifier can have zero or more Features -->
+		<field
+			name="feature"
+			type="subform"
+			formsource="administrator/components/com_extengen/forms/metaProjectForms/LIonCore_M3/feature.xml"
+			multiple="true"
+			label="COM_EXTENGEN_FIELD_FEATURES_LABEL"
+			buttons="add,remove,move"
+			id="feature"
+			layout="joomla.form.field.subform.repeatable"
+		/>
+
+		<field
+			name="extends"
+			value="LanguageEntity"
+			type="hidden"
+		/>
+
+		<field
+			name="LIonWeb_key"
+			value="LanguageEntity.Classifier"
+			type="hidden"
+		/>
+	</fieldset>
+</form>
