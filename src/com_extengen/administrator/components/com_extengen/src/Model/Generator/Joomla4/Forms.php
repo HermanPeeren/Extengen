@@ -40,17 +40,24 @@ class Forms extends Generator
 		// Get the utility to manipulate the language strings
 		$languageStringUtil = $this->languageStringUtil;
 		$addLanguageString = function(
-			string $templateValue,
-			string $english,
 			string $componentName,
-			string $pageName = "",
-			string $fieldName = "",
+			string $pageName = '',
+			string $fieldName = '',
+			string $templateValue = '',
+			string $english = '',
 			string $applicationType = "Administrator",
 			bool   $sys = false
 		) use($languageStringUtil)
 		{
-			return $languageStringUtil->addLanguageString( $templateValue,
-				$english, $componentName, $pageName, $fieldName, $applicationType, $sys);
+			return $languageStringUtil->addLanguageString(
+				componentName: $componentName,
+				pageName: $pageName,
+				fieldName: $fieldName,
+				templateValue: $templateValue,
+				english: $english,
+				applicationType: $applicationType,
+				sys: $sys
+			);
 		};
 
 
@@ -271,13 +278,13 @@ class Forms extends Generator
 					// Label language-string: COM_componentname_formName_FIELD_fieldname_LABEL
 					$label = new \DOMAttr('label',
 						$addLanguageString(
-							"pageName_FIELD_fieldName_LABEL", '%fieldName%',$componentName, $formName, $field->field_name));
+							$componentName, $formName, $field->field_name, "pageName_FIELD_fieldName_LABEL", '%fieldName%'));
 					$formField->setAttributeNode($label);
 
 					// Description language-string: COM_componentname_formName_FIELD_fieldname_DESC
 					$description = new \DOMAttr('description',
-						$addLanguageString("pageName_FIELD_fieldName_DESC", 'Input %fieldName% here.',
-							$componentName, $formName, $field->field_name));
+						$addLanguageString($componentName, $formName, $field->field_name, "pageName_FIELD_fieldName_DESC", 'Input %fieldName% here.'
+							));
 					$formField->setAttributeNode($description);
 
 					$fieldset->appendChild($formField);
@@ -347,13 +354,13 @@ class Forms extends Generator
 					// Label
 					$label = new \DOMAttr('label',
 						$addLanguageString(
-							"pageName_FIELD_SEARCH_LABEL", 'Search',$componentName, $formName));
+							$componentName, $formName, '', "pageName_FIELD_SEARCH_LABEL", 'Search'));
 					$searchField->setAttributeNode($label);
 					// Description
 					//todo: longer description how to use search-string; see com_content)
 					$description = new \DOMAttr('description',
 						$addLanguageString(
-							"pageName_FIELD_SEARCH_DESC", 'Search',$componentName, $formName));
+							$componentName, $formName, '', "pageName_FIELD_SEARCH_DESC", 'Search'));
 					$searchField->setAttributeNode($description);
 					// Hint
 					$hint = new \DOMAttr('hint', 'JSEARCH_FILTER');
@@ -435,7 +442,7 @@ class Forms extends Generator
 
 						// Empty choice with field name on top of options
 						$header = new \DOMAttr('header', $addLanguageString(
-							"pageName_FILTER_FIELD_fieldName_HEADER", '- Select %fieldName% -',$componentName, $formName, $field->field_name));
+							$componentName, $formName, $field->field_name, "pageName_FILTER_FIELD_fieldName_HEADER", '- Select %fieldName% -'));
 						$formField->setAttributeNode($header);
 
 						// Submit on change
@@ -453,13 +460,13 @@ class Forms extends Generator
 						// Label language-string: COM_componentname_formName_FIELD_fieldname_LABEL
 						$label = new \DOMAttr('label',
 							$addLanguageString(
-								"pageName_FILTER_FIELD_fieldName_LABEL", 'Filter %fieldName%',$componentName, $formName, $field->field_name));
+								$componentName, $formName, $field->field_name, "pageName_FILTER_FIELD_fieldName_LABEL", 'Filter %fieldName%'));
 						$formField->setAttributeNode($label);
 
 						// Description language-string: COM_componentname_formName_FILTER_FIELD_fieldname_DESC
 						$description = new \DOMAttr('description',
-							$addLanguageString("pageName_FILTER_FIELD_fieldName_DESC", 'Filter on %fieldName%.',
-								$componentName, $formName, $field->field_name));
+							$addLanguageString($componentName, $formName, $field->field_name, "pageName_FILTER_FIELD_fieldName_DESC", 'Filter on %fieldName%.'
+								));
 						$formField->setAttributeNode($description);
 
 						$fields->appendChild($formField);

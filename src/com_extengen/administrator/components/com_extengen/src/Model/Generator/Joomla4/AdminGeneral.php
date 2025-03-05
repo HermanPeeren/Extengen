@@ -103,9 +103,9 @@ class AdminGeneral extends Generator
 		// --- add some general language strings ---
 
 		// back-end
-		$this->languageStringUtil->addLanguageStringFromView($componentName, '', '',
+		$this->languageStringUtil->addLanguageString($componentName, '', '', '',
 			$componentName);
-		$this->languageStringUtil->addLanguageStringFromView($componentName, '', 'CONFIGURATION',
+		$this->languageStringUtil->addLanguageString($componentName, '', '', 'CONFIGURATION',
 			$templateVariables['projectName'] . ' options');
 		/*
 		    todo: items must be specified per type and not added in this general part of language strings
@@ -126,45 +126,45 @@ class AdminGeneral extends Generator
 			COM_FOOS_N_ITEMS_DELETED_1="%d foo deleted."
 			COM_FOOS_N_ITEMS_TRASHED="%d foos trashed."
 			COM_FOOS_N_ITEMS_TRASHED_1="%d foo trashed."*/
-		$this->languageStringUtil->addLanguageStringFromView($componentName, '', 'N_ITEMS_PUBLISHED',
+		$this->languageStringUtil->addLanguageString($componentName, '', '', 'N_ITEMS_PUBLISHED',
 			'%d items published.');
-		$this->languageStringUtil->addLanguageStringFromView($componentName, '', 'N_ITEMS_PUBLISHED_1',
+		$this->languageStringUtil->addLanguageString($componentName, '', '', 'N_ITEMS_PUBLISHED_1',
 			'%d item published.');
-		$this->languageStringUtil->addLanguageStringFromView($componentName, '', 'N_ITEMS_UNPUBLISHED',
+		$this->languageStringUtil->addLanguageString($componentName, '', '', 'N_ITEMS_UNPUBLISHED',
 			'%d items unpublished.');
-		$this->languageStringUtil->addLanguageStringFromView($componentName, '', 'N_ITEMS_UNPUBLISHED_1',
+		$this->languageStringUtil->addLanguageString($componentName, '', '', 'N_ITEMS_UNPUBLISHED_1',
 			'%d item unpublished.');
-		$this->languageStringUtil->addLanguageStringFromView($componentName, '', 'N_ITEMS_CHECKED_IN_1',
+		$this->languageStringUtil->addLanguageString($componentName, '', '', 'N_ITEMS_CHECKED_IN_1',
 			'%d item checked in.');
-		$this->languageStringUtil->addLanguageStringFromView($componentName, '', 'N_ITEMS_CHECKED_IN_MORE',
+		$this->languageStringUtil->addLanguageString($componentName, '', '', 'N_ITEMS_CHECKED_IN_MORE',
 			'%d items checked in.');
-		$this->languageStringUtil->addLanguageStringFromView($componentName, '', 'N_ITEMS_FEATURED',
+		$this->languageStringUtil->addLanguageString($componentName, '', '', 'N_ITEMS_FEATURED',
 			'%d items featured.');
-		$this->languageStringUtil->addLanguageStringFromView($componentName, '', 'N_ITEMS_FEATURED_1',
+		$this->languageStringUtil->addLanguageString($componentName, '', '', 'N_ITEMS_FEATURED_1',
 			'%d item featured.');
-		$this->languageStringUtil->addLanguageStringFromView($componentName, '', 'N_ITEMS_UNFEATURED',
+		$this->languageStringUtil->addLanguageString($componentName, '', '', 'N_ITEMS_UNFEATURED',
 			'%d items unfeatured.');
-		$this->languageStringUtil->addLanguageStringFromView($componentName, '', 'N_ITEMS_UNFEATURED_1',
+		$this->languageStringUtil->addLanguageString($componentName, '', '', 'N_ITEMS_UNFEATURED_1',
 			'%d item unfeatured.');
-		$this->languageStringUtil->addLanguageStringFromView($componentName, '', 'N_ITEMS_ARCHIVED',
+		$this->languageStringUtil->addLanguageString($componentName, '', '', 'N_ITEMS_ARCHIVED',
 			'%d items archived.');
-		$this->languageStringUtil->addLanguageStringFromView($componentName, '', 'N_ITEMS_ARCHIVED_1',
+		$this->languageStringUtil->addLanguageString($componentName, '', '', 'N_ITEMS_ARCHIVED_1',
 			'%d item archived.');
-		$this->languageStringUtil->addLanguageStringFromView($componentName, '', 'N_ITEMS_DELETED',
+		$this->languageStringUtil->addLanguageString($componentName, '', '', 'N_ITEMS_DELETED',
 			'%d items deleted.');
-		$this->languageStringUtil->addLanguageStringFromView($componentName, '', 'N_ITEMS_DELETED_1',
+		$this->languageStringUtil->addLanguageString($componentName, '', '', 'N_ITEMS_DELETED_1',
 			'%d item deleted.');
-		$this->languageStringUtil->addLanguageStringFromView($componentName, '', 'N_ITEMS_TRASHED',
+		$this->languageStringUtil->addLanguageString($componentName, '', '', 'N_ITEMS_TRASHED',
 			'%d items trashed.');
-		$this->languageStringUtil->addLanguageStringFromView($componentName, '', 'N_ITEMS_TRASHED_1',
+		$this->languageStringUtil->addLanguageString($componentName, '', '', 'N_ITEMS_TRASHED_1',
 			'%d item trashed.');
 
 		// sys
-		$this->languageStringUtil->addLanguageStringFromView($componentName, '', '',
+		$this->languageStringUtil->addLanguageString($componentName, '', '', '',
 			$componentName, 'Administrator', true);
 
 		// front-end
-		/*$this->languageStringUtil->addLanguageStringFromView($componentName, '', '',
+		/*$this->languageStringUtil->addLanguageString($componentName, '', '', '',
 			$componentName,'Site');*/
 
 		return $log;

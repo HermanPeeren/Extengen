@@ -198,7 +198,6 @@ class HtmlView extends BaseHtmlView
 			$umlCreate[] = "}
 				
 				";
-
 		}
 
 		// Loop over all CONCEPTS
@@ -239,6 +238,11 @@ class HtmlView extends BaseHtmlView
 				if ($feature->feature_type=='Link')
 				{
 					$featureName = ":" . $feature->name;
+
+					// because $feature->is_optional and $feature->link->is_multiple are checkboxes,
+					// those properties don't exist if the checkbox was empty.
+					if (!property_exists($feature, 'is_optional')) $feature->is_optional = false;
+					if (!property_exists($feature->link, 'is_multiple')) $feature->link->is_multiple = false;
 
 					if (( $feature->is_optional) && ( $feature->link->is_multiple)) $toCardinality = ' "0..*" ';
 					if (( $feature->is_optional) && (!$feature->link->is_multiple)) $toCardinality = ' "0..1" ';
@@ -284,8 +288,8 @@ class HtmlView extends BaseHtmlView
 		$encode = $this->encodep($uml);
 		$formDiagram = "http://www.plantuml.com/plantuml/png/{$encode}";
 		// todo: caching when Project Form is unchanged
-		echo "<h2>" . Text::_('COM_EXTENGEN_BUTTON_PROJECT_FORM_DIAGRAM')
-		    . Text::_('COM_EXTENGEN_PROJECT_FORM_DIAGRAM_FOR')
+		echo "<h2>" . Text::_('COM_EXTENGEN_BUTTON_PROJECTFORM_DIAGRAM')
+		    . Text::_('COM_EXTENGEN_FOR')
 			. $AST->name ."</h2>";
 		echo '<p><img src="' . $formDiagram . '" /></p>';
 

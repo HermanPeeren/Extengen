@@ -19,9 +19,7 @@ use Joomla\CMS\Router\Route;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
- * Component Controller
- *
- * @since  1.5
+ * general Component Controller to display views
  */
 class DisplayController extends BaseController
 {
@@ -29,7 +27,6 @@ class DisplayController extends BaseController
      * The default view.
      *
      * @var    string
-     * @since  1.6
      */
     protected $default_view = '{{ defaultView|lower }}';
 
@@ -39,12 +36,10 @@ class DisplayController extends BaseController
      * @param   boolean  $cachable   If true, the view output will be cached
      * @param   array    $urlparams  An array of safe URL parameters and their variable types, for valid values see {@link JFilterInput::clean()}.
      *
-     * @return  BaseController|boolean  This object to support chaining.
-     *
-     * @since   1.5
+     * @return  static|boolean       This object to support chaining
      */
     public function display($cachable = false, $urlparams = [])
     {
-        return parent::display();
+        return parent::display($cachable, $urlparams);
     }
 }

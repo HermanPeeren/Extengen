@@ -144,7 +144,7 @@ class HtmlView extends BaseHtmlView
 		// Get the toolbar object instance
 		$toolbar = Toolbar::getInstance('toolbar');
 
-		ToolbarHelper::title(Text::_('{{ addLanguageString("MANAGER_pageName", 'Manage %pageName%', componentName, pageName) }}'), 'address {{pageName|lower }}');
+		ToolbarHelper::title(Text::_('{{ addLanguageString(componentName, pageName, '', "MANAGER_pageName", 'Manage %pageName%') }}'), 'address {{pageName|lower }}');
 		// todo: choose an icon in the project-model
 
 		if ($canDo->get('core.create') || count($user->getAuthorisedCategories('com_{{ componentName|lower }}', 'core.create')) > 0)

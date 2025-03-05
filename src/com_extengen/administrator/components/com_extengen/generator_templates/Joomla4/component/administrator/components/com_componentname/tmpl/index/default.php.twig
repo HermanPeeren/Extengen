@@ -45,7 +45,7 @@ if ($saveOrder && !empty($this->items)) {
 				<?php else : ?>
                     <table class="table" id="{{ pageNamelower }}List">
                         <caption class="visually-hidden">
-							<?php echo Text::_('{{ addLanguageString("pageName_TABLE_CAPTION", '%pageName%', componentName, pageName) }}'); ?>, <?php echo Text::_('JGLOBAL_SORTED_BY'); ?>
+							<?php echo Text::_('{{ addLanguageString(componentName, pageName, '', "pageName_TABLE_CAPTION", '%pageName%') }}'); ?>, <?php echo Text::_('JGLOBAL_SORTED_BY'); ?>
                         </caption>
                         <thead>
                         <tr>
@@ -55,7 +55,7 @@ if ($saveOrder && !empty($this->items)) {
 {% for field in entity.field %}
                             <th scope="col" style="width:1%" class="text-center d-none d-md-table-cell">
 		                        <?php echo HTMLHelper::_('searchtools.sort',
-		                        '{{ addLanguageString("TABLE_pageName_TABLEHEAD_fieldName", '%fieldName%', componentName, entity.entity_name, field.field_name) }}', $listDirn, $listOrder);
+		                        '{{ addLanguageString(componentName, entity.entity_name, field.field_name, "TABLE_pageName_TABLEHEAD_fieldName", '%fieldName%') }}', $listDirn, $listOrder);
                                 ?>
                             </th>
 {% endfor %}
@@ -78,7 +78,9 @@ if ($saveOrder && !empty($this->items)) {
 {% for field in entity.field %}
 {% if field.property.default_ref_display is defined %}
                                 <td>
-                                <a class="hasTooltip" href="<?php echo Route::_('index.php?option=com_{{componentName|lower }}&task={{  linkPageName|lower }}.edit&id=' . (int) $item->id); ?>" title="<?php echo Text::_('JACTION_EDIT'); ?> <?php echo $this->escape(addslashes($item->name)); ?>">
+                                <a class="hasTooltip" href="<?php
+                                    echo Route::_('index.php?option=com_{{componentName|lower }}&task={{  linkPageName|lower }}.edit&id=' . (int) $item->id); ?>"
+                                    title="<?php echo Text::_('JACTION_EDIT'); ?> <?php echo $this->escape(addslashes($item->{{field.field_name}})); ?>">
 		                            <?php //echo $editIcon; ?><?php echo $this->escape($item->{{field.field_name}}); ?></a>
                                 </td>
 {% else %}
@@ -99,7 +101,7 @@ if ($saveOrder && !empty($this->items)) {
 						'bootstrap.renderModal',
 						'collapseModal',
 						[
-							'title'  => Text::_('{{ addLanguageString("BATCH_OPTIONS_pageName", 'Batch process the selected %pageName%', componentName, pageName) }}'),
+							'title'  => Text::_('{{ addLanguageString(componentName, pageName, '', "BATCH_OPTIONS_pageName", 'Batch process the selected %pageName%') }}'),
 							'footer' => $this->loadTemplate('batch_footer'),
 						],
 						$this->loadTemplate('batch_body')

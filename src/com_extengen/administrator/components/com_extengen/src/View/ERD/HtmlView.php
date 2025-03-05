@@ -108,7 +108,13 @@ skinparam linetype ortho
 						break;
 					case "reference":
 						$type=$entityNameMap[$field->reference->reference] . '  <<FK>>';
-						$references[] = $entityNameMap[$field->reference->reference];
+						$isMultiple = property_exists($field->reference, 'ismultiple') ? $field->reference->ismultiple : false;
+						$isRequired = property_exists($field->reference, 'isrequired') ? $field->reference->isrequired : false;
+						$references[] = [
+							'name'=>$entityNameMap[$field->reference->reference],
+							'ismultiple'=>$isMultiple,
+							'isrequired'=>$isRequired
+						];
 						break;
 					default:
 						$type="";
@@ -118,8 +124,12 @@ skinparam linetype ortho
 			// Add reference(s)
 			foreach ($references as $reference)
 			{
-				// todo only when this class owns the reference, so many2one, but not one2many
-				$umlRef[] =  $reference . ' |o..o{ ' . $entityName;
+				// Only use this when this entity owns the reference, so many2one, but not one2many!
+				$multipleSymbol = $reference['ismultiple']?'}':'|';
+				$requiredSymbol = $reference['isrequired']?'|':'o';
+				// todo: BUG: doesn't work for NOT multiple AND required: || works online in PlantUML, but not here???
+				$referenceSide = $multipleSymbol . $requiredSymbol;
+				$umlRef[] =  $reference['name'] . ' ' . $referenceSide . '..o{ ' . $entityName;
 			}
 			$umlCreate[] = "}
 			

@@ -69,150 +69,21 @@ class LanguageStringUtil extends AbstractExtension
 	public function getFunctions()
 	{
 		return [
-			new TwigFunction('addLanguageString', [$this, 'addLanguageString']),
-			new TwigFunction('addLanguageStringFromView', [$this, 'addLanguageStringFromView']),
-			new TwigFunction('addLanguageStringFromForm', [$this, 'addLanguageStringFromForm'])
+			new TwigFunction('addLanguageString', [$this, 'addLanguageString'])
 		];
 	}
 
 	/**
-	 * Return a language string + (side effect) put in language files
+	 * Return a language string
+	 * Side effect: put  the key-value pair in language files
 	 *
-	 * @param   string  $componentName
-	 * @param   string  $pageName
-	 * @param   string  $templateValue
-	 * @param   string  $english          Preferred English translation.
-	 * @param   string  $applicationType  Administrator | Site; default = Administrator. A.k.a. Section: backend and frontend
-	 * @param   bool    $sys              If this is backend, will it be added to sys-language file? Default = false.
-	 *
-	 * @return  string  $langstring
-	 */
-	public function addLanguageStringFromView(
-		string $componentName,
-		string $pageName,
-		string $templateValue,
-		string $english,
-		string $applicationType = "Administrator",
-		bool   $sys = false
-	)
-	{
-		// Make the language string
-		$optional_underscore = "_";
-		if (empty($templateValue)) $optional_underscore = "";
-		$langstring = "COM_" . strtoupper($componentName) . $optional_underscore
-			. str_replace("pageName",strtoupper($pageName),$templateValue);
-
-		// Side effect:add the languagestring to the language tree for all languages in this component's section
-		// Add to backend, sys or frontend?
-		$fileType = $this->langTree->backend;
-		if ($sys) $fileType = $this->langTree->sys;
-		if ($applicationType == "Site") $fileType = $this->langTree->frontend;
-
-		foreach ($fileType->languages as $language)
-		{
-			$keyValuePair = new \stdClass();
-			$keyValuePair->language_string = $langstring;
-
-			// todo: only translate if no translated string exists (you can give a preferred translation)
-			// TEST automatic translation for other languages todo: proper translation API
-			// todo: in general addLanguageString() method also replace componentName (and maybe also projectName) in templateValue
-			$locale_string = ucfirst(str_replace("%pageName%",strtolower($pageName), $english));
-			$locale_string_translated = $locale_string;
-
-			$source = 'en';
-			$target = $language->language_code;
-
-			// even geen translation, was maar even om uit te proberen. todo: implement translation properly
-/*
-			if ($target != 'en')
-			{
-				$locale_string_translated = $this->translate->translate($source, $target, $locale_string);
-			}*/
-
-			$keyValuePair->locale_string = $locale_string_translated;
-
-			// todo: only add if key not yet exist!
-			$language->key_value_pairs[] = $keyValuePair;
-		}
-
-		return $langstring;
-	}
-
-	/**
-	 * Return a language string + (side effect) put in language files
-	 * todo: make 1 general method for adding language strings (from view, from form, whatever...)
-	 * todo: the difference between addLanguageStringFromView and addLanguageStringFromForm is 1 parameter fieldName and its use.
-	 *
-	 * @param   string  $componentName
-	 * @param   string  $pageName
-	 * @param   string  $fieldName
-	 * @param   string  $templateValue
-	 * @param   string  $english          Preferred English translation.
-	 * @param   string  $applicationType  Administrator | Site; default = Administrator. A.k.a. Section: backend and frontend
-	 * @param   bool    $sys              If this is backend, will it be added to sys-language file? Default = false.
-	 *
-	 * @return  string  $langstring
-	 */
-	public function addLanguageStringFromForm(
-		string $componentName,
-		string $formName,
-		string $fieldName,
-		string $templateValue,
-		string $english,
-		string $applicationType = "Administrator",
-		bool   $sys = false
-	)
-	{
-		// Make the language string
-		$langstring = "COM_" . strtoupper($componentName) . "_"
-			. str_replace(["formName", "fieldName"],[strtoupper($formName),strtoupper($fieldName)],$templateValue);
-
-		// Side effect:add the languagestring to the language tree for all languages in this component's section
-		// Add to backend, sys or frontend?
-		$fileType = $this->langTree->backend;
-		if ($sys) $fileType = $this->langTree->sys;
-		if ($applicationType == "Site") $fileType = $this->langTree->frontend;
-
-		foreach ($fileType->languages as $language)
-		{
-			$keyValuePair = new \stdClass();
-			$keyValuePair->language_string = $langstring;
-
-			// TEST automatic translation for other languages todo: proper translation API
-			$locale_string = ucfirst(str_replace(["%formName%", "%fieldName%"],[strtolower($formName),strtolower($fieldName)], $english));
-
-			$locale_string_translated = $locale_string;
-
-			$source = 'en';
-			$target = $language->language_code;
-
-			// even geen translation, was maar even om uit te proberen. todo: implement translation properly
-/*
-			if ($target != 'en')
-			{
-				$locale_string_translated = $this->translate->translate($source, $target, $locale_string);
-			}*/
-
-			$keyValuePair->locale_string = $locale_string_translated;
-
-			// todo: only add if key not yet exist!
-			$language->key_value_pairs[] = $keyValuePair;
-		}
-
-		return $langstring;
-	}
-
-	/**
-	 * Return a language string + (side effect) put in language files
-	 * todo: calling parameters in right order!!!
-	 *
-	 * @param   string  $templateValue
-	 * @param   string  $english          Preferred English translation.
-	 * @param   string  $componentName
-	 * @param   string  $pageName         The name of the page OR the form
-	 * @param   string  $fieldName
-	 * @param   string  $applicationType  Administrator | Site; default = Administrator. A.k.a. Section: backend and frontend
-	 * @param   bool    $sys              If this is backend, will it be added to sys-language file? Default = false.
+	 * @param   string  $componentName      The name of the component (without com_)
+	 * @param   string  $pageName           The name of the page OR the form
+	 * @param   string  $fieldName = ''     The name of the field (optional)
+	 * @param   string  $templateValue = '' The specific part of the languagestring to fill in in the template (optional)
+	 * @param   string  $english            Preferred English translation.
+	 * @param   string  $applicationType    Administrator | Site; default = Administrator. (eJSL: Section backend and frontend)
+	 * @param   bool    $sys                If this is backend, will it be added to sys-language file? Default = false.
 	 *
 	 * In $templateValue the strings componentName, pageName and fieldName will be replaced with their respective (uppercase) values.
 	 * In $english the strings %componentName%, %pageName% and %fieldName% will be replaced with their respective (lowercase) values.
@@ -221,25 +92,27 @@ class LanguageStringUtil extends AbstractExtension
 	 * @return  string  $langstring
 	 */
 	public function addLanguageString(
-		string $templateValue,
-		string $english,
 		string $componentName,
-		string $pageName = "",
-		string $fieldName = "",
-		string $applicationType = "Administrator",
+		string $pageName = '',
+		string $fieldName = '',
+		string $templateValue = '',
+		string $english = '',
+		string $applicationType = 'Administrator',
 		bool   $sys = false
 	)
 	{
-		// Make the language string
+		// Create the language string
 		$langstring = "COM_" . strtoupper($componentName) . "_"
 			. str_replace(["pageName", "fieldName"],[strtoupper($pageName),strtoupper($fieldName)],$templateValue);
 
-		// Side effect:add the languagestring to the language tree for all languages in this component's section
+		// Side effect:add the language-string to the language tree for all languages in this component's section
 		// Add to backend, sys or frontend?
 		$fileType = $this->langTree->backend;
 		if ($sys) $fileType = $this->langTree->sys;
 		if ($applicationType == "Site") $fileType = $this->langTree->frontend;
 
+		// If language key does not yet exist, then add it to the language-strings
+		if ($this->isUniqueLanguageString($fileType->languages->languages0->key_value_pairs, $langstring))
 		foreach ($fileType->languages as $language)
 		{
 			$keyValuePair = new \stdClass();
@@ -262,7 +135,6 @@ class LanguageStringUtil extends AbstractExtension
 
 			$keyValuePair->locale_string = $locale_string_translated;
 
-			// todo: only add if key not yet exist! Because already given strings have priority.
 			$language->key_value_pairs[] = $keyValuePair;
 		}
 
@@ -306,6 +178,23 @@ class LanguageStringUtil extends AbstractExtension
 		}
 
 		$this->langTree = $langTree;
+	}
+
+	/**
+	 * Check uniqueness of a languagestring.
+	 *
+	 * @param array   $key_value_pairs the objects with language_string + locale_string_string properties
+	 * @param string  $language_string the language string we are testing on uniqueness
+	 *
+	 * @return boolean true if unique, false if not.
+	 */
+	private function isUniqueLanguageString(array $key_value_pairs, string $language_string): bool {
+		foreach ($key_value_pairs as $keyValuePair) {
+			if ($keyValuePair->language_string === $language_string) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**

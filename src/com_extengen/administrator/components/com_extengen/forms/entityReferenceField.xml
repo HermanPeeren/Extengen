@@ -21,11 +21,9 @@
 		<field
 			name="ismultiple"
 			type="checkbox"
-			disabled="1"
 			label="COM_EXTENGEN_ATTRIBUTE_FIELD_ISMULTIPLE_LABEL"
-			description="Not yet available in this version! See roadmap for more information."
+			description="COM_EXTENGEN_ATTRIBUTE_FIELD_ISMULTIPLE_DESC"
 		/>
-		<!--description="COM_EXTENGEN_ATTRIBUTE_FIELD_ISMULTIPLE_DESC"-->
 
 		<field
 			name="isrequired"

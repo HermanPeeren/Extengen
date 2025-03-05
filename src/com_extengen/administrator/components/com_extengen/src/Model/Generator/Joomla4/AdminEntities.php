@@ -79,7 +79,7 @@ class AdminEntities extends Generator
 		$templateVariables['license'] = $manifest->license;
 		$templateVariables['companyNamepace'] = $manifest->company_namespace;
 
-		// Loop over the entities to make a map of entity_id to name
+		// Loop over the entities to make a map of entity_id to name and from entity_id to entity
 		$entityNameMap = [];
 		foreach ($project->datamodel as $entity)
 		{
@@ -88,11 +88,13 @@ class AdminEntities extends Generator
 
 		// Loop over the entities to create the tables in the sql-file and the Table-files for Joomla
 		$sqlCreateTable = [];
-		$sqlDropTable = [];
+		$sqlDropTable   = [];
+		$junctionTables = [];
 		foreach ($project->datamodel as $entity)
 		{
 			$entityName = ucfirst($entity->entity_name);
 			$templateVariables['entityName'] = $entityName;
+			$templateVariables['getFK'] = '';
 
 			// --- CREATE TABLE sql statement for this entity and write to sql-file ---
 			// N.B.: I now name the table singular. It might be nicer to do it in plural (but inflector only works for English names)
@@ -120,10 +122,26 @@ class AdminEntities extends Generator
 						break;
 
 					case "reference":
-						// For references: add the foreign key
-						$attributeRows[]= '`'
-							. strtolower($entityNameMap[$field->reference->reference]) . '_id` '
-							. "bigint(20) UNSIGNED";
+						if (property_exists($field->reference, 'ismultiple'))
+						{
+							$fromEntityName = strtolower($entityName);
+							$toEntityName   = strtolower($entityNameMap[$field->reference->reference]);
+
+							// For references to multiple entities: create the junction table for this n:n-relation
+							$junctionTables[] =
+								[
+									'fromEntityName' => $fromEntityName,
+									'toEntityName'   => $toEntityName,
+								];
+							$templateVariables['getFK'] .= $this->getFK($fromEntityName, $field->field_name, $toEntityName);
+						}
+						else
+						{
+							// For references to a single entity: add the foreign key
+							$attributeRows[]= '`'
+								. strtolower($entityNameMap[$field->reference->reference]) . '_id` '
+								. "bigint(20) UNSIGNED";
+						}
 						break;
 				}
 			}
@@ -139,14 +157,63 @@ class AdminEntities extends Generator
 			$sqlCreateTable[] = implode("\n", $tableRows);
 			$logAppend(['generated CREATE TABLE sql statement for ' . $tableName . ' in sql-file']);
 
-			// --- create Table file for this entity ---
+			// --- create Joomla\CMS\Table file for this entity ---
 			$templateFileName = 'Table.php.twig';
 			$generatedFileName = $entityName . 'Table.php';
 
 			$logAppend($this->generateFileWithTemplate($templateFilePath, $templateFileName, $generatedTablesPath, $generatedFileName, $templateVariables));
-			// also add a method to retrieve entity with FK in the table
-			// todo: this must be a "stub" that will be a variable in the template;
-			// todo: also for many2one relations... (choose: eager or lazy loading)
+		}
+
+		// Junction tables
+		if (!empty($junctionTables))
+		{
+			// Get rid of duplicate junction tables (junction table fromEntity->toEntity == toEntity->fromEntity)
+			$sortedJunctions       = array_map(function(array $entityNames)
+										{
+											// Sort the two entityNames alphabetcally
+											$sortedJunction = $entityNames;
+											if($entityNames['fromEntityName'] > $entityNames['toEntityName'])
+											{
+
+												$sortedJunction['fromEntityName'] = $entityNames['toEntityName'];
+												$sortedJunction['toEntityName'] = $entityNames['fromEntityName'];
+											}
+											return $sortedJunction;
+										}
+				                    , $junctionTables);
+
+			$uniqueJunctionStrings = array_unique(array_map(
+				fn(array $junction): string => $junction['fromEntityName'] . $junction['toEntityName'],
+				$sortedJunctions));
+			$uniqueJunctions       = array_intersect_key($sortedJunctions, $uniqueJunctionStrings);
+
+			// Create the junction tables from uniqueJunctions-array
+			foreach ($uniqueJunctions as $uniqueJunction)
+			{
+				$tableName = '#__' . strtolower($componentName)
+					. "_" . strtolower($uniqueJunction['fromEntityName'])
+					. "_" . strtolower($uniqueJunction['toEntityName']);
+				$tableRows = [];
+				$tableRows[] = "CREATE TABLE IF NOT EXISTS `$tableName` (";
+
+				// Add a Drop Table to the uninstall sql file
+				$sqlDropTable[] = "DROP TABLE IF EXISTS `$tableName`;";
+
+				// Add both foreign keys for the junction
+				$id1 = '`' . strtolower($uniqueJunction['fromEntityName']) . '_id`';
+				$id2 = '`' . strtolower($uniqueJunction['toEntityName']) . '_id`';
+				$tableRows[]= $id1 . " bigint(20) UNSIGNED,";
+				$tableRows[]= $id2 . " bigint(20) UNSIGNED,";
+
+				// And make the combination the primary key of the junction table
+				$tableRows[] = "PRIMARY KEY ($id1, $id2)";
+				$tableRows[] = ")  ENGINE=InnoDB DEFAULT COLLATE utf8mb4_unicode_ci;";
+
+				// Generate the Create Table sql
+				$sqlCreateTable[] = implode("\n", $tableRows);
+				$logAppend(['generated CREATE TABLE sql statement for ' . $tableName . ' in sql-file']);
+			}
+
 		}
 
 		// Write the sql install file
@@ -242,5 +309,61 @@ class AdminEntities extends Generator
 
 		return $sqlDef;
 
+	}
+
+	/**
+	 * Add methods to the Table object of an entity to get the n:n entities that are referenced to
+	 *
+	 * @param string $fromEntityName  (lowercase)
+	 * @param string $fieldName       The fieldName of the collection of foreign entities
+	 * @param string $toEntityName    (lowercase)
+	 *
+	 * @return string 2 methods: to retrieve the foreign entities and to only retrieve their ids
+	 *
+	 */
+	private function getFK(string $fromEntityName, string $fieldName, string $toEntityName)
+	{
+		$componentName  = strtolower($this->componentName);
+		$u1ToEntityName = ucfirst($toEntityName);
+		$combi          = $fromEntityName > $toEntityName ? $toEntityName . '_' . $fromEntityName : $fromEntityName . '_' . $toEntityName;
+		$junctionTable  = '#__' . $componentName . '_' . $combi;
+		$otherTable     = '#__' . $componentName . '_' . $toEntityName;
+
+		$getFK = [];
+
+		$getFK[] = '    ';
+		$getFK[] = '    public function get' . ucfirst($fieldName) . '()';
+		$getFK[] = '    {';
+		$getFK[] = '        $db    = $this->getDbo();';
+		$getFK[] = '        $query = $db->getQuery(true)';
+		$getFK[] = '            ->select($db->quoteName(\''. $toEntityName . '\') . \'.*\')';
+		$getFK[] = '            ->from($db->quoteName(\'' . $junctionTable . '\', \'junction\'))';
+		$getFK[] = '            ->join(\'LEFT\', 
+								    $db->quoteName(\'' . $otherTable . '\', \''. $toEntityName . '\'), 
+									$db->quoteName(\'junction.'. $toEntityName . '_id\') . \' = \' . $db->quoteName(\''. $toEntityName . '.id\'))';
+		$getFK[] = '            ->where($db->quoteName(\''. $fromEntityName . '_id\') . \' = :thisId\')';
+		$getFK[] = '            ->order($db->quoteName(\'id\') . \' ASC\')';
+		$getFK[] = '            ->bind(\':thisId\', $this->id, ParameterType::INTEGER);';
+		$getFK[] = '        ';
+		$getFK[] = '        $' . $fieldName . ' = $db->setQuery($query)->loadAssocList() ?: [];';
+		$getFK[] = '        ';
+		$getFK[] = '        return $' . $fieldName . ';';
+		$getFK[] = '    }';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		return implode("\n", $getFK);
 	}
 }

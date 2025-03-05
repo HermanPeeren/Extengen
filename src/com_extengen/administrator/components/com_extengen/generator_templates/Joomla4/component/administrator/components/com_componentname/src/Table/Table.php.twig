@@ -21,6 +21,7 @@ use Joomla\CMS\Tag\TaggableTableTrait;
 use Joomla\Database\DatabaseDriver;
 use Joomla\CMS\Language\Text;
 use Joomla\Registry\Registry;
+use Joomla\Database\ParameterType;
 
 /**
  * {{entityName}} Table class.
@@ -40,6 +41,7 @@ class {{ entityName }}Table extends Table implements TaggableTableInterface
 
 		parent::__construct('#__{{componentName|lower}}_{{entityName|lower}}', 'id', $db);
 	}
+{{ getFK|raw }}
 
 	/**
 	 * Generate a valid alias from title / date.

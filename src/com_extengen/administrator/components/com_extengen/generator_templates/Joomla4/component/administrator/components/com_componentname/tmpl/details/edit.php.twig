@@ -41,7 +41,7 @@ $tmpl = $input->get('tmpl', '', 'cmd') === 'component' ? '&tmpl=component' : '';
     <div>
 		<?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'details']); ?>
 
-		<?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'details', empty($this->item->id) ? Text::_('{{ addLanguageString("NEW_pageName", 'New %pageName%', componentName, pageName) }}') : Text::_('{{ addLanguageString("EDIT_pageName", 'Edit %pageName%', componentName,pageName) }}')); ?>
+		<?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'details', empty($this->item->id) ? Text::_('{{ addLanguageString(componentName, pageName, '', "NEW_pageName", 'New %pageName%') }}') : Text::_('{{ addLanguageString(componentName,pageName, '', "EDIT_pageName", 'Edit %pageName%') }}')); ?>
         <div class="row">
             <div class="col-md-9">
                 <div class="row">

@@ -12,7 +12,7 @@
 	<namespace path="src">{{ company_namespace }}\Component\{{ componentName }}</namespace>
 
 	<!-- Scripts to run on installation -->
-	<scriptfile>script.php</scriptfile>
+	<!--<scriptfile>script.php</scriptfile>-->
 
 	<!-- Runs on install -->
 	<install>
@@ -72,21 +72,27 @@
 		<files folder="administrator/components/com_{{ componentName|lower }}">
 			<filename>access.xml</filename>
 			<filename>config.xml</filename>
-			<filename>version.php</filename>
+			<!--<filename>version.php</filename>-->
 			<filename>LICENSE.txt</filename>
 
 			<folder>forms</folder>
 			<folder>language</folder>
-			<folder>layouts</folder>
+			<!--<folder>layouts</folder>-->
 			<folder>services</folder>
 			<folder>sql</folder>
 			<folder>src</folder>
 			<folder>tmpl</folder>
 		</files>
+
+		<languages folder="administrator/components/com_{{ componentName|lower }}">
+			<!--todo: repeat for all languages-->
+			<language tag="en-GB">language/en-GB/com_eventschedule.ini</language>
+			<language tag="en-GB">language/en-GB/com_eventschedule.sys.ini</language>
+		</languages>
 	</administration>
 
 	<!-- Update servers -->
-	<updateservers>
+	<!--<updateservers>
 		<server type="extension" priority="1" name="{{ projectName }}">{{ updateServerURL }}/{{ componentName|lower }}</server>
-	</updateservers>
+	</updateservers>-->
 </extension>

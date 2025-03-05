@@ -69,12 +69,12 @@ $tmpl    = $isModal || $input->get('tmpl', '', 'cmd') === 'component' ? '&tmpl=c
 <?php
 if (($this->item->id)>0)
 {
-    // TODO: make a forms-diagram e.s.o. an ERD
+    // Make a forms-diagram
 	echo HTMLHelper::_(
 		'bootstrap.renderModal',
 		'ProjectFormModal',
 		array(
-			'title'  => Text::_('COM_EXTENGEN_BUTTON_PROJECT_FORM_DIAGRAM'),
+			'title'  => Text::_('COM_EXTENGEN_BUTTON_PROJECTFORM_DIAGRAM'),
 			'url' => JUri::root() . "administrator/index.php?option=com_extengen&view=FormsDiagram&tmpl=component&projectform_id=" .  $this->item->id,
 			'height' => "700",
 			'width' => "700"

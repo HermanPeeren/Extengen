@@ -2,8 +2,8 @@
 <config>
 	<fieldset
 			name="projects"
-			label="{{ addLanguageString('PROJECT_FIELD_CONFIG_COMMON_DISPLAY', 'Use custom fields', componentName) }}"
-			description="{{ addLanguageString('PROJECT_FIELD_CONFIG_COMMON_DESC', 'Add custom fields to project', componentName) }}"
+			label="{{ addLanguageString(componentName, '', '', 'PROJECT_FIELD_CONFIG_COMMON_DISPLAY', 'Use custom fields') }}"
+			description="{{ addLanguageString(componentName, '', '', 'PROJECT_FIELD_CONFIG_COMMON_DESC', 'Add custom fields to project') }}"
 	>
 		<field
 				name="custom_fields_enable"

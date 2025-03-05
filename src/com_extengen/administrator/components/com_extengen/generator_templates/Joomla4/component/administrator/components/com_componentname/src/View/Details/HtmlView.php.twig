@@ -77,7 +77,7 @@ class HtmlView extends BaseHtmlView
 
 		$isNew = ($this->item->id == 0);
 
-		ToolbarHelper::title($isNew ? Text::_('{{ addLanguageString("MANAGER_pageName_NEW", 'New %pageName%', componentName, pageName) }}') : Text::_('{{ addLanguageString("MANAGER_pageName_EDIT", 'Edit %pageName%', componentName, pageName) }}'), 'address {{ pageName|lower }}');
+		ToolbarHelper::title($isNew ? Text::_('{{ addLanguageString(componentName, pageName, '', "MANAGER_pageName_NEW", 'New %pageName%') }}') : Text::_('{{ addLanguageString(componentName, pageName, '', "MANAGER_pageName_EDIT", 'Edit %pageName%') }}'), 'address {{ pageName|lower }}');
 		// todo: choose icon in model
 
 		// Since we don't track these assets at the item level, use the category id. todo: categories & access control
