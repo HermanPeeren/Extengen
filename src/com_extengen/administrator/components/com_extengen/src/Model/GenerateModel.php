@@ -119,8 +119,13 @@ class GenerateModel extends AdminModel
 			$this->useConcreteGenerator($generatorNamespace . "AdminGeneral", $outputType, $AST, $languageStringUtil);
 			$this->useConcreteGenerator($generatorNamespace . "AdminEntities", $outputType, $AST, $languageStringUtil);
 			$this->useConcreteGenerator($generatorNamespace . "AdminMVC", $outputType, $AST, $languageStringUtil);
+
 			$this->useConcreteGenerator($generatorNamespace . "Forms", $outputType, $AST, $languageStringUtil);
-			//$this->useConcreteGenerator($generatorNamespace . "SiteMVC", $outputType, $AST, $languageStringUtil);
+
+			// --- Frontend ---
+			$this->log[] = "&nbsp;";
+			$this->log[] = "<b>=== FRONT-END ===</b>";
+			$this->useConcreteGenerator($generatorNamespace . "SiteMVC", $outputType, $AST, $languageStringUtil);
 			// ...more generators here
 		}
 
