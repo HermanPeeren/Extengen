@@ -67,11 +67,14 @@ class HtmlView extends BaseHtmlView
 
         $component = $project->extensions->component;
 		
-		// Loop over the entities to make a map of entity_id to name
+		// Loop over the entities to make a map of entity_id to name.
+		// Plus indicate if it is a value object in embeddableMap.
 		$entityNameMap = [];
+		$embeddableMap = [];
 		foreach ($project->datamodel as $entity)
 		{
 			$entityNameMap[$entity->entity_id] = ucfirst($entity->entity_name);
+			$embeddableMap[$entity->entity_id] = property_exists($entity, 'isvalueobject')?true:false;
 		}
 
 		// Initiate the uml-file.
@@ -82,6 +85,11 @@ class HtmlView extends BaseHtmlView
 
 ' avoid problems with angled crows feet
 skinparam linetype ortho
+
+skinparam class{
+            BackgroundColor BlanchedAlmond
+        }
+skinparam ClassBackgroundColor<<value object>> LightCyan
 ";
 		$umlRef = [];
 
@@ -90,13 +98,16 @@ skinparam linetype ortho
 		{
 			$entityName = $entity->entity_name;
 
-			$umlCreate[] = '			
-			entity "' . $entityName . '" {
+			// value object
+			$valueObject = '';
+			$id = '';
+			if (property_exists($entity, 'isvalueobject')) $valueObject = ' <<(V,DeepSkyBlue)value object>> ';
+			if (!property_exists($entity, 'isvalueobject')) $id = '
   *id : number <<generated>>
-  --
+  --';
+			$umlCreate[] = '			
+			entity "' . $entityName . '" ' .$valueObject . ' {' . $id . '
   ';
-			// todo: more general for other things than entities, fields and relations???
-
 			$references = [];
 			// Add fields
 			foreach ($entity->field as $field)
@@ -113,7 +124,8 @@ skinparam linetype ortho
 						$references[] = [
 							'name'=>$entityNameMap[$field->reference->reference],
 							'ismultiple'=>$isMultiple,
-							'isrequired'=>$isRequired
+							'isrequired'=>$isRequired,
+							'referencesValueobject'=>$embeddableMap[$field->reference->reference]
 						];
 						break;
 					default:
@@ -124,12 +136,26 @@ skinparam linetype ortho
 			// Add reference(s)
 			foreach ($references as $reference)
 			{
-				// Only use this when this entity owns the reference, so many2one, but not one2many!
-				$multipleSymbol = $reference['ismultiple']?'}':'|';
-				$requiredSymbol = $reference['isrequired']?'|':'o';
-				// todo: BUG: doesn't work for NOT multiple AND required: || works online in PlantUML, but not here???
-				$referenceSide = $multipleSymbol . $requiredSymbol;
-				$umlRef[] =  $reference['name'] . ' ' . $referenceSide . '..o{ ' . $entityName;
+				if($reference['referencesValueobject'])
+				{
+					// It refers to an embeddable, a value object
+					$multipleSymbol = $reference['ismultiple']?'n':'1';
+					$requiredSymbol = $reference['isrequired']?'1':'0';
+					$multiplicity = $requiredSymbol . '..' . $multipleSymbol;
+					$umlRef[] =  $entityName . ' *-- "' . $multiplicity . '" ' . $reference['name'];
+				}
+				else
+				{
+					// Only use this when this entity owns the reference, so many2one, but not one2many! (except with embeddables)
+					// todo: better model the relation from both sides
+					$multipleSymbol = $reference['ismultiple']?'}':'|';
+					$requiredSymbol = $reference['isrequired']?'|':'o';
+					// todo: BUG: doesn't work for NOT multiple AND required: || works online in PlantUML, but not here???
+					$referenceSide = $multipleSymbol . $requiredSymbol;
+					$umlRef[] =  $reference['name'] . ' ' . $referenceSide . '..o{ ' . $entityName;
+				}
+
+
 			}
 			$umlCreate[] = "}
 			
@@ -139,6 +165,7 @@ skinparam linetype ortho
 
 		// Add the relationships
 		$umlCreate[] = implode("\n", $umlRef);
+		$umlCreate[] = "'hide <<value object>> circle";
 		$umlCreate[] = '@enduml';
 
 		// Compact all lines to one file

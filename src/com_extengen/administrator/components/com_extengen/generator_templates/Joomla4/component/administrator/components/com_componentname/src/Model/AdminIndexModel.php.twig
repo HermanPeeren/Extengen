@@ -58,10 +58,8 @@ class {{ pageName }}Model extends ListModel
 	 * Build an SQL query to load the list data.
 	 *
 	 * @return  QueryInterface
-	 *
-	 * @since   __BUMP_VERSION__
 	 */
-	protected function getListQuery()
+	protected function getListQuery():QueryInterface
 	{
 		// Create a new query object.
 		$db = $this->getDatabase();
@@ -82,10 +80,10 @@ class {{ pageName }}Model extends ListModel
 		$query->select($db->quoteName('{{ reference.refEntityName|lower }}.{{ reference.foreignFieldName|lower }}', '{{ reference.fieldName|lower }}'));
 		$query->join(
 			'LEFT',
-			$db->quoteName('#__{{ componentName|lower}}_{{ reference.refEntityName|lower }}', '{{ reference.refEntityName|lower }}'), $db->quoteName('{{ reference.refEntityName|lower }}.id') . ' = ' . $db->quoteName('{{ entityName|lower }}.{{ reference.columnName|lower }}')
+			$db->quoteName('#__{{ componentName|lower}}_{{ reference.refEntityName|lower }}', '{{ reference.refEntityName|lower }}'),
+				$db->quoteName('{{ reference.refEntityName|lower }}.id') . ' = ' . $db->quoteName('{{ entityName|lower }}.{{ reference.columnName|lower }}')
 		);
-{% endfor %}
-{% endif %}
+{% endfor %}{% endif %}
 
 {% if filters|length > 0 %}
 		// Add filters to query

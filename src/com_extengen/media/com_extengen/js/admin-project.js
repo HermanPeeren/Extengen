@@ -325,7 +325,7 @@
     }
     
     // put the changed ID of a referred to field (from drop down select) in the hidden field
-    function backupChildID(event) {
+    function backupChildConceptID(event) {
         // If the list was still empty: fill it...
         if (event.target.value == 999999) {
             // todo: get the childName and parentName

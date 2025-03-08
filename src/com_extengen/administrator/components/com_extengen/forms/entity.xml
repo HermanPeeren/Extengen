@@ -15,6 +15,13 @@
 		<!--required="true"-->
 
 		<field
+			name="isvalueobject"
+			type="checkbox"
+				label="COM_EXTENGEN_ATTRIBUTE_FIELD_EMBEDDABLE_LABEL"
+			description="COM_EXTENGEN_ATTRIBUTE_FIELD_EMBEDDABLE_DESC"
+	/>
+
+		<field
 			name="field"
 			type="subform"
 			formsource="administrator/components/com_extengen/forms/field.xml"

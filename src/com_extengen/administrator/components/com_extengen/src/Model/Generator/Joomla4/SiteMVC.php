@@ -196,7 +196,7 @@ class SiteMVC extends Generator
 							{
 								$propertyFieldNames[] = $field->field_name;
 							}
-							if (($field->field_type) == "reference")
+							if ((($field->field_type) == "reference") && (!property_exists($field->reference,'ismultiple')))
 							{
 								$fieldName = $field->field_name;
 								$reference = $field->reference;
@@ -210,7 +210,7 @@ class SiteMVC extends Generator
 								// todo: use representation-column if specified
 								// for now only take a default_ref_field of the foreign entity (or id if none is specified)
 
-								$refDisplayFieldName = '';
+								$refDisplayFieldName = 'id';
 								foreach ($refEntity->field as $foreignField)
 								{
 									if ((($foreignField->field_type)=="property") && property_exists($foreignField->property,'default_ref_display'))
@@ -218,12 +218,6 @@ class SiteMVC extends Generator
 										$refDisplayFieldName = $foreignField->field_name;
 										break;
 									}
-								}
-
-								// display the id if no display-field available
-								if (empty($refDisplayFieldName))
-								{
-									$refDisplayFieldName = 'id';
 								}
 
 								$foreign[] = [

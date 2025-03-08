@@ -26,6 +26,7 @@
 		>
 			<option value="detailspage">Detail page</option>
 			<option value="indexpage">List page</option>
+			<option value="subform">Sub-form</option>
 			<option value="dashboard" disabled="true">todo: Dashboard</option>
 			<option value="detailsindex" disabled="true">todo: Detail page with lists embedded</option>
 		</field>
@@ -76,7 +77,7 @@
 				label="Editfields"
 				id="editfields"
 				layout="joomla.form.field.subform.repeatable"
-				showon="page_type:detailspage"
+				showon="page_type:detailspage,subform"
 		/>
 
 		<field

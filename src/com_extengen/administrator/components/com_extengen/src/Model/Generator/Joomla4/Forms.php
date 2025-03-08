@@ -24,7 +24,10 @@ use DOMDocument;
 class Forms extends Generator
 {
 	/**
-	 * Generate the FORM xml-files. One for each details-page. This method is called from the model.
+	 * Generate the FORM xml-files. This method is called from the model.
+	 *    - One xml-file for each details-page.
+	 *    - One xml-file for each subform (+ a new page-type, not in eJSL of JooMDD).
+	 *    - One xml-file for the filters of an index-page.
 	 *
 	 * @return array the log of this concrete generator; logs which files were generated
 	 *
@@ -109,25 +112,26 @@ class Forms extends Generator
 		{
 			$formName = strtolower($page->page_name);
 
-			// Generate the detail page forms
-			if (($page->page_type)=="detailspage")
+			// Generate the detail page forms + subforms
+			if (($page->page_type)=="detailspage" || ($page->page_type)=="subform")
 			{
-				// todo: SimpleXML doesn't format the xml, DOMdocument only puts new tags on new line (with identation),
+
+// todo: SimpleXML doesn't format the xml, DOMdocument only puts new tags on new line (with identation),
 				// todo: but I also want the attributes on new line, vertically stacked. Hence: paste my own xml...
 				// todo: or can I extend DOMdocument to adjust output-format?
 				// for now: stick to DOMdocument...
 
 
 				// Start the form-creation
-				$form = new DOMDocument();
-				$form->encoding = 'utf-8';
-				$form->xmlVersion = '1.0';
+				$form               = new DOMDocument();
+				$form->encoding     = 'utf-8';
+				$form->xmlVersion   = '1.0';
 				$form->formatOutput = true;
-				$root = $form->createElement('form');
+				$root               = $form->createElement('form');
 				$form->appendChild($root);
 
 				// Add a fieldset
-				$fieldset = $form->createElement('fieldset');
+				$fieldset   = $form->createElement('fieldset');
 				$ruleprefix = new \DOMAttr('addruleprefix',
 					$companyNamespace . '\\Component\\' . $this->componentName . '\\Administrator\\Rule');
 				$fieldset->setAttributeNode($ruleprefix);
@@ -140,7 +144,7 @@ class Forms extends Generator
 
 				// Find the entity referenced in that page todo: multiple entities?
 				$entity_id = $page->entity_ref->entity_ref0->reference;
-				$entity = $entityMap[$entity_id];
+				$entity    = $entityMap[$entity_id];
 
 				// Loop over the fields in that entity and map them to HtmlFields
 				foreach ($entity->field as $field)
@@ -160,17 +164,17 @@ class Forms extends Generator
 					// Type
 
 					//    - Property
-					if (($field->field_type)=="property")
+					if (($field->field_type) == "property")
 					{
 						// By default use a standard HtmlType.
 						$property = $field->property;
-						$type = $this->standard2HtmlTypes($property->type);
+						$type     = $this->standard2HtmlTypes($property->type);
 
 						// Is this field in the editFields?
 						foreach ($page->editfields as $editfield)
 						{
 							// The current field is in the editfields
-							if (($editfield->attribute->field_reference)==$field->field_id)
+							if (($editfield->attribute->field_reference) == $field->field_id)
 							{
 								// If in editfields, then use the HtmlType defined there.
 								$type = $editfield->htmltype;
@@ -186,7 +190,7 @@ class Forms extends Generator
 
 											// Default empty choice as first option
 											$option = $form->createElement('option');
-											$key = new \DOMAttr('value', 0);
+											$key    = new \DOMAttr('value', 0);
 											$option->setAttributeNode($key);
 											$option->textContent = '&nbsp;';
 											$formField->appendChild($option);
@@ -195,7 +199,7 @@ class Forms extends Generator
 											foreach ($editfield->parameters as $parameter)
 											{
 												$option = $form->createElement('option');
-												$key = new \DOMAttr('value', $parameter->key);
+												$key    = new \DOMAttr('value', $parameter->key);
 												$option->setAttributeNode($key);
 												$option->textContent = $parameter->value;
 												$formField->appendChild($option);
@@ -225,54 +229,97 @@ class Forms extends Generator
 						$formField->setAttributeNode($type);
 					}
 
-					//    - Reference (n:1)
-					if (($field->field_type)=="reference")
+					//    - Reference
+					if (($field->field_type) == "reference")
 					{
 						$reference = $field->reference;
 
 						$refEntity_id = $reference->reference_id;
-						$refEntity = $entityMap[$refEntity_id];
+						$refEntity    = $entityMap[$refEntity_id];
 
-						// Find the default field to display this reference
-						$refDisplayFieldName = '';
-						foreach ($refEntity->field as $foreignField)
+						// In case of an embeddable: refer to a subform
+						if (property_exists($refEntity, 'isvalueobject'))
 						{
-							if ((($foreignField->field_type)=="property") && property_exists($foreignField->property,'default_ref_display'))
+
+							// Type
+							$type = new \DOMAttr('type', 'subform');
+							$formField->setAttributeNode($type);
+
+							// FormSource
+							$formsource = new \DOMAttr(
+								'formsource',
+								'administrator/components/com_'.strtolower($componentName) .
+								'/forms/' . strtolower($refEntity->entity_name) . '.xml'
+							);
+							$formField->setAttributeNode($formsource);
+
+							// Attributes
+							// Is this field in the editFields?
+							foreach ($page->editfields as $editfield)
 							{
-								$refDisplayFieldName = $foreignField->field_name;
-								break;
+								// The current field is in the editfields
+								if (($editfield->attribute->field_reference) == $field->field_id)
+								{
+									// If in editfields, then use the HtmlType defined there.
+									// $type = $editfield->htmltype; // can now only be subform
+
+									// Add parameters of editfield, if not empty
+									if (!empty($editfield->parameters))
+									{
+										// Add the parameters as attributes to the formField
+										foreach ($editfield->parameters as $parameter)
+										{
+											$key_value = new \DOMAttr($parameter->key, $parameter->value);
+											$formField->setAttributeNode($key_value);
+										}
+									}
+								}
 							}
 						}
-
-						// display the id if no display-field available
-						if (empty($refDisplayFieldName))
+						else
 						{
-							$refDisplayFieldName = 'id';
+							// (n:1)
+							// Find the default field to display this reference
+							$refDisplayFieldName = '';
+							foreach ($refEntity->field as $foreignField)
+							{
+								if ((($foreignField->field_type) == "property") && property_exists($foreignField->property, 'default_ref_display'))
+								{
+									$refDisplayFieldName = $foreignField->field_name;
+									break;
+								}
+							}
+
+							// display the id if no display-field available
+							if (empty($refDisplayFieldName))
+							{
+								$refDisplayFieldName = 'id';
+							}
+
+							// Make the custom sql to get the values for the dropdown-list todo $db->quoteName i.s.o. directly backticks
+							$table = '#__' . strtolower($componentName) . "_" . strtolower($refEntity->entity_name);
+							$query = "SELECT id, `" . $refDisplayFieldName . "` FROM `" . $table . "`";
+
+							// Type
+							$type = new \DOMAttr('type', 'sql');
+							$formField->setAttributeNode($type);
+
+							// Query
+							$query = new \DOMAttr('query', $query);
+							$formField->setAttributeNode($query);
+
+							// Empty choice on top of options
+							$header = new \DOMAttr('header', '&nbsp;');
+							$formField->setAttributeNode($header);
+
+							// Key-field
+							$keyField = new \DOMAttr('key_field', 'id');
+							$formField->setAttributeNode($keyField);
+
+							// Value-field
+							$valueField = new \DOMAttr('value_field', $refDisplayFieldName);
+							$formField->setAttributeNode($valueField);
 						}
-
-						// Make the custom sql to get the values for the dropdown-list todo $db->quoteName i.s.o. directly backticks
-						$table = '#__' . strtolower($componentName) . "_" . strtolower($refEntity->entity_name);
-						$query="SELECT id, `" . $refDisplayFieldName . "` FROM `" . $table . "`";
-
-						// Type
-						$type = new \DOMAttr('type', 'sql');
-						$formField->setAttributeNode($type);
-
-						// Query
-						$query = new \DOMAttr('query', $query);
-						$formField->setAttributeNode($query);
-
-						// Empty choice on top of options
-						$header = new \DOMAttr('header', '&nbsp;');
-						$formField->setAttributeNode($header);
-
-						// Key-field
-						$keyField = new \DOMAttr('key_field', 'id');
-						$formField->setAttributeNode($keyField);
-
-						// Value-field
-						$valueField = new \DOMAttr('value_field', $refDisplayFieldName);
-						$formField->setAttributeNode($valueField);
 					}
 
 					// Label language-string: COM_componentname_formName_FIELD_fieldname_LABEL
@@ -284,28 +331,32 @@ class Forms extends Generator
 					// Description language-string: COM_componentname_formName_FIELD_fieldname_DESC
 					$description = new \DOMAttr('description',
 						$addLanguageString($componentName, $formName, $field->field_name, "pageName_FIELD_fieldName_DESC", 'Input %fieldName% here.'
-							));
+						));
 					$formField->setAttributeNode($description);
 
 					$fieldset->appendChild($formField);
 				}
 
-				// HIDDEN field: id
-				$formField = $form->createElement('field');
+				if (($page->page_type)!="subform")
+				{
+					// HIDDEN field: id
+					$formField = $form->createElement('field');
 
-				// Name = id
-				$name = new \DOMAttr('name', 'id');
-				$formField->setAttributeNode($name);
+					// Name = id
+					$name = new \DOMAttr('name', 'id');
+					$formField->setAttributeNode($name);
 
-				// Type = hidden
-				$type = new \DOMAttr('type', 'hidden');
-				$formField->setAttributeNode($type);
+					// Type = hidden
+					$type = new \DOMAttr('type', 'hidden');
+					$formField->setAttributeNode($type);
 
-				$fieldset->appendChild($formField);
+					$fieldset->appendChild($formField);
+				}
 
 				// Write to file
 				$form->save($formDirectory . $formName . '.xml');
 				$logAppend([$formName . '.xml generated']);
+
 			}
 
 
