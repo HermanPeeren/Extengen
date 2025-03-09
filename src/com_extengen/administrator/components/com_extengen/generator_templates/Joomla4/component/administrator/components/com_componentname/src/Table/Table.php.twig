@@ -1,14 +1,13 @@
 <?php
 /**
  * @package     {{ projectName }}
- * @subpackage  {{ componentName }}
+ * @subpackage  com_{{ componentName|lower }}
  * @version     {{ version }}
  *
  *
  * @copyright   {{ copyright }}
  * @license     {{ license }}
  */
-
 
 namespace {{ companyNamepace }}\Component\{{ componentName }}\Administrator\Table;
 
@@ -28,7 +27,7 @@ use Joomla\Database\ParameterType;
  */
 class {{ entityName }}Table extends Table implements TaggableTableInterface
 {
-	use TaggableTableTrait;
+	use TaggableTableTrait; {# todo: only add this trait if the entity can be tagged #}
 
 	/**
 	 * Constructor
@@ -41,7 +40,27 @@ class {{ entityName }}Table extends Table implements TaggableTableInterface
 
 		parent::__construct('#__{{componentName|lower}}_{{entityName|lower}}', 'id', $db);
 	}
-{{ getFK|raw }}
+
+
+	/**
+	* Method to bind the actor and events data.
+	*
+	* @param   array  $array   The data to bind.
+	* @param   mixed  $ignore  An array or space separated list of fields to ignore.
+	*
+	* @return  boolean  True on success, false on failure.
+	*/
+	public function bind($array, $ignore = ''):bool
+	{
+	// Attempt to bind the data.
+	$return = parent::bind($array, $ignore);
+
+{{ m2m_bind|raw }}{# bind the ids of the related entities #}
+
+	return $return;
+	}
+
+{{ getFK|raw }}{# make a setter for the related entities; will be placed in the model, not in the table anymore. #}
 
 	/**
 	 * Generate a valid alias from title / date.
@@ -114,7 +133,7 @@ class {{ entityName }}Table extends Table implements TaggableTableInterface
 	 *
 	 * @param   boolean  $updateNulls  True to update fields even if they are null.
 	 *
-	 * @return  boolean  True on success, false on failure.
+	 * @return  boolean                True on success, false on failure.
 	 */
 	public function store($updateNulls = true)
 	{
@@ -124,6 +143,60 @@ class {{ entityName }}Table extends Table implements TaggableTableInterface
 			$this->params = (string) $registry;
 		}
 
-		return parent::store($updateNulls);
+		// Get the table key and key value.
+		$k   = $this->_tbl_key;
+		$key = $this->$k;
+
+{{ m2m_localstore|raw }}{# Make a temporary local copy of the ids of the related entities  #}
+
+		// Insert or update the object based on presence of a key value.
+		if ($key) {
+			// Already have a table key, update the row.
+			$this->_db->updateObject($this->_tbl, $this, $this->_tbl_key, $updateNulls);
+		} else {
+			// Don't have a table key, insert the row.
+			$this->_db->insertObject($this->_tbl, $this, $this->_tbl_key);
+		}
+
+{{ m2m_relatedstore|raw }}{# Update related entities from a junction table. #}
+
+		return true;
 	}
+
+
+
+	/**
+	 * Method to delete a {{entityName|lower}} (and mappings of that {{entityName|lower}} to related entities) from the database.
+	 *
+	 * @param   integer  ${{entityName|lower}}Id  An optional {{entityName|lower}} id.
+	 *
+	 * @return  boolean  True on success, false on failure.
+	 *
+	 * @see     \Joomla\CMS\Table\User handling of user groups
+	 */
+	public function delete(${{entityName|lower}}Id = null):bool
+	{
+		// Set the primary key to delete.
+		$k = $this->_tbl_key;
+
+		if (${{entityName|lower}}Id) {
+
+			$this->$k = (int) ${{entityName|lower}}Id;
+		}
+
+		$key = (int) $this->$k;
+
+{{ m2m_delete|raw }}{# Delete the entity from the junction tables. #}
+
+		// Delete the {{entityName|lower}}.
+		$query->clear()
+			->delete($this->_db->quoteName($this->_tbl))
+			->where($this->_db->quoteName($this->_tbl_key) . ' = :key')
+			->bind(':key', $key, ParameterType::INTEGER);
+		$this->_db->setQuery($query);
+		$this->_db->execute();
+
+		return true;
+	}
+
 }

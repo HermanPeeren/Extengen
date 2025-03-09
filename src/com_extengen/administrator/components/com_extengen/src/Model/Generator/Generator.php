@@ -113,6 +113,7 @@ abstract class Generator
 	 * @param   string  $templateFileName   Filename of the template
 	 * @param   string  $generatedFilePath  Path in the generated-files-directory to the generated file (ending with /)
 	 * @param   string  $generatedFileName  Filename of the generated file
+	 * @param   array   $templateVariables  Array of variables to be used in template
 	 *
 	 * @return array $log a log of what file has been created
 	 *
@@ -141,25 +142,12 @@ abstract class Generator
 		// Path to administrator-side of com_extengen
 		$extengenAdminPath = $this->extengenAdminPath;
 
-		// Path to generator-templates of a specific output type
-		$generatorTemplatePath = $extengenAdminPath . 'generator_templates/'. $outputType . '/';
-
-		// Path to template
-		$templatePath = $generatorTemplatePath . $templateFilePath;
-
 		// Path to generated files of component todo: more general to package and to other modules or plugins...
 		$generatedFilesPathComponent = $extengenAdminPath . '/generated/' . $componentName .'/'
 			. $outputType . '/com_'.strtolower($componentName) . '/';
 
-		// Get Twig to render the template todo: do you have to instantiate a new twig or can you change the templatePath?
-		$loader = new FilesystemLoader($templatePath);
-		$twig = new Environment($loader, ['cache' => $this->twigCache]);
-
-		// Add extension to Twig to render the language strings and put them in files
-		$twig->addExtension($this->languageStringUtil);
-
 		// Render the template
-		$generatedContent= $twig->render($templateFileName, $templateVariables);
+		$generatedContent= $this->renderTemplateFragment($templateFilePath, $templateFileName, $templateVariables);
 
 		// Create the directory for the generated file if it doesn't exist
 		$generatedDirectory = $generatedFilesPathComponent . $generatedFilePath;
@@ -174,6 +162,52 @@ abstract class Generator
 		$log[] = $generatedFileName . ' generated';
 
 		return $log;
+	}
+
+	/**
+	 * Render template fragment, using template variables.
+	 * To be called from the concrete generator generate()-method when a sub-template must be rendered.
+	 * And is called from $this->generateFileWithTemplate()
+	 *
+	 * @param   string  $templateFilePath   Path in the template-directory to the template file  (ending with /)
+	 * @param   string  $templateFileName   Filename of the template
+	 *
+	 * @return string The generated (sub-)template
+	 *
+	 * @throws \Twig\Error\RuntimeError
+	 * @throws \Twig\Error\SyntaxError
+	 * @throws \Twig\Error\LoaderError
+	 */
+	protected function renderTemplateFragment
+	(
+		string $templateFilePath,
+		string $templateFileName,
+		array  $templateVariables = []
+	) : string
+	{
+		// What kind of output do you want to generate? For instance: 'Joomla4'
+		$outputType = $this->outputType;
+
+		// Path to administrator-side of com_extengen
+		$extengenAdminPath = $this->extengenAdminPath;
+
+		// Path to generator-templates of a specific output type
+		$generatorTemplatePath = $extengenAdminPath . 'generator_templates/'. $outputType . '/';
+
+		// Path to template
+		$templatePath = $generatorTemplatePath . $templateFilePath;
+
+		// Get Twig to render the template todo: do you have to instantiate a new twig or can you change the templatePath?
+		$loader = new FilesystemLoader($templatePath);
+		$twig = new Environment($loader, ['cache' => $this->twigCache]);
+
+		// Add extension to Twig to render the language strings and put them in files
+		$twig->addExtension($this->languageStringUtil);
+
+		// Render the template
+		$generatedContent= $twig->render($templateFileName, $templateVariables);
+
+		return $generatedContent;
 	}
 
 }

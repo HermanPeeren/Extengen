@@ -1,0 +1,9 @@
+
+		// Delete the {{entityName|lower}} from the {{pivotTable}} junction table.
+		$query = $this->_db->getQuery(true)
+			->delete($this->_db->quoteName('#__{{componentName|lower}}_{{pivotTable}}'))
+			->where($this->_db->quoteName('{{entityName|lower}}_id') . ' = :key')
+			->bind(':key', $key, ParameterType::INTEGER);
+		$this->_db->setQuery($query);
+		$this->_db->execute();
+

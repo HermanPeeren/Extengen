@@ -78,12 +78,15 @@ class AdminEntities extends Generator
 		$templateVariables['copyright'] = $manifest->copyright;
 		$templateVariables['license'] = $manifest->license;
 		$templateVariables['companyNamepace'] = $manifest->company_namespace;
+		$templateVariables['version'] = $manifest->version;
 
 		// Loop over the entities to make a map of entity_id to name and from entity_id to entity
 		$entityNameMap = [];
+		$entityMap     = [];
 		foreach ($project->datamodel as $entity)
 		{
 			$entityNameMap[$entity->entity_id] = ucfirst($entity->entity_name);
+			$entityMap[$entity->entity_id]     = $entity;
 		}
 
 		// Loop over the entities to create the tables in the sql-file and the Table-files for Joomla
@@ -92,76 +95,115 @@ class AdminEntities extends Generator
 		$junctionTables = [];
 		foreach ($project->datamodel as $entity)
 		{
-			$entityName = ucfirst($entity->entity_name);
-			$templateVariables['entityName'] = $entityName;
-			$templateVariables['getFK'] = '';
-
-			// --- CREATE TABLE sql statement for this entity and write to sql-file ---
-			// N.B.: I now name the table singular. It might be nicer to do it in plural (but inflector only works for English names)
-			// Maybe stick to English names for the entities. But for now: use entityName for the tableName
-			$tableName = '#__' . strtolower($componentName) . "_" . strtolower($entityName);
-			$tableRows = [];
-			$tableRows[] = "CREATE TABLE IF NOT EXISTS `$tableName` (";
-
-			// Add a Drop Table to the uninstall sql file
-			$sqlDropTable[] = "DROP TABLE IF EXISTS `$tableName`;";
-
-			$attributeRows = [];
-			// By default all tables have an auto increment id.
-			$attributeRows[] = "`id` bigint UNSIGNED NOT NULL AUTO_INCREMENT";
-
-			// Add fields
-			foreach ($entity->field as $field)
+			// Only Entities have their own table, not Embeddables / Value Objects.
+			if (!property_exists($entity, 'isvalueobject'))
 			{
-				switch($field->field_type)
+				$entityName = ucfirst($entity->entity_name);
+				$templateVariables['entityName'] = $entityName;
+				$templateVariables['getFK'] = '';
+				$templateVariables['m2m_bind'] = '';
+				$templateVariables['m2m_delete'] = '';
+				$templateVariables['m2m_localstore'] = '';
+				$templateVariables['m2m_relatedstore'] = '';
+
+				// --- CREATE TABLE sql statement for this entity and write to sql-file ---
+				// N.B.: I now name the table singular. It might be nicer to do it in plural (but inflector only works for English names)
+				// Maybe stick to English names for the entities. But for now: use entityName for the tableName
+				$tableName = '#__' . strtolower($componentName) . "_" . strtolower($entityName);
+				$tableRows = [];
+				$tableRows[] = "CREATE TABLE IF NOT EXISTS `$tableName` (";
+
+				// Add a Drop Table to the uninstall sql file
+				$sqlDropTable[] = "DROP TABLE IF EXISTS `$tableName`;";
+
+				$attributeRows = [];
+				// By default all tables have an auto increment id.
+				$attributeRows[] = "`id` bigint UNSIGNED NOT NULL AUTO_INCREMENT";
+
+				// Add fields
+				foreach ($entity->field as $field)
 				{
-					case "property":
-						$attributeRows[]= '`'
-							. $field->field_name . '` '
-							. $this->standard2SqlTypes($field->property->type);
-						break;
-
-					case "reference":
-						if (property_exists($field->reference, 'ismultiple'))
-						{
-							$fromEntityName = strtolower($entityName);
-							$toEntityName   = strtolower($entityNameMap[$field->reference->reference]);
-
-							// For references to multiple entities: create the junction table for this n:n-relation
-							$junctionTables[] =
-								[
-									'fromEntityName' => $fromEntityName,
-									'toEntityName'   => $toEntityName,
-								];
-							$templateVariables['getFK'] .= $this->getFK($fromEntityName, $field->field_name, $toEntityName);
-						}
-						else
-						{
-							// For references to a single entity: add the foreign key
+					switch($field->field_type)
+					{
+						case "property":
 							$attributeRows[]= '`'
-								. strtolower($entityNameMap[$field->reference->reference]) . '_id` '
-								. "bigint(20) UNSIGNED";
-						}
-						break;
+								. $field->field_name . '` '
+								. $this->standard2SqlTypes($field->property->type);
+							break;
+
+						case "reference":
+							$refEntity = $entityMap[$field->reference->reference];
+
+							// For references to Embeddables: add a db-text-field with that reference-name
+							if (property_exists($refEntity, 'isvalueobject'))
+							{
+								$attributeRows[]= '`' . strtolower($field->field_name) . '` ' . "TEXT";
+							}
+							else
+							{
+								if (property_exists($field->reference, 'ismultiple'))
+								{
+									// Many-to-many relation
+									$fromEntityName = strtolower($entityName);
+									$toEntityName   = strtolower($entityNameMap[$field->reference->reference]);
+
+									$templateVariables['relatedEntityName'] = ucfirst($entityNameMap[$field->reference->reference]);
+
+									// For references to multiple entities: create the junction table for this n:n-relation
+									$junctionTables[] =
+										[
+											'fromEntityName' => $fromEntityName,
+											'toEntityName'   => $toEntityName,
+										];
+									// todo: skip the getter in the next line; will be in the model (via a template fragment)
+									//$templateVariables['getFK'] .= $this->getFK($fromEntityName, $field->field_name, $toEntityName);
+
+									$templateVariables['pivotTable'] =
+										$fromEntityName > $toEntityName ? $toEntityName . '_' . $fromEntityName : $fromEntityName . '_' . $toEntityName;
+
+									$subTemplates = ['m2m_bind', 'm2m_delete', 'm2m_localstore', 'm2m_relatedstore'];
+									foreach ($subTemplates as $subTemplate)
+									{
+										$templateVariables[$subTemplate] .= $this->renderTemplateFragment
+										(
+											$templateFilePath . 'fragments/',
+											$subTemplate . '.php.twig',
+											$templateVariables
+										);
+									}
+									// todo: also add this to the JTable of the other side!
+								}
+								else
+								{
+									// For references to a single entity (many-to-one relation): add the foreign key
+									$attributeRows[]= '`'
+										. strtolower($entityNameMap[$field->reference->reference]) . '_id` '
+										. "bigint(20) UNSIGNED";
+								}
+							}
+
+							break;
+					}
 				}
+
+				// The id also is the primary key.
+				$attributeRows[] = "PRIMARY KEY (`id`)";
+
+				// Add the attributes to the table
+				$tableRows[] =  implode(",\n", $attributeRows);
+				$tableRows[] = ")  ENGINE=InnoDB DEFAULT COLLATE utf8mb4_unicode_ci;";
+
+				// Generate the Create Table sql
+				$sqlCreateTable[] = implode("\n", $tableRows);
+				$logAppend(['generated CREATE TABLE sql statement for ' . $tableName . ' in sql-file']);
+
+				// --- create Joomla\CMS\Table file for this entity ---
+				$templateFileName = 'Table.php.twig';
+				$generatedFileName = $entityName . 'Table.php';
+
+				$logAppend($this->generateFileWithTemplate($templateFilePath, $templateFileName, $generatedTablesPath, $generatedFileName, $templateVariables));
 			}
 
-			// The id also is the primary key.
-			$attributeRows[] = "PRIMARY KEY (`id`)";
-
-			// Add the attributes to the table
-			$tableRows[] =  implode(",\n", $attributeRows);
-			$tableRows[] = ")  ENGINE=InnoDB DEFAULT COLLATE utf8mb4_unicode_ci;";
-
-			// Generate the Create Table sql
-			$sqlCreateTable[] = implode("\n", $tableRows);
-			$logAppend(['generated CREATE TABLE sql statement for ' . $tableName . ' in sql-file']);
-
-			// --- create Joomla\CMS\Table file for this entity ---
-			$templateFileName = 'Table.php.twig';
-			$generatedFileName = $entityName . 'Table.php';
-
-			$logAppend($this->generateFileWithTemplate($templateFilePath, $templateFileName, $generatedTablesPath, $generatedFileName, $templateVariables));
 		}
 
 		// Junction tables
@@ -330,6 +372,27 @@ class AdminEntities extends Generator
 		$otherTable     = '#__' . $componentName . '_' . $toEntityName;
 
 		$getFK = [];
+
+		// Leave out a get of the other entity: will do that in the model
+		/*$getFK[] = '    ';
+		$getFK[] = '    public function get' . ucfirst($fieldName) . '()';
+		$getFK[] = '    {';
+		$getFK[] = '        $db    = $this->getDbo();';
+		$getFK[] = '        $query = $db->getQuery(true)';
+		$getFK[] = '            ->select($db->quoteName(\''. $toEntityName . '\') . \'.*\')';
+		$getFK[] = '            ->from($db->quoteName(\'' . $junctionTable . '\', \'junction\'))';
+		$getFK[] = '            ->join(\'LEFT\', 
+								    $db->quoteName(\'' . $otherTable . '\', \''. $toEntityName . '\'), 
+									$db->quoteName(\'junction.'. $toEntityName . '_id\') . \' = \' . $db->quoteName(\''. $toEntityName . '.id\'))';
+		$getFK[] = '            ->where($db->quoteName(\''. $fromEntityName . '_id\') . \' = :thisId\')';
+		$getFK[] = '            ->order($db->quoteName(\'id\') . \' ASC\')';
+		$getFK[] = '            ->bind(\':thisId\', $this->id, ParameterType::INTEGER);';
+		$getFK[] = '        ';
+		$getFK[] = '        $' . $fieldName . ' = $db->setQuery($query)->loadAssocList() ?: [];';
+		$getFK[] = '        ';
+		$getFK[] = '        return $' . $fieldName . ';';
+		$getFK[] = '    }';*/
+
 
 		$getFK[] = '    ';
 		$getFK[] = '    public function get' . ucfirst($fieldName) . '()';

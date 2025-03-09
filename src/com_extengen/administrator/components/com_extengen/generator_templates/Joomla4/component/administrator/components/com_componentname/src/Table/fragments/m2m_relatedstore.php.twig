@@ -1,0 +1,73 @@
+
+		// Reset {{relatedEntityName|lower}}Ids to the local object.
+		$this->{{relatedEntityName|lower}}_ids = ${{relatedEntityName|lower}}Ids;
+
+		$query = $this->_db->getQuery(true);
+
+		// Store the {{relatedEntityName|lower}}Id data if the {{entityName|lower}} data was saved.
+		if (\is_array($this->{{relatedEntityName|lower}}_ids) && \count($this->{{relatedEntityName|lower}}_ids)) {
+			${{entityName|lower}}Id = (int) $this->id;
+
+			// Grab all {{relatedEntityName|lower}}Ids for the {{entityName|lower}}, as is stored in the junction table
+			$query->clear()
+				->select($this->_db->quoteName('{{relatedEntityName|lower}}_id'))
+				->from($this->_db->quoteName('#__{{componentName|lower}}_{{pivotTable}}'))
+				->where($this->_db->quoteName('{{entityName|lower}}_id') . ' = :{{entityName|lower}}id')
+				->order($this->_db->quoteName('{{relatedEntityName|lower}}_id') . ' ASC')
+				->bind(':{{entityName|lower}}id', ${{entityName|lower}}Id, ParameterType::INTEGER);
+
+			$this->_db->setQuery($query);
+			${{relatedEntityName|lower}}IdsInDb = $this->_db->loadColumn();
+
+			// Loop through them and check if database contains something $this->{{relatedEntityName|lower}}Ids does not
+			if (\count(${{relatedEntityName|lower}}IdsInDb)) {
+				$delete{{relatedEntityName}}Ids = [];
+
+				foreach (${{relatedEntityName|lower}}IdsInDb as $stored{{relatedEntityName}}Id) {
+					if (\in_array($stored{{relatedEntityName}}Id, $this->{{relatedEntityName|lower}}_ids)) {
+						// It already exists, no action required, so remove it from ${{relatedEntityName|lower}}Ids
+						${{relatedEntityName|lower}}Ids = array_diff(${{relatedEntityName|lower}}Ids,[$stored{{relatedEntityName}}Id]);
+					} else {
+						$delete{{relatedEntityName}}Ids[] = (int) $stored{{relatedEntityName}}Id;
+					}
+				}
+
+				if (\count($delete{{relatedEntityName}}Ids)) {
+					$query->clear()
+						->delete($this->_db->quoteName('#__{{componentName|lower}}_{{pivotTable}}'))
+						->where($this->_db->quoteName('{{entityName|lower}}_id') . ' = :{{entityName|lower}}Id')
+						->whereIn($this->_db->quoteName('{{relatedEntityName|lower}}_id'), $delete{{relatedEntityName}}Ids)
+						->bind(':{{entityName|lower}}Id', ${{entityName|lower}}Id, ParameterType::INTEGER);
+
+					$this->_db->setQuery($query);
+					$this->_db->execute();
+				}
+
+				unset($delete{{relatedEntityName}}Ids);
+			}
+
+			// If there is anything left in ${{relatedEntityName|lower}}Ids it needs to be inserted
+			if (\count(${{relatedEntityName|lower}}Ids)) {
+				// Set the new actor {{relatedEntityName|lower}}Ids in the db junction table.
+				$query->clear()
+					->insert($this->_db->quoteName('#__{{componentName|lower}}_{{pivotTable}}'))
+					->columns([$this->_db->quoteName('{{entityName|lower}}_id'), $this->_db->quoteName('{{relatedEntityName|lower}}_id')]);
+
+				foreach (${{relatedEntityName|lower}}Ids as ${{relatedEntityName|lower}}Id) {
+					$query->values(
+						implode(
+							',',
+							$query->bindArray(
+								[$this->id , ${{relatedEntityName|lower}}Id],
+								[ParameterType::INTEGER, ParameterType::INTEGER]
+							)
+						)
+					);
+				}
+
+				$this->_db->setQuery($query);
+				$this->_db->execute();
+			}
+
+			unset(${{relatedEntityName|lower}}Ids);
+		}
