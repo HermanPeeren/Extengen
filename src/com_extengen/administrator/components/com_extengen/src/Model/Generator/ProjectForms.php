@@ -1,75 +1,366 @@
 <?php
 /**
  * @package     Extension Generator
- * @subpackage  Joomla4 Generator
+ * @subpackage  Joomla Generator
  * @version     0.8.0
  *
- * @copyright   Copyright (C) Yepr, Herman Peeren, 2023. All rights reserved.
+ * @copyright   Copyright (C) Yepr, Herman Peeren, 2025. All rights reserved.
  * @license     GNU General Public License version 3 or later; see LICENSE.txt
  */
 
-namespace Yepr\Component\Extengen\Administrator\Model\Generator\Joomla4;
+namespace Yepr\Component\Extengen\Administrator\Model\Generator;
 
-use Yepr\Component\Extengen\Administrator\Model\Generator\Generator;
+use	Yepr\Component\Extengen\Administrator\Model\LanguageStringUtil;
 use DOMDocument;
 
 /**
- * A concrete generator to create the form files of  J4 pages
- * generated files: form xml-files todo: also filters
+ * A concrete generator to create the project-form files
+ * generated files: form xml-files
  *
- * @package     Yepr\Component\Extengen\Administrator\Model\Generator\Joomla4
+ * @package     Yepr\Component\Extengen\Administrator\Model\Generator\
  *
  * @since       version 1.0
  */
-class Forms extends Generator
+class ProjectForms
 {
-	/** TODO: not necessary to extend from Abstract Generator(?) as we don't use Twig here. See ProjectForms generator.
-	 * Generate the FORM xml-files. This method is called from the model.
-	 *    - One xml-file for each details-page.
-	 *    - One xml-file for each subform (+ a new page-type, not in eJSL of JooMDD).
-	 *    - One xml-file for the filters of an index-page.
+
+
+	/**
+	 * The Abstract Syntax Tree (AST) = the form-data of the project as 1 object with hierarchical properties
+	 *
+	 * @var object
+	 */
+	protected object $AST;
+
+	/**
+	 * The Language String Utilities to make language strings and put them in the language files.
+	 * Not in use for projectforms at the moment
+	 * (because the generated language strings should have to be added to the existing ones of this component).
+	 *
+	 * @var LanguageStringUtil
+	 */
+	protected LanguageStringUtil $languageStringUtil;
+
+	/**
+	 * The path to the administrator-side of com_extengen
+	 *
+	 * @var string
+	 */
+	protected string $extengenAdminPath;
+
+	/**
+	 * The name of these project forms
+	 *
+	 * @var string
+	 */
+	protected string $projectFormName;
+
+	/**
+	 * The namespace of these project forms (for Rules and Fields)
+	 *
+	 * @var string
+	 */
+	protected string $projectFormNamespace;
+
+	/**
+	 * Generator Class Constructor
+	 *
+	 * @param   string        $projectFormName    The name of the projectform
+	 * @param   object        $AST                The Abstract Syntax Tree (AST) = the form-data of the project
+	 * @param   object        $languageStringUtil The languagestring utility
+	 */
+	public function __construct(string $projectFormName, object $AST, LanguageStringUtil $languageStringUtil)
+	{
+		$this->projectFormName = $projectFormName;
+		$this->AST = $AST;
+		$this->languageStringUtil = $languageStringUtil;
+
+		// General paths to admin part of extengen-component and Twig-cache
+		$this->extengenAdminPath = JPATH_ROOT . '/administrator/components/com_extengen/';
+
+		// The project form namespace
+		$this->projectFormNamespace = 'Yepr\\Component\\Extengen\\Administrator\\Projectform\\';
+	}
+
+	/**
+	 * Generate the PROJECTFORM xml-files. This method is called from the model.
+	 *    - One xml-file for each concept.
 	 *
 	 * @return array the log of this concrete generator; logs which files were generated
-	 *
-	 * @since version 1.0
 	 */
 	public function generate(): array
 	{
 		// Initialise variables
-		$project = $this->AST;
-		$manifest = $project->extensions->component->manifest;
-		$companyNamespace = $manifest->company_namespace;
+		$projectForm = $this->AST;
 
-		// Get the utility to manipulate the language strings
-		$languageStringUtil = $this->languageStringUtil;
-		$addLanguageString = function(
-			string $componentName,
-			string $pageName = '',
-			string $fieldName = '',
-			string $templateValue = '',
-			string $english = '',
-			string $applicationType = "Administrator",
-			bool   $sys = false
-		) use($languageStringUtil)
+		// The path where the projectforms are made
+		$generatedProjectFormFilesPath = $this->extengenAdminPath . 'forms/ProjectForms/' . $this->projectFormName .'/';
+
+		// Create the directory for the projectForm files if it doen't exist
+		if (!file_exists($generatedProjectFormFilesPath)) {
+			mkdir($generatedProjectFormFilesPath, 0755, true);
+		}
+
+		// Get the concepts + conceptInterfaces and the root-concept (assume 1 root for now)
+		// Make a key-concept-map + key-conceptInterface-map
+		$keyConceptMap = [];
+		$keyConceptInterfaceMap = [];
+		$root = new \stdClass();
+		foreach ($projectForm->languageEntities as $languageEntity)
 		{
-			return $languageStringUtil->addLanguageString(
-				componentName: $componentName,
-				pageName: $pageName,
-				fieldName: $fieldName,
-				templateValue: $templateValue,
-				english: $english,
-				applicationType: $applicationType,
-				sys: $sys
-			);
+			if ($languageEntity->languageEntity_type=='Classifier')
+			{
+				// Concepts
+				if ($languageEntity->classifier->classifier_type=='Concept')
+				{
+					$keyConceptMap[$languageEntity->key] = $languageEntity;// ? alleen de naam nodig???
+
+					// is this the root? Property partition only exists if it == 1.
+					// todo: multiple root nodes; we now only assume 1 (= the last one that is encountered in the concepts)
+					if (property_exists($languageEntity->classifier->concept,'partition'))
+					{
+						$root = $languageEntity;
+					}
+				}
+
+				// ConceptInterfaces
+				if ($languageEntity->classifier->classifier_type=='ConceptInterface')
+				{
+					$keyConceptInterfaceMap[$languageEntity->key] = $languageEntity;// ? alleen de naam nodig???
+				}
+
+			}
+
+		}
+
+		// A type of a link can refer to any Classifier, so make a combined map
+		// todo: add Annotations
+		$keyClassifierMap = array_merge($keyConceptMap, $keyConceptInterfaceMap);
+
+		$log = [];
+		$logAppend = function ($append) use(&$log) {$log = array_merge($log, $append);};
+
+
+		// Gather the extensions and implementations of concept-interfaces and concepts.
+		$umlRef = [];
+
+		// Initiate the uml-file.
+		$umlCreate = [];
+		$umlCreate[] = "@startuml";
+
+		// Loop over all CONCEPTINTERFACES TODO: extract the repetition with "concepts"
+		foreach ($keyConceptInterfaceMap as $languageEntity)
+		{
+
+			// Add fields to the fieldset
+
+			// Get extended conceptInterface and add it as the parent
+			$extends = $languageEntity->classifier->conceptInterface->extends;
+			if (!empty($extends))
+			{
+				
+
+				$umlRef[] =  $keyConceptInterfaceMap[$extends]->name . ' <|-- ' . $languageEntity->name;
+
+
+
+			}
+
+			foreach ($languageEntity->classifier->feature as $feature)
+			{
+				// Get other properties of this conceptInterface, if any
+				if ($feature->feature_type=='Property')
+				{
+					$umlCreate[] = $feature->name; // todo: type
+				}
+				// Get children and references
+				if ($feature->feature_type=='Link')
+				{
+					$featureName = ":" . $feature->name;
+
+					if (( $feature->is_optional) && ( $feature->link->is_multiple)) $toCardinality = ' "0..*" ';
+					if (( $feature->is_optional) && (!$feature->link->is_multiple)) $toCardinality = ' "0..1" ';
+					if ((!$feature->is_optional) && ( $feature->link->is_multiple)) $toCardinality = ' "1..*" ';
+					if ((!$feature->is_optional) && (!$feature->link->is_multiple)) $toCardinality = ' "1" ';
+
+					$fromCardinality = ''; // we don't know anything of the cardinality on the "from-side"
+
+					if ($feature->link->link_type=='Containment')
+					{
+						if (!empty($feature->link->type))
+							$umlRef[] =  $languageEntity->name . $fromCardinality . ' *-- ' . $toCardinality
+								. $keyClassifierMap[$feature->link->type]->name . $featureName;
+					}
+					if ($feature->link->link_type=='Reference')
+					{
+						if (!empty($feature->link->type))
+							$umlRef[] =  $languageEntity->name . $fromCardinality . ' --> '  . $toCardinality
+								. $keyClassifierMap[$feature->link->type]->name . $featureName;
+					}
+				}
+			}
+
+			$umlCreate[] = "}
+				
+				";
+
+		}
+
+		// Loop over all CONCEPTS
+		foreach ($keyConceptMap as $languageEntity)
+		{
+			// Add fields to the fieldset
+
+
+
+
+
+			$umlCreate[]  = '			
+				object ' . $languageEntity->name . ' {
+	  			';
+
+			// Get extended concept and add it as the parent
+			$extends = $languageEntity->classifier->concept->extends;
+			if (!empty($extends))
+			{
+
+				$umlRef[] =  $keyConceptMap[$extends]->name . ' <|-- ' . $languageEntity->name;
+
+			}
+
+			// Get implemented conceptInterfaces and add an implements-line to them
+			$implements = $languageEntity->classifier->concept->implements;
+			if (!empty($implements))
+			{
+				foreach ($implements as $interface)
+				{
+					$umlRef[] =  $keyConceptInterfaceMap[$interface->conceptInterface]->name . ' <|.. ' . $languageEntity->name;
+				}
+
+			}
+
+			foreach ($languageEntity->classifier->feature as $feature)
+			{
+				// Get other properties of this concept, if any
+				if ($feature->feature_type=='Property')
+				{
+					$umlCreate[] = $feature->name; // todo: type
+				}
+				// Get children and references
+				if ($feature->feature_type=='Link')
+				{
+					$featureName = ":" . $feature->name;
+
+					// because $feature->is_optional and $feature->link->is_multiple are checkboxes,
+					// those properties don't exist if the checkbox was empty.
+					if (!property_exists($feature, 'is_optional')) $feature->is_optional = false;
+					if (!property_exists($feature->link, 'is_multiple')) $feature->link->is_multiple = false;
+
+					if (( $feature->is_optional) && ( $feature->link->is_multiple)) $toCardinality = ' "0..*" ';
+					if (( $feature->is_optional) && (!$feature->link->is_multiple)) $toCardinality = ' "0..1" ';
+					if ((!$feature->is_optional) && ( $feature->link->is_multiple)) $toCardinality = ' "1..*" ';
+					if ((!$feature->is_optional) && (!$feature->link->is_multiple)) $toCardinality = ' "1" ';
+
+					$fromCardinality = ''; // we don't know anything of the cardinality on the "from-side"
+
+					if ($feature->link->link_type=='Containment')
+					{
+						if (!empty($feature->link->type))
+							$umlRef[] =  $languageEntity->name . $fromCardinality . ' *-- ' . $toCardinality
+								. $keyClassifierMap[$feature->link->type]->name . $featureName;
+					}
+					if ($feature->link->link_type=='Reference')
+					{
+						if (!empty($feature->link->type))
+							$umlRef[] =  $languageEntity->name . $fromCardinality . ' --> '  . $toCardinality
+								. $keyClassifierMap[$feature->link->type]->name . $featureName;
+					}
+				}
+			}
+
+			$umlCreate[] = "}
+				
+				";
+		}
+
+		// Add the relationships
+		$umlCreate[] = implode("\n", $umlRef);
+
+		$umlCreate[] = '@enduml';
+
+		// Compact all lines to one file
+		$uml = implode("\n", $umlCreate);
+
+		// Create a form from a node
+		$createForm = function ($node) use ($generatedProjectFormFilesPath, $logAppend)
+		{
+			// Start the form-creation
+			$form               = new DOMDocument();
+			$form->encoding     = 'utf-8';
+			$form->xmlVersion   = '1.0';
+			$form->formatOutput = true;
+			$root               = $form->createElement('form');
+			$form->appendChild($root);
+
+			$formName =$node->name;
+
+			// Add a fieldset
+			$fieldset   = $form->createElement('fieldset');
+			$ruleprefix = new \DOMAttr('addruleprefix',
+				$this->projectFormNamespace . $formName . '\\Rule');
+			$fieldset->setAttributeNode($ruleprefix);
+			$fieldprefix = new \DOMAttr('addfieldprefix',
+				$this->projectFormNamespace . $formName . '\\Field');
+			$fieldset->setAttributeNode($fieldprefix);
+			$root->appendChild($fieldset);
+
+			// Add fields to the fieldset
+
+
+
+			//........
+
+
+
+			// Write to file
+			$form->save($generatedProjectFormFilesPath . $formName . '.xml');
+			$logAppend([$formName . '.xml generated']);
+
 		};
 
 
-		// Loop over the entities to make a map of entity_id to entity
+
+		// Closure to loop through the tree (based on a json_decoded object) and apply a function
+		// (can be recursively used by calling $treeIterate from the function)
+		$treeIterate = function ($rootNode, $function)//, $done
+		{
+			foreach ($rootNode as $childNode)
+			{
+				$function($childNode);
+			}
+		};
+
+		//$done = [];
+		// Loop down the tree and create the forms
+	/*	$treeIterate($root, 'createForm')
+		{
+
+		}*/
+
+
+
+		// ---------------------- from Forms generator -----------------------------------
+		// A type of a link can refer to any Classifier, so make a combined map
+		// todo: add Annotations
+		$keyClassifierMap = array_merge($keyConceptMap, $keyConceptInterfaceMap);
+
+
+		// Loop over the concepts to make a map of entity_id to entity
 		// Per entity: loop over the fields to make a map of field_id to field
 		// todo: make this more general to use it when building generators in Extengen
 		$entityMap = [];
 		$fieldMap  = [];
-		foreach ($project->datamodel as $entity)
+		foreach ($projectForm->datamodel as $entity)
 		{
 			$entityMap[$entity->entity_id] = $entity;
 			foreach ($entity->field as $field)
@@ -80,19 +371,11 @@ class Forms extends Generator
 
 		$log = [];
 		$logAppend = function ($append) use(&$log) {$log = array_merge($log, $append);};
-
-		// The name of the component (without 'com_' prefix and possibly with capitals)
-		$componentName = ucfirst($this->componentName);
-
-		// What kind of output do you want to generate? For instance: 'Joomla4'
-		$outputType = $this->outputType;
-
 		// Path to administrator-side of com_extengen
 		$extengenAdminPath = $this->extengenAdminPath;
 
 		// Path to generated files of component
-		$generatedFilesPathComponent = $extengenAdminPath . '/generated/' . $componentName .'/'
-			. $outputType . '/com_'.strtolower($componentName) . '/';
+		$generatedFilesPathComponent = $extengenAdminPath . '/forms/projectForms/' . $this->projectFormName .'/';
 
 		// Path of generated file IN the directory for generated files of component
 		$generatedFilePath = 'administrator/components/com_'.strtolower($componentName).'/';
@@ -108,7 +391,10 @@ class Forms extends Generator
 
 		// Create a form for each detailspage (editing is now only done in detailspages in backend)
 		// todo: selection of fields, subforms, custom edit-fields
-		foreach ($project->pages as $page)
+
+
+
+		foreach ($projectForm->pages as $page)
 		{
 			$formName = strtolower($page->page_name);
 
@@ -322,18 +608,9 @@ class Forms extends Generator
 						}
 					}
 
-					// Label language-string: COM_componentname_formName_FIELD_fieldname_LABEL
-					$label = new \DOMAttr('label',
-						$addLanguageString(
-							$componentName, $formName, $field->field_name, "pageName_FIELD_fieldName_LABEL", '%fieldName%'));
+					// Label
+					$label = new \DOMAttr('label', $field->field_name);
 					$formField->setAttributeNode($label);
-
-					// Description language-string: COM_componentname_formName_FIELD_fieldname_DESC
-					$description = new \DOMAttr('description',
-						$addLanguageString($componentName, $formName, $field->field_name, "pageName_FIELD_fieldName_DESC", 'Input %fieldName% here.'
-						));
-					$formField->setAttributeNode($description);
-
 					$fieldset->appendChild($formField);
 				}
 
@@ -537,7 +814,7 @@ class Forms extends Generator
 
 		// make a map of entity_id to name
 		/*$entityNameMap = [];
-		foreach ($project->datamodel as $entity)
+		foreach ($projectForm->datamodel as $entity)
 		{
 			$entityNameMap[$entity->entity_id] = ucfirst($entity->entity_name);
 		}*/
@@ -555,7 +832,7 @@ class Forms extends Generator
 
 		// Loop over the entities to create the tables in the sql-file and the Table-files for Joomla
 		$sqlCreateTable = [];
-		foreach ($project->datamodel as $entity)
+		foreach ($projectForm->datamodel as $entity)
 		{
 			$entityName = ucfirst($entity->entity_name);
 			$templateVariables['entityName'] = $entityName;

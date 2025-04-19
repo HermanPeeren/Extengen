@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
+
 	<fieldset
 			name="projects"
-			label="{{ addLanguageString(componentName, '', '', 'PROJECT_FIELD_CONFIG_COMMON_DISPLAY', 'Use custom fields') }}"
-			description="{{ addLanguageString(componentName, '', '', 'PROJECT_FIELD_CONFIG_COMMON_DESC', 'Add custom fields to project') }}"
+			label="{{ addLanguageString(componentName, '', '', 'PROJECT_FIELD_CONFIG_COMMON_DISPLAY', 'Common') }}"
+			description="{{ addLanguageString(componentName, '', '', 'PROJECT_FIELD_CONFIG_COMMON_DESC', 'Common parameters for this project') }}"
 	>
 		<field
 				name="custom_fields_enable"

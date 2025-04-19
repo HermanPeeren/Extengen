@@ -298,7 +298,8 @@ class HtmlView extends BaseHtmlView
 
 // functions to call plantuml
 	private function encodep($text) {
-		$data = utf8_encode($text);
+		//$data = utf8_encode($text); // utf8_encode() deprecated since PHP 8.2
+		$data = mb_convert_encoding($text, 'UTF-8');
 		$compressed = gzdeflate($data, 9);
 		return $this->encode64($compressed);
 	}

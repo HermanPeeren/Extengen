@@ -13,7 +13,7 @@
           "extends": "0",
           "implements": {
             "implements0": {
-              "conceptInterface": "IKeyed"
+              "conceptInterface": "INamedConcept"
             }
           },
           "LIonWeb_key": ""
@@ -24,58 +24,6 @@
         },
         "feature": {
           "feature0": {
-            "name": "name",
-            "key": "XmlFile-name",
-            "feature_type": "Property",
-            "property": {
-              "type": "0",
-              "typeReference_key": "",
-              "LIonWeb_key": ""
-            },
-            "link": {
-              "type": "0",
-              "containment": {
-                "extends": "",
-                "LIonWeb_key": ""
-              },
-              "link": {
-                "extends": "",
-                "LIonWeb_key": ""
-              },
-              "typeReference_key": "",
-              "extends": "",
-              "LIonWeb_key": ""
-            },
-            "classifier_key": "",
-            "LIonWeb_key": ""
-          },
-          "feature1": {
-            "name": "key",
-            "key": "XmlFile-id",
-            "feature_type": "Property",
-            "property": {
-              "type": "0",
-              "typeReference_key": "",
-              "LIonWeb_key": ""
-            },
-            "link": {
-              "type": "0",
-              "containment": {
-                "extends": "",
-                "LIonWeb_key": ""
-              },
-              "link": {
-                "extends": "",
-                "LIonWeb_key": ""
-              },
-              "typeReference_key": "",
-              "extends": "",
-              "LIonWeb_key": ""
-            },
-            "classifier_key": "",
-            "LIonWeb_key": ""
-          },
-          "feature2": {
             "name": "fileExtension",
             "key": "XmlFile-fileExtension",
             "is_optional": "1",
@@ -102,7 +50,7 @@
             "classifier_key": "",
             "LIonWeb_key": ""
           },
-          "feature3": {
+          "feature1": {
             "name": "document",
             "key": "XmlFile-document",
             "feature_type": "Link",
@@ -255,7 +203,37 @@
           "extends": "0",
           "LIonWeb_key": ""
         },
-        "feature": [],
+        "feature": {
+          "feature0": {
+            "name": "elements",
+            "key": "XmlProlog-elements",
+            "is_optional": "1",
+            "feature_type": "Link",
+            "property": {
+              "type": "0",
+              "typeReference_key": "",
+              "LIonWeb_key": ""
+            },
+            "link": {
+              "type": "XmlPrologElement",
+              "is_multiple": "1",
+              "link_type": "Containment",
+              "containment": {
+                "extends": "",
+                "LIonWeb_key": ""
+              },
+              "link": {
+                "extends": "",
+                "LIonWeb_key": ""
+              },
+              "typeReference_key": "",
+              "extends": "",
+              "LIonWeb_key": ""
+            },
+            "classifier_key": "",
+            "LIonWeb_key": ""
+          }
+        },
         "extends": "",
         "LIonWeb_key": ""
       },
@@ -284,7 +262,11 @@
         "concept": {
           "abstract": "1",
           "extends": "0",
-          "implements": [],
+          "implements": {
+            "implements0": {
+              "conceptInterface": "XmlPart"
+            }
+          },
           "LIonWeb_key": ""
         },
         "conceptInterface": {
@@ -392,6 +374,7 @@
           "feature1": {
             "name": "shortEmptyNotation",
             "key": "XmlElement-shortEmptyNotation",
+            "feature_type": "Property",
             "property": {
               "type": "0",
               "typeReference_key": "",
@@ -718,8 +701,8 @@
       "LIonWeb_key": ""
     },
     "languageEntities10": {
-      "name": "INamed",
-      "key": "INamed",
+      "name": "INamedConcept",
+      "key": "INamedConcept",
       "languageEntity_type": "Classifier",
       "classifier": {
         "classifier_type": "ConceptInterface",
@@ -780,8 +763,8 @@
       "LIonWeb_key": ""
     },
     "languageEntities11": {
-      "name": "IKeyed",
-      "key": "IKeyed",
+      "name": "XmlPart",
+      "key": "XmlPart",
       "languageEntity_type": "Classifier",
       "classifier": {
         "classifier_type": "ConceptInterface",
@@ -791,13 +774,123 @@
           "LIonWeb_key": ""
         },
         "conceptInterface": {
-          "extends": "INamed",
+          "extends": "0",
+          "LIonWeb_key": ""
+        },
+        "feature": [],
+        "extends": "",
+        "LIonWeb_key": ""
+      },
+      "datatype": {
+        "dataType_type": "PrimitiveType",
+        "primitiveType": {
+          "extends": "",
+          "LIonWeb_key": ""
+        },
+        "enumeration": {
+          "literals": [],
+          "extends": "",
+          "LIonWeb_key": ""
+        },
+        "extends": "",
+        "LIonWeb_key": ""
+      },
+      "LIonWeb_key": ""
+    },
+    "languageEntities12": {
+      "name": "XmlPrologElement",
+      "key": "XmlPrologElement",
+      "languageEntity_type": "Classifier",
+      "classifier": {
+        "classifier_type": "ConceptInterface",
+        "concept": {
+          "extends": "0",
+          "implements": [],
+          "LIonWeb_key": ""
+        },
+        "conceptInterface": {
+          "extends": "XmlPart",
+          "LIonWeb_key": ""
+        },
+        "feature": [],
+        "extends": "",
+        "LIonWeb_key": ""
+      },
+      "datatype": {
+        "dataType_type": "PrimitiveType",
+        "primitiveType": {
+          "extends": "",
+          "LIonWeb_key": ""
+        },
+        "enumeration": {
+          "literals": [],
+          "extends": "",
+          "LIonWeb_key": ""
+        },
+        "extends": "",
+        "LIonWeb_key": ""
+      },
+      "LIonWeb_key": ""
+    },
+    "languageEntities13": {
+      "name": "XmlBasePrologElement",
+      "key": "XmlBasePrologElement",
+      "languageEntity_type": "Classifier",
+      "classifier": {
+        "classifier_type": "Concept",
+        "concept": {
+          "abstract": "1",
+          "extends": "0",
+          "implements": {
+            "implements0": {
+              "conceptInterface": "XmlPrologElement"
+            }
+          },
+          "LIonWeb_key": ""
+        },
+        "conceptInterface": {
+          "extends": "0",
+          "LIonWeb_key": ""
+        },
+        "feature": [],
+        "extends": "",
+        "LIonWeb_key": ""
+      },
+      "datatype": {
+        "dataType_type": "PrimitiveType",
+        "primitiveType": {
+          "extends": "",
+          "LIonWeb_key": ""
+        },
+        "enumeration": {
+          "literals": [],
+          "extends": "",
+          "LIonWeb_key": ""
+        },
+        "extends": "",
+        "LIonWeb_key": ""
+      },
+      "LIonWeb_key": ""
+    },
+    "languageEntities14": {
+      "name": "XmlCDATA",
+      "key": "XmlCDATA",
+      "languageEntity_type": "Classifier",
+      "classifier": {
+        "classifier_type": "Concept",
+        "concept": {
+          "extends": "XmlContent",
+          "implements": [],
+          "LIonWeb_key": ""
+        },
+        "conceptInterface": {
+          "extends": "0",
           "LIonWeb_key": ""
         },
         "feature": {
           "feature0": {
-            "name": "key",
-            "key": "IKeyed-id",
+            "name": "content",
+            "key": "XmlCDATA-content",
             "feature_type": "Property",
             "property": {
               "type": "0",
@@ -822,6 +915,1202 @@
             "LIonWeb_key": ""
           }
         },
+        "extends": "",
+        "LIonWeb_key": ""
+      },
+      "datatype": {
+        "dataType_type": "PrimitiveType",
+        "primitiveType": {
+          "extends": "",
+          "LIonWeb_key": ""
+        },
+        "enumeration": {
+          "literals": [],
+          "extends": "",
+          "LIonWeb_key": ""
+        },
+        "extends": "",
+        "LIonWeb_key": ""
+      },
+      "LIonWeb_key": ""
+    },
+    "languageEntities15": {
+      "name": "XmlCharRef",
+      "key": "XmlCharRef",
+      "languageEntity_type": "Classifier",
+      "classifier": {
+        "classifier_type": "Concept",
+        "concept": {
+          "extends": "XmlContent",
+          "implements": [],
+          "LIonWeb_key": ""
+        },
+        "conceptInterface": {
+          "extends": "0",
+          "LIonWeb_key": ""
+        },
+        "feature": {
+          "feature0": {
+            "name": "charCode",
+            "key": "XmlCharRef-charCode",
+            "property": {
+              "type": "0",
+              "typeReference_key": "",
+              "LIonWeb_key": ""
+            },
+            "link": {
+              "type": "0",
+              "containment": {
+                "extends": "",
+                "LIonWeb_key": ""
+              },
+              "link": {
+                "extends": "",
+                "LIonWeb_key": ""
+              },
+              "typeReference_key": "",
+              "extends": "",
+              "LIonWeb_key": ""
+            },
+            "classifier_key": "",
+            "LIonWeb_key": ""
+          }
+        },
+        "extends": "",
+        "LIonWeb_key": ""
+      },
+      "datatype": {
+        "dataType_type": "PrimitiveType",
+        "primitiveType": {
+          "extends": "",
+          "LIonWeb_key": ""
+        },
+        "enumeration": {
+          "literals": [],
+          "extends": "",
+          "LIonWeb_key": ""
+        },
+        "extends": "",
+        "LIonWeb_key": ""
+      },
+      "LIonWeb_key": ""
+    },
+    "languageEntities16": {
+      "name": "XmlCharRefValue",
+      "key": "XmlCharRefValue",
+      "languageEntity_type": "Classifier",
+      "classifier": {
+        "classifier_type": "Concept",
+        "concept": {
+          "extends": "XmlValuePart",
+          "implements": [],
+          "LIonWeb_key": ""
+        },
+        "conceptInterface": {
+          "extends": "0",
+          "LIonWeb_key": ""
+        },
+        "feature": {
+          "feature0": {
+            "name": "charCode",
+            "key": "XmlCharRefValue-charCode",
+            "feature_type": "Property",
+            "property": {
+              "type": "0",
+              "typeReference_key": "",
+              "LIonWeb_key": ""
+            },
+            "link": {
+              "type": "0",
+              "containment": {
+                "extends": "",
+                "LIonWeb_key": ""
+              },
+              "link": {
+                "extends": "",
+                "LIonWeb_key": ""
+              },
+              "typeReference_key": "",
+              "extends": "",
+              "LIonWeb_key": ""
+            },
+            "classifier_key": "",
+            "LIonWeb_key": ""
+          }
+        },
+        "extends": "",
+        "LIonWeb_key": ""
+      },
+      "datatype": {
+        "dataType_type": "PrimitiveType",
+        "primitiveType": {
+          "extends": "",
+          "LIonWeb_key": ""
+        },
+        "enumeration": {
+          "literals": [],
+          "extends": "",
+          "LIonWeb_key": ""
+        },
+        "extends": "",
+        "LIonWeb_key": ""
+      },
+      "LIonWeb_key": ""
+    },
+    "languageEntities17": {
+      "name": "XmlComment",
+      "key": "XmlComment",
+      "languageEntity_type": "Classifier",
+      "classifier": {
+        "classifier_type": "Concept",
+        "concept": {
+          "extends": "XmlContent",
+          "implements": [],
+          "LIonWeb_key": ""
+        },
+        "conceptInterface": {
+          "extends": "0",
+          "LIonWeb_key": ""
+        },
+        "feature": {
+          "feature0": {
+            "name": "lines",
+            "key": "XmlComment-lines",
+            "is_optional": "1",
+            "feature_type": "Link",
+            "property": {
+              "type": "0",
+              "typeReference_key": "",
+              "LIonWeb_key": ""
+            },
+            "link": {
+              "type": "XmlCommentLine",
+              "is_multiple": "1",
+              "link_type": "Containment",
+              "containment": {
+                "extends": "",
+                "LIonWeb_key": ""
+              },
+              "link": {
+                "extends": "",
+                "LIonWeb_key": ""
+              },
+              "typeReference_key": "",
+              "extends": "",
+              "LIonWeb_key": ""
+            },
+            "classifier_key": "",
+            "LIonWeb_key": ""
+          }
+        },
+        "extends": "",
+        "LIonWeb_key": ""
+      },
+      "datatype": {
+        "dataType_type": "PrimitiveType",
+        "primitiveType": {
+          "extends": "",
+          "LIonWeb_key": ""
+        },
+        "enumeration": {
+          "literals": [],
+          "extends": "",
+          "LIonWeb_key": ""
+        },
+        "extends": "",
+        "LIonWeb_key": ""
+      },
+      "LIonWeb_key": ""
+    },
+    "languageEntities18": {
+      "name": "XmlCommentLine",
+      "key": "XmlCommentLine",
+      "languageEntity_type": "Classifier",
+      "classifier": {
+        "classifier_type": "Concept",
+        "concept": {
+          "extends": "0",
+          "implements": [],
+          "LIonWeb_key": ""
+        },
+        "conceptInterface": {
+          "extends": "0",
+          "LIonWeb_key": ""
+        },
+        "feature": {
+          "feature0": {
+            "name": "text",
+            "key": "XmlCommentLine-text",
+            "feature_type": "Property",
+            "property": {
+              "type": "0",
+              "typeReference_key": "",
+              "LIonWeb_key": ""
+            },
+            "link": {
+              "type": "0",
+              "containment": {
+                "extends": "",
+                "LIonWeb_key": ""
+              },
+              "link": {
+                "extends": "",
+                "LIonWeb_key": ""
+              },
+              "typeReference_key": "",
+              "extends": "",
+              "LIonWeb_key": ""
+            },
+            "classifier_key": "",
+            "LIonWeb_key": ""
+          }
+        },
+        "extends": "",
+        "LIonWeb_key": ""
+      },
+      "datatype": {
+        "dataType_type": "PrimitiveType",
+        "primitiveType": {
+          "extends": "",
+          "LIonWeb_key": ""
+        },
+        "enumeration": {
+          "literals": [],
+          "extends": "",
+          "LIonWeb_key": ""
+        },
+        "extends": "",
+        "LIonWeb_key": ""
+      },
+      "LIonWeb_key": ""
+    },
+    "languageEntities19": {
+      "name": "XmlDeclaration",
+      "key": "XmlDeclaration",
+      "languageEntity_type": "Classifier",
+      "classifier": {
+        "classifier_type": "Concept",
+        "concept": {
+          "extends": "XmlBasePrologElement",
+          "implements": [],
+          "LIonWeb_key": ""
+        },
+        "conceptInterface": {
+          "extends": "0",
+          "LIonWeb_key": ""
+        },
+        "feature": {
+          "feature0": {
+            "name": "version",
+            "key": "XmlDeclaration-version",
+            "feature_type": "Property",
+            "property": {
+              "type": "0",
+              "typeReference_key": "",
+              "LIonWeb_key": ""
+            },
+            "link": {
+              "type": "0",
+              "containment": {
+                "extends": "",
+                "LIonWeb_key": ""
+              },
+              "link": {
+                "extends": "",
+                "LIonWeb_key": ""
+              },
+              "typeReference_key": "",
+              "extends": "",
+              "LIonWeb_key": ""
+            },
+            "classifier_key": "",
+            "LIonWeb_key": ""
+          },
+          "feature1": {
+            "name": "encoding",
+            "key": "XmlDeclaration-encoding",
+            "feature_type": "Property",
+            "property": {
+              "type": "0",
+              "typeReference_key": "",
+              "LIonWeb_key": ""
+            },
+            "link": {
+              "type": "0",
+              "containment": {
+                "extends": "",
+                "LIonWeb_key": ""
+              },
+              "link": {
+                "extends": "",
+                "LIonWeb_key": ""
+              },
+              "typeReference_key": "",
+              "extends": "",
+              "LIonWeb_key": ""
+            },
+            "classifier_key": "",
+            "LIonWeb_key": ""
+          },
+          "feature2": {
+            "name": "standalone",
+            "key": "XmlDeclaration-standalone",
+            "feature_type": "Property",
+            "property": {
+              "type": "0",
+              "typeReference_key": "",
+              "LIonWeb_key": ""
+            },
+            "link": {
+              "type": "0",
+              "containment": {
+                "extends": "",
+                "LIonWeb_key": ""
+              },
+              "link": {
+                "extends": "",
+                "LIonWeb_key": ""
+              },
+              "typeReference_key": "",
+              "extends": "",
+              "LIonWeb_key": ""
+            },
+            "classifier_key": "",
+            "LIonWeb_key": ""
+          }
+        },
+        "extends": "",
+        "LIonWeb_key": ""
+      },
+      "datatype": {
+        "dataType_type": "PrimitiveType",
+        "primitiveType": {
+          "extends": "",
+          "LIonWeb_key": ""
+        },
+        "enumeration": {
+          "literals": [],
+          "extends": "",
+          "LIonWeb_key": ""
+        },
+        "extends": "",
+        "LIonWeb_key": ""
+      },
+      "LIonWeb_key": ""
+    },
+    "languageEntities20": {
+      "name": "ConstainedString",
+      "key": "ConstainedString",
+      "languageEntity_type": "DataType",
+      "classifier": {
+        "classifier_type": "Concept",
+        "concept": {
+          "extends": "0",
+          "implements": [],
+          "LIonWeb_key": ""
+        },
+        "conceptInterface": {
+          "extends": "0",
+          "LIonWeb_key": ""
+        },
+        "feature": [],
+        "extends": "",
+        "LIonWeb_key": ""
+      },
+      "datatype": {
+        "dataType_type": "Enumeration",
+        "primitiveType": {
+          "extends": "",
+          "LIonWeb_key": ""
+        },
+        "enumeration": {
+          "literals": {
+            "literals0": {
+              "name": "xmlVersionString",
+              "key": "ConstainedString-xmlVersionString",
+              "LIonWeb_key": ""
+            },
+            "literals1": {
+              "name": "xmlEncoding",
+              "key": "ConstainedString-xmlEncoding",
+              "LIonWeb_key": ""
+            },
+            "literals2": {
+              "name": "yesNoString",
+              "key": "ConstainedString-yesNoString",
+              "LIonWeb_key": ""
+            }
+          },
+          "extends": "",
+          "LIonWeb_key": ""
+        },
+        "extends": "",
+        "LIonWeb_key": ""
+      },
+      "LIonWeb_key": ""
+    },
+    "languageEntities21": {
+      "name": "XmlDoctypeDeclaration",
+      "key": "XmlDoctypeDeclaration",
+      "languageEntity_type": "Classifier",
+      "classifier": {
+        "classifier_type": "Concept",
+        "concept": {
+          "extends": "XmlBasePrologElement",
+          "implements": [],
+          "LIonWeb_key": ""
+        },
+        "conceptInterface": {
+          "extends": "0",
+          "LIonWeb_key": ""
+        },
+        "feature": {
+          "feature0": {
+            "name": "doctypeName",
+            "key": "XmlDoctypeDeclaration-doctypeName",
+            "feature_type": "Property",
+            "property": {
+              "type": "0",
+              "typeReference_key": "",
+              "LIonWeb_key": ""
+            },
+            "link": {
+              "type": "0",
+              "containment": {
+                "extends": "",
+                "LIonWeb_key": ""
+              },
+              "link": {
+                "extends": "",
+                "LIonWeb_key": ""
+              },
+              "typeReference_key": "",
+              "extends": "",
+              "LIonWeb_key": ""
+            },
+            "classifier_key": "",
+            "LIonWeb_key": ""
+          },
+          "feature1": {
+            "name": "externalId",
+            "key": "doctypeName",
+            "is_optional": "1",
+            "feature_type": "Link",
+            "property": {
+              "type": "0",
+              "typeReference_key": "",
+              "LIonWeb_key": ""
+            },
+            "link": {
+              "type": "XmlExternalId",
+              "link_type": "Containment",
+              "containment": {
+                "extends": "",
+                "LIonWeb_key": ""
+              },
+              "link": {
+                "extends": "",
+                "LIonWeb_key": ""
+              },
+              "typeReference_key": "",
+              "extends": "",
+              "LIonWeb_key": ""
+            },
+            "classifier_key": "",
+            "LIonWeb_key": ""
+          }
+        },
+        "extends": "",
+        "LIonWeb_key": ""
+      },
+      "datatype": {
+        "dataType_type": "PrimitiveType",
+        "primitiveType": {
+          "extends": "",
+          "LIonWeb_key": ""
+        },
+        "enumeration": {
+          "literals": [],
+          "extends": "",
+          "LIonWeb_key": ""
+        },
+        "extends": "",
+        "LIonWeb_key": ""
+      },
+      "LIonWeb_key": ""
+    },
+    "languageEntities22": {
+      "name": "XmlExternalId",
+      "key": "XmlExternalId",
+      "languageEntity_type": "Classifier",
+      "classifier": {
+        "classifier_type": "Concept",
+        "concept": {
+          "extends": "0",
+          "implements": [],
+          "LIonWeb_key": ""
+        },
+        "conceptInterface": {
+          "extends": "0",
+          "LIonWeb_key": ""
+        },
+        "feature": {
+          "feature0": {
+            "name": "publicId",
+            "key": "XmlExternalId-publicId",
+            "feature_type": "Property",
+            "property": {
+              "type": "0",
+              "typeReference_key": "",
+              "LIonWeb_key": ""
+            },
+            "link": {
+              "type": "0",
+              "containment": {
+                "extends": "",
+                "LIonWeb_key": ""
+              },
+              "link": {
+                "extends": "",
+                "LIonWeb_key": ""
+              },
+              "typeReference_key": "",
+              "extends": "",
+              "LIonWeb_key": ""
+            },
+            "classifier_key": "",
+            "LIonWeb_key": ""
+          },
+          "feature1": {
+            "name": "systemId",
+            "key": "XmlExternalId-systemId",
+            "feature_type": "Property",
+            "property": {
+              "type": "0",
+              "typeReference_key": "",
+              "LIonWeb_key": ""
+            },
+            "link": {
+              "type": "0",
+              "containment": {
+                "extends": "",
+                "LIonWeb_key": ""
+              },
+              "link": {
+                "extends": "",
+                "LIonWeb_key": ""
+              },
+              "typeReference_key": "",
+              "extends": "",
+              "LIonWeb_key": ""
+            },
+            "classifier_key": "",
+            "LIonWeb_key": ""
+          },
+          "feature2": {
+            "name": "isPublic",
+            "key": "XmlExternalId-isPublic",
+            "feature_type": "Property",
+            "property": {
+              "type": "0",
+              "typeReference_key": "",
+              "LIonWeb_key": ""
+            },
+            "link": {
+              "type": "0",
+              "containment": {
+                "extends": "",
+                "LIonWeb_key": ""
+              },
+              "link": {
+                "extends": "",
+                "LIonWeb_key": ""
+              },
+              "typeReference_key": "",
+              "extends": "",
+              "LIonWeb_key": ""
+            },
+            "classifier_key": "",
+            "LIonWeb_key": ""
+          }
+        },
+        "extends": "",
+        "LIonWeb_key": ""
+      },
+      "datatype": {
+        "dataType_type": "PrimitiveType",
+        "primitiveType": {
+          "extends": "",
+          "LIonWeb_key": ""
+        },
+        "enumeration": {
+          "literals": [],
+          "extends": "",
+          "LIonWeb_key": ""
+        },
+        "extends": "",
+        "LIonWeb_key": ""
+      },
+      "LIonWeb_key": ""
+    },
+    "languageEntities23": {
+      "name": "XmlEntityRef",
+      "key": "XmlEntityRef",
+      "languageEntity_type": "Classifier",
+      "classifier": {
+        "classifier_type": "Concept",
+        "concept": {
+          "extends": "XmlContent",
+          "implements": [],
+          "LIonWeb_key": ""
+        },
+        "conceptInterface": {
+          "extends": "0",
+          "LIonWeb_key": ""
+        },
+        "feature": {
+          "feature0": {
+            "name": "entityName",
+            "key": "XmlEntityRef-entityName",
+            "feature_type": "Property",
+            "property": {
+              "type": "0",
+              "typeReference_key": "",
+              "LIonWeb_key": ""
+            },
+            "link": {
+              "type": "0",
+              "containment": {
+                "extends": "",
+                "LIonWeb_key": ""
+              },
+              "link": {
+                "extends": "",
+                "LIonWeb_key": ""
+              },
+              "typeReference_key": "",
+              "extends": "",
+              "LIonWeb_key": ""
+            },
+            "classifier_key": "",
+            "LIonWeb_key": ""
+          }
+        },
+        "extends": "",
+        "LIonWeb_key": ""
+      },
+      "datatype": {
+        "dataType_type": "PrimitiveType",
+        "primitiveType": {
+          "extends": "",
+          "LIonWeb_key": ""
+        },
+        "enumeration": {
+          "literals": [],
+          "extends": "",
+          "LIonWeb_key": ""
+        },
+        "extends": "",
+        "LIonWeb_key": ""
+      },
+      "LIonWeb_key": ""
+    },
+    "languageEntities24": {
+      "name": "XmlEntityRefValue",
+      "key": "XmlEntityRefValue",
+      "languageEntity_type": "Classifier",
+      "classifier": {
+        "classifier_type": "Concept",
+        "concept": {
+          "extends": "XmlValuePart",
+          "implements": [],
+          "LIonWeb_key": ""
+        },
+        "conceptInterface": {
+          "extends": "0",
+          "LIonWeb_key": ""
+        },
+        "feature": {
+          "feature0": {
+            "name": "entityName",
+            "key": "XmlEntityRefValue-entityName",
+            "feature_type": "Property",
+            "property": {
+              "type": "0",
+              "typeReference_key": "",
+              "LIonWeb_key": ""
+            },
+            "link": {
+              "type": "0",
+              "containment": {
+                "extends": "",
+                "LIonWeb_key": ""
+              },
+              "link": {
+                "extends": "",
+                "LIonWeb_key": ""
+              },
+              "typeReference_key": "",
+              "extends": "",
+              "LIonWeb_key": ""
+            },
+            "classifier_key": "",
+            "LIonWeb_key": ""
+          }
+        },
+        "extends": "",
+        "LIonWeb_key": ""
+      },
+      "datatype": {
+        "dataType_type": "PrimitiveType",
+        "primitiveType": {
+          "extends": "",
+          "LIonWeb_key": ""
+        },
+        "enumeration": {
+          "literals": [],
+          "extends": "",
+          "LIonWeb_key": ""
+        },
+        "extends": "",
+        "LIonWeb_key": ""
+      },
+      "LIonWeb_key": ""
+    },
+    "languageEntities25": {
+      "name": "XmlNoSpaceValue",
+      "key": "XmlNoSpaceValue",
+      "languageEntity_type": "Classifier",
+      "classifier": {
+        "classifier_type": "Concept",
+        "concept": {
+          "extends": "XmlValuePart",
+          "implements": [],
+          "LIonWeb_key": ""
+        },
+        "conceptInterface": {
+          "extends": "0",
+          "LIonWeb_key": ""
+        },
+        "feature": [],
+        "extends": "",
+        "LIonWeb_key": ""
+      },
+      "datatype": {
+        "dataType_type": "PrimitiveType",
+        "primitiveType": {
+          "extends": "",
+          "LIonWeb_key": ""
+        },
+        "enumeration": {
+          "literals": [],
+          "extends": "",
+          "LIonWeb_key": ""
+        },
+        "extends": "",
+        "LIonWeb_key": ""
+      },
+      "LIonWeb_key": ""
+    },
+    "languageEntities26": {
+      "name": "XmlProcessingInstruction",
+      "key": "XmlProcessingInstruction",
+      "languageEntity_type": "Classifier",
+      "classifier": {
+        "classifier_type": "Concept",
+        "concept": {
+          "extends": "XmlContent",
+          "implements": {
+            "implements0": {
+              "conceptInterface": "XmlPrologElement"
+            }
+          },
+          "LIonWeb_key": ""
+        },
+        "conceptInterface": {
+          "extends": "0",
+          "LIonWeb_key": ""
+        },
+        "feature": {
+          "feature0": {
+            "name": "target",
+            "key": "XmlProcessingInstruction-target",
+            "feature_type": "Property",
+            "property": {
+              "type": "0",
+              "typeReference_key": "",
+              "LIonWeb_key": ""
+            },
+            "link": {
+              "type": "0",
+              "containment": {
+                "extends": "",
+                "LIonWeb_key": ""
+              },
+              "link": {
+                "extends": "",
+                "LIonWeb_key": ""
+              },
+              "typeReference_key": "",
+              "extends": "",
+              "LIonWeb_key": ""
+            },
+            "classifier_key": "",
+            "LIonWeb_key": ""
+          },
+          "feature1": {
+            "name": "rawData",
+            "key": "XmlProcessingInstruction-rawData",
+            "feature_type": "Property",
+            "property": {
+              "type": "0",
+              "typeReference_key": "",
+              "LIonWeb_key": ""
+            },
+            "link": {
+              "type": "0",
+              "containment": {
+                "extends": "",
+                "LIonWeb_key": ""
+              },
+              "link": {
+                "extends": "",
+                "LIonWeb_key": ""
+              },
+              "typeReference_key": "",
+              "extends": "",
+              "LIonWeb_key": ""
+            },
+            "classifier_key": "",
+            "LIonWeb_key": ""
+          }
+        },
+        "extends": "",
+        "LIonWeb_key": ""
+      },
+      "datatype": {
+        "dataType_type": "PrimitiveType",
+        "primitiveType": {
+          "extends": "",
+          "LIonWeb_key": ""
+        },
+        "enumeration": {
+          "literals": [],
+          "extends": "",
+          "LIonWeb_key": ""
+        },
+        "extends": "",
+        "LIonWeb_key": ""
+      },
+      "LIonWeb_key": ""
+    },
+    "languageEntities27": {
+      "name": "XmlText",
+      "key": "XmlText",
+      "languageEntity_type": "Classifier",
+      "classifier": {
+        "classifier_type": "Concept",
+        "concept": {
+          "extends": "XmlContent",
+          "implements": [],
+          "LIonWeb_key": ""
+        },
+        "conceptInterface": {
+          "extends": "0",
+          "LIonWeb_key": ""
+        },
+        "feature": {
+          "feature0": {
+            "name": "value",
+            "key": "XmlText-value",
+            "feature_type": "Property",
+            "property": {
+              "type": "0",
+              "typeReference_key": "",
+              "LIonWeb_key": ""
+            },
+            "link": {
+              "type": "0",
+              "containment": {
+                "extends": "",
+                "LIonWeb_key": ""
+              },
+              "link": {
+                "extends": "",
+                "LIonWeb_key": ""
+              },
+              "typeReference_key": "",
+              "extends": "",
+              "LIonWeb_key": ""
+            },
+            "classifier_key": "",
+            "LIonWeb_key": ""
+          }
+        },
+        "extends": "",
+        "LIonWeb_key": ""
+      },
+      "datatype": {
+        "dataType_type": "PrimitiveType",
+        "primitiveType": {
+          "extends": "",
+          "LIonWeb_key": ""
+        },
+        "enumeration": {
+          "literals": [],
+          "extends": "",
+          "LIonWeb_key": ""
+        },
+        "extends": "",
+        "LIonWeb_key": ""
+      },
+      "LIonWeb_key": ""
+    },
+    "languageEntities28": {
+      "name": "XmlTextValue",
+      "key": "XmlTextValue",
+      "languageEntity_type": "Classifier",
+      "classifier": {
+        "classifier_type": "Concept",
+        "concept": {
+          "extends": "XmlValuePart",
+          "implements": [],
+          "LIonWeb_key": ""
+        },
+        "conceptInterface": {
+          "extends": "0",
+          "LIonWeb_key": ""
+        },
+        "feature": {
+          "feature0": {
+            "name": "text",
+            "key": "XmlTextValue-text",
+            "feature_type": "Property",
+            "property": {
+              "type": "0",
+              "typeReference_key": "",
+              "LIonWeb_key": ""
+            },
+            "link": {
+              "type": "0",
+              "containment": {
+                "extends": "",
+                "LIonWeb_key": ""
+              },
+              "link": {
+                "extends": "",
+                "LIonWeb_key": ""
+              },
+              "typeReference_key": "",
+              "extends": "",
+              "LIonWeb_key": ""
+            },
+            "classifier_key": "",
+            "LIonWeb_key": ""
+          }
+        },
+        "extends": "",
+        "LIonWeb_key": ""
+      },
+      "datatype": {
+        "dataType_type": "PrimitiveType",
+        "primitiveType": {
+          "extends": "",
+          "LIonWeb_key": ""
+        },
+        "enumeration": {
+          "literals": [],
+          "extends": "",
+          "LIonWeb_key": ""
+        },
+        "extends": "",
+        "LIonWeb_key": ""
+      },
+      "LIonWeb_key": ""
+    },
+    "languageEntities29": {
+      "name": "XmlWhitespace",
+      "key": "XmlWhitespace",
+      "languageEntity_type": "Classifier",
+      "classifier": {
+        "classifier_type": "Concept",
+        "concept": {
+          "extends": "XmlBasePrologElement",
+          "implements": [],
+          "LIonWeb_key": ""
+        },
+        "conceptInterface": {
+          "extends": "0",
+          "LIonWeb_key": ""
+        },
+        "feature": {
+          "feature0": {
+            "name": "value",
+            "key": "XmlWhitespace-value",
+            "feature_type": "Property",
+            "property": {
+              "type": "0",
+              "typeReference_key": "",
+              "LIonWeb_key": ""
+            },
+            "link": {
+              "type": "0",
+              "containment": {
+                "extends": "",
+                "LIonWeb_key": ""
+              },
+              "link": {
+                "extends": "",
+                "LIonWeb_key": ""
+              },
+              "typeReference_key": "",
+              "extends": "",
+              "LIonWeb_key": ""
+            },
+            "classifier_key": "",
+            "LIonWeb_key": ""
+          }
+        },
+        "extends": "",
+        "LIonWeb_key": ""
+      },
+      "datatype": {
+        "dataType_type": "PrimitiveType",
+        "primitiveType": {
+          "extends": "",
+          "LIonWeb_key": ""
+        },
+        "enumeration": {
+          "literals": [],
+          "extends": "",
+          "LIonWeb_key": ""
+        },
+        "extends": "",
+        "LIonWeb_key": ""
+      },
+      "LIonWeb_key": ""
+    },
+    "languageEntities30": {
+      "name": "String",
+      "key": "LionCore_builtins-String",
+      "languageEntity_type": "DataType",
+      "classifier": {
+        "classifier_type": "Concept",
+        "concept": {
+          "extends": "0",
+          "implements": [],
+          "LIonWeb_key": ""
+        },
+        "conceptInterface": {
+          "extends": "0",
+          "LIonWeb_key": ""
+        },
+        "feature": [],
+        "extends": "",
+        "LIonWeb_key": ""
+      },
+      "datatype": {
+        "dataType_type": "PrimitiveType",
+        "primitiveType": {
+          "extends": "",
+          "LIonWeb_key": ""
+        },
+        "enumeration": {
+          "literals": [],
+          "extends": "",
+          "LIonWeb_key": ""
+        },
+        "extends": "",
+        "LIonWeb_key": ""
+      },
+      "LIonWeb_key": ""
+    },
+    "languageEntities31": {
+      "name": "Boolean",
+      "key": "LionCore_builtins-Boolean",
+      "languageEntity_type": "DataType",
+      "classifier": {
+        "classifier_type": "Concept",
+        "concept": {
+          "extends": "0",
+          "implements": [],
+          "LIonWeb_key": ""
+        },
+        "conceptInterface": {
+          "extends": "0",
+          "LIonWeb_key": ""
+        },
+        "feature": [],
+        "extends": "",
+        "LIonWeb_key": ""
+      },
+      "datatype": {
+        "dataType_type": "PrimitiveType",
+        "primitiveType": {
+          "extends": "",
+          "LIonWeb_key": ""
+        },
+        "enumeration": {
+          "literals": [],
+          "extends": "",
+          "LIonWeb_key": ""
+        },
+        "extends": "",
+        "LIonWeb_key": ""
+      },
+      "LIonWeb_key": ""
+    },
+    "languageEntities32": {
+      "name": "Integer",
+      "key": "LionCore_builtins-Integer",
+      "languageEntity_type": "DataType",
+      "classifier": {
+        "classifier_type": "Concept",
+        "concept": {
+          "extends": "0",
+          "implements": [],
+          "LIonWeb_key": ""
+        },
+        "conceptInterface": {
+          "extends": "0",
+          "LIonWeb_key": ""
+        },
+        "feature": [],
+        "extends": "",
+        "LIonWeb_key": ""
+      },
+      "datatype": {
+        "dataType_type": "PrimitiveType",
+        "primitiveType": {
+          "extends": "",
+          "LIonWeb_key": ""
+        },
+        "enumeration": {
+          "literals": [],
+          "extends": "",
+          "LIonWeb_key": ""
+        },
+        "extends": "",
+        "LIonWeb_key": ""
+      },
+      "LIonWeb_key": ""
+    },
+    "languageEntities33": {
+      "name": "JSON",
+      "key": "LionCore_builtins-JSON",
+      "languageEntity_type": "DataType",
+      "classifier": {
+        "classifier_type": "Concept",
+        "concept": {
+          "extends": "0",
+          "implements": [],
+          "LIonWeb_key": ""
+        },
+        "conceptInterface": {
+          "extends": "0",
+          "LIonWeb_key": ""
+        },
+        "feature": [],
         "extends": "",
         "LIonWeb_key": ""
       },

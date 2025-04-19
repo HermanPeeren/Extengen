@@ -14,34 +14,13 @@ namespace Yepr\Component\Extengen\Administrator\Model;
 defined('_JEXEC') or die;
 
 use Joomla\CMS\MVC\Model\AdminModel;
-use Joomla\CMS\Factory;
-use Joomla\CMS\Language\Associations;
-use Joomla\CMS\Language\LanguageHelper;
 use Joomla\CMS\Form\Form;
-
-use Joomla\CMS\Date\Date;
-use Joomla\CMS\Event\AbstractEvent;
-use Joomla\CMS\Filter\InputFilter;
-use Joomla\CMS\Filter\OutputFilter;
-use Joomla\CMS\Form\FormFactoryInterface;
-use Joomla\CMS\Helper\TagsHelper;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
-use Joomla\CMS\MVC\Model\WorkflowBehaviorTrait;
-use Joomla\CMS\MVC\Model\WorkflowModelInterface;
-use Joomla\CMS\Object\CMSObject;
-use Joomla\CMS\Plugin\PluginHelper;
-use Joomla\CMS\String\PunycodeHelper;
-use Joomla\CMS\Table\TableInterface;
-use Joomla\CMS\Tag\TaggableTableInterface;
-use Joomla\CMS\UCM\UCMType;
-use Joomla\CMS\Versioning\VersionableModelTrait;
-use Joomla\CMS\Workflow\Workflow;
-use Joomla\Component\Categories\Administrator\Helper\CategoriesHelper;
-use Joomla\Component\Fields\Administrator\Helper\FieldsHelper;
+use Joomla\CMS\Object\CMSObject; // TODO!!!
 use Joomla\Database\ParameterType;
 use Joomla\Registry\Registry;
 use Joomla\Utilities\ArrayHelper;
+use Yepr\Component\Extengen\Administrator\Model\Generator\ProjectForms;
 
 use	Yepr\Component\Extengen\Administrator\Model\LanguageStringUtil;
 
@@ -49,7 +28,7 @@ use	Yepr\Component\Extengen\Administrator\Model\LanguageStringUtil;
 /**
  * Generate Form Model
  */
-class GenerateFormModel extends AdminModel
+class GenerateProjectFormModel extends AdminModel
 {
 	/**
 	 * A log of all files that were created with the various generators
@@ -95,30 +74,15 @@ class GenerateFormModel extends AdminModel
 
 		// file paths for generated (language)files
 		$extengenAdminPath = JPATH_ROOT . '/administrator/components/com_extengen/';
-		$generatedFormFilesPath = $extengenAdminPath . '/metaProjectForms/generated/' . $projectFormName .'/';
+		$generatedFormFilesPath = $extengenAdminPath . 'forms/ProjectForms/' . $projectFormName .'/';
 
-			//$generatorNamespace = 'Yepr\\Component\\Extengen\\Administrator\\Model\\Generator\\';
+		$generatorNamespace = 'Yepr\\Component\\Extengen\\Administrator\\Model\\Generator\\';
+		$this->log[] = "<b>=== XML-FORMS FOR " . $projectFormName . " GENERATED ===</b>";
+		$generator = new ProjectForms($projectFormName, $AST, $languageStringUtil);
+		$this->log = array_merge($this->log, $generator->generate());
 
-			// --- Component ---
-			$this->log[] = "<b>=== XML-FORMS FOR " . $projectFormName . " GENERATED ===</b>";
+		// todo: ? do we generate files or are we - more dynamically-  adding them to the db? How about version control then?
 
-			// TODO: generate the forms
-
-
-			// todo: ? do we generate files or are we - more dynamically-  adding them to the db? How about version control then?
-
-			/*
-			$this->useConcreteGenerator($generatorNamespace . "ComponentGeneral", $outputType, $AST, $languageStringUtil);
-
-			// --- Backend ---
-			$this->log[] = "<b>=== BACK-END ===</b>";
-			// Call the various generators
-			$this->useConcreteGenerator($generatorNamespace . "AdminGeneral", $outputType, $AST, $languageStringUtil);
-			$this->useConcreteGenerator($generatorNamespace . "AdminEntities", $outputType, $AST, $languageStringUtil);
-			$this->useConcreteGenerator($generatorNamespace . "AdminMVC", $outputType, $AST, $languageStringUtil);
-			$this->useConcreteGenerator($generatorNamespace . "Forms", $outputType, $AST, $languageStringUtil);
-			// ...more generators here
-*/
 		// Add strings to the language files. TODO: can we add those language stings more dynamically to the db?
 		$this->log[] = "&nbsp;";
 
@@ -126,6 +90,8 @@ class GenerateFormModel extends AdminModel
 		// todo: handle language strings
 
 		/*
+		 * Languagestrings not in use for projectforms at the moment
+	     * (because the generated language strings should have to be added to the existing ones of this component).
 		$languageTree = $languageStringUtil->getLangTree();
 		$baseGeneratedFilePath = 'administrator/components/com_'.strtolower($componentName).'/';
 		foreach ($languageTree as $section_name => $section)
@@ -177,21 +143,6 @@ class GenerateFormModel extends AdminModel
 				$this->log[] = $generatedFilePath . $languageFolderName . '/' . $generatedFileName . ' generated';
 			}
 		}*/
-	}
-
-	/**
-	 * todo: this was for extension generation from the model. Do we still need this for form-generation?
-	 * Use a specific concrete generator to generate files and add the result to the log.
-	 *
-	 * @param   string              $generatorFQN         The Full Qualified Name of the concrete Generator
-	 * @param   string              $outputType           The type of output we generate files for, for instance "Joomla4"
-	 * @param   object              $AST                  The Abstract Syntax Tree (= all properties of the project)
-	 * @param   LanguageStringUtil  $languageStringUtil   A Twig extension with language string utilities
-	 */
-	private function useConcreteGenerator(string $generatorFQN, string $outputType, object $AST, LanguageStringUtil $languageStringUtil)
-	{
-		$generator = new $generatorFQN($outputType, $AST, $languageStringUtil);
-		$this->log = array_merge($this->log, $generator->generate());
 	}
 
 	/**

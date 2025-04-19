@@ -24,7 +24,7 @@ use Twig\Extension\ExtensionInterface;
 
 
 /**
- * Abstract Generator Class: all concrete generators are extended from this.
+ * Abstract Generator Class: concrete generators are extended from this.
  * A concrete  Generator has an AST as input and outputs (a part of) the files in the output type.
  * For instance: a Table generator (= concrete generator) for Joomla4 (= output type) generates the Table files
  * todo: make it more general than only for a component; also other extensions or non-Joomla output.
