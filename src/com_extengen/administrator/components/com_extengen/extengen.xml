@@ -54,7 +54,7 @@
 	</administration>
 	<changelogurl>https://raw.githubusercontent.com/hermanpeeren/extengen/changelog.xml</changelogurl>
 	<updateservers>
-		<server type="extension" name="Extengen Updates">https://raw.githubusercontent.com/hermanpeeren/extengen/extengen_update.xml</server>
+		<server type="extension" name="Extengen Updates">https://raw.githubusercontent.com/HermanPeeren/extengen/extengen_update.xml</server>
 	</updateservers>
 	<dlid prefix="dlid=" suffix="" />
 </extension>
