@@ -56,5 +56,4 @@
 	<updateservers>
 		<server type="extension" name="Extengen Updates">https://github.com/HermanPeeren/Extengen/raw/refs/heads/main/extengen_update.xml</server>
 	</updateservers>
-	<dlid prefix="dlid=" suffix="" />
 </extension>
