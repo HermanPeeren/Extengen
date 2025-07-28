@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS `#__extengen_projects` (
     KEY `idx_checkout` (`checked_out`)
     ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `km9x6_extengen_projectforms` (
+CREATE TABLE IF NOT EXISTS `#__extengen_projectforms` (
     `id` int(11) NOT NULL AUTO_INCREMENT,
     `alias` varchar(400) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT '',
     `checked_out_time` datetime DEFAULT NULL,

@@ -35,9 +35,10 @@
 		<!-- Menu entries -->
 		<menu view="extengen">COM_EXTENGEN</menu>
 		<submenu>
-			<menu link="option=com_extengen">COM_EXTENGEN</menu>
-			<menu link="option=com_categories&amp;extension=com_extengen"
-				view="categories" img="class:extengen-cat" alt="extengen/Categories">JCATEGORY</menu>
+			<menu link="option=com_extengen&amp;view=projects">COM_EXTENGEN_SUBMENU_MANAGER_PROJECTS</menu>
+			<menu link="option=com_extengen&amp;view=generators">COM_EXTENGEN_SUBMENU_MANAGER_GENERATORS</menu>
+			<menu link="option=com_extengen&amp;view=projectforms">COM_EXTENGEN_SUBMENU_MANAGER_PROJECTFORMS</menu>
+			<menu link="option=com_extengen&amp;view=info">COM_EXTENGEN_SUBMENU_MANAGER_INFO</menu>
 		</submenu>
 		<files folder="administrator/components/com_extengen">
 			<filename>access.xml</filename>
