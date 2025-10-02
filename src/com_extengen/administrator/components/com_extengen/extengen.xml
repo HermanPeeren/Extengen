@@ -33,7 +33,7 @@
 	<!-- Back-end files -->
 	<administration>
 		<!-- Menu entries -->
-		<menu view="extengen">COM_EXTENGEN</menu>
+		<menu>COM_EXTENGEN</menu>
 		<submenu>
 			<menu link="option=com_extengen&amp;view=projects">COM_EXTENGEN_SUBMENU_MANAGER_PROJECTS</menu>
 			<menu link="option=com_extengen&amp;view=generators">COM_EXTENGEN_SUBMENU_MANAGER_GENERATORS</menu>
