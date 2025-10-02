@@ -117,9 +117,162 @@ class AdminMVC extends Generator
 			$entityName = $entity?$entity->entity_name:"";
 			$templateVariables['entityName'] = $entityName;
 
-			// Joined entities n:1 relations // todo: other type of relations
+			// --- Foreign keys and embedded objects ---
+			// Get all property fields
+			$propertyFieldNames = [];
+			// Add fields for joined tables (n:1 relations)
+			$foreign  = [];
+			// Add fields for pivot tables (n:n relations)
+			$pivot  = [];
+			// Add fields for embedded objects (subforms)
+			$embedded = [];
+			foreach ($entity->field as $field)
+			{
+				if (($field->field_type) == "property")
+				{
+					$propertyFieldNames[] = $field->field_name;
+				}
+				if (($field->field_type) == "reference")
+				{
+					$pivotTable = '';
+					$fieldName = $field->field_name;
+					$reference = $field->reference;
+
+					$refEntity_id = $reference->reference_id;
+					$refEntity    = $entityMap[$refEntity_id];
+
+					// Not for embedded objects, only show relations with real entities
+					if (!property_exists($refEntity, 'isvalueobject')) {
+
+						// n:n relation
+						if (property_exists($field->reference, 'ismultiple'))
+						{
+							// Many-to-many relation: needs pivottable
+							$fromEntityName = strtolower($entityName);
+							$toEntityName   = strtolower($refEntity->entity_name);
+
+							// todo: skip the getter in the next line; will be in the model (via a template fragment)
+							//$templateVariables['getFK'] .= $this->getFK($fromEntityName, $field->field_name, $toEntityName);
+
+							$pivotTable =
+								$fromEntityName > $toEntityName ? $toEntityName . '_' . $fromEntityName : $fromEntityName . '_' . $toEntityName;
+
+
+							$fromColumnName = $fromEntityName . '_id'; // the name of the 'owner' column in the pivot table
+							$toColumnName   = $toEntityName   . '_id';
+
+							$pivot[] = [
+								'fieldName'       => $fieldName,  // the name of the array-field, containing the ids
+								'fromColumnName'  => $fromColumnName,
+								'toColumnName'    => $toEntityName,
+								'pivotTable'      => $pivotTable
+							];
+						}
+						else {
+							// n:1 relation
+							$columnName = strtolower($refEntity->entity_name) . '_id';
+
+							// Find the presentation column of the foreign entity
+							// todo: use representation-column if specified
+							// for now only take a default_ref_field of the foreign entity (or id if none is specified)
+
+							$refDisplayFieldName = '';
+							foreach ($refEntity->field as $foreignField)
+							{
+								if ((($foreignField->field_type)=="property") && property_exists($foreignField->property,'default_ref_display'))
+								{
+									$refDisplayFieldName = $foreignField->field_name;
+									break;
+								}
+							}
+
+							// display the id if no display-field available
+							if (empty($refDisplayFieldName))
+							{
+								$refDisplayFieldName = 'id';
+							}
+
+							$foreign[] = [
+								'fieldName'        => $fieldName,
+								'columnName'       => $columnName,
+								'foreignFieldName' => $refDisplayFieldName,
+								'refEntityName'    => $refEntity->entity_name
+							];
+						}
+
+
+					}
+					else {
+						// Embedded objects: fieldName + the JSON-object
+						$embedded[] = [
+							'fieldName'        => $field->field_name,
+							'values'           => $refEntity // json_decode()?
+						];
+					}
+
+				}
+			}
+			$templateVariables['propertyFieldNames'] = $propertyFieldNames;
+			$templateVariables['foreign']            = $foreign;
+			$templateVariables['embedded']           = $embedded;
 
 			// todo: editFields for the detailspage and representationcolumns for the indexpage: they can overwrite the default fields from the entity.
+
+
+			// --- Index-pages: Filters ---
+			if ($pageType=='Index')
+				// Per filter make an associative array for the template: [fieldName, columnName]
+				// Where
+				//      * fieldName  = the local field name of the entity
+				//      * columnName = the name of the column in the table, which can be  different from fieldName in case of a foreign key
+				$filtersInTemplate = [];
+
+			// Loop over the filters in the AST and make variables for the AdminIndexModel-template
+			// Todo: make this more general for similar cases in generators, when building the generator in Extengen
+			foreach ($page->filters as $filter)
+			{
+				$entity_id = $filter->entity_reference;
+				$entity    = $entityMap[$entity_id];
+
+				$field_id = $filter->field_reference;
+				$field    = $fieldMap[$field_id];
+
+				$fieldName = $field->field_name;
+
+				// ColumnName depends on this being a property of this entity or a reference (foreign key)
+
+				//    - Property: the fieldName and columnName are the same
+				if (($field->field_type) == "property")
+				{
+					$filtersInTemplate[] = [
+						'fieldName'  => $fieldName,
+						'columnName' => $fieldName
+					];
+
+				}
+
+				//    - Reference (n:1): the columnName is the foreign key
+				if (($field->field_type) == "reference")
+				{
+					$reference = $field->reference;
+
+					$refEntity_id = $reference->reference_id;
+					$refEntity    = $entityMap[$refEntity_id];
+
+					// No filter for embedded objects
+					if (!property_exists($refEntity, 'isvalueobject')) {
+
+						$columnName = strtolower($refEntity->entity_name) . '_id';
+
+						$filtersInTemplate[] = [
+							'fieldName'  => $fieldName,
+							'columnName' => $columnName
+						];
+					}
+				}
+			}
+
+			$templateVariables['filters'] = $filtersInTemplate;
 
 			// Per page-reference: make a Model, View and Controller
 			foreach ($MVCtypes as $MVCtype)
@@ -127,139 +280,6 @@ class AdminMVC extends Generator
 				// Create Model, View or Controller  // todo: reorganise for Views: in subfolder with different names...
 				if ($MVCtype!='View')
 				{
-
-					// Filters, only for index-pages
-					if ($pageType=='Index')
-					{
-						// Per filter make an associative array for the template: [fieldName, columnName]
-						// Where
-						//      * fieldName  = the local field name of the entity
-						//      * columnName = the name of the column in the table, which can be  different from fieldName in case of a foreign key
-						$filtersInTemplate = [];
-
-						// Loop over the filters in the AST and make variables for the AdminIndexModel-template
-						// Todo: make this more general for similar cases in generators, when building the generator in Extengen
-						foreach ($page->filters as $filter)
-						{
-							$entity_id = $filter->entity_reference;
-							$entity    = $entityMap[$entity_id];
-
-							$field_id = $filter->field_reference;
-							$field    = $fieldMap[$field_id];
-
-							$fieldName = $field->field_name;
-
-							// ColumnName depends on this being a property of this entity or a reference (foreign key)
-
-							//    - Property: the fieldName and columnName are the same
-							if (($field->field_type) == "property")
-							{
-								$filtersInTemplate[] = [
-									'fieldName'  => $fieldName,
-									'columnName' => $fieldName
-								];
-
-							}
-
-							//    - Reference (n:1): the columnName is the foreign key
-							if (($field->field_type) == "reference")
-							{
-								$reference = $field->reference;
-
-								$refEntity_id = $reference->reference_id;
-								$refEntity    = $entityMap[$refEntity_id];
-
-								$columnName = strtolower($refEntity->entity_name) . '_id';
-
-								$filtersInTemplate[] = [
-									'fieldName'  => $fieldName,
-									'columnName' => $columnName
-								];
-							}
-						}
-
-						$templateVariables['filters'] = $filtersInTemplate;
-
-						// Get all property fields
-						$propertyFieldNames = [];
-						// Add fields for joined tables
-						$foreign = [];
-						foreach ($entity->field as $field)
-						{
-							if (($field->field_type) == "property")
-							{
-								$propertyFieldNames[] = $field->field_name;
-							}
-							if (($field->field_type) == "reference")
-							{
-								$fieldName = $field->field_name;
-								$reference = $field->reference;
-
-								$refEntity_id = $reference->reference_id;
-								$refEntity    = $entityMap[$refEntity_id];
-
-								$columnName = strtolower($refEntity->entity_name) . '_id';
-
-								// Find the presentation column of the foreign entity
-								// todo: use representation-column if specified
-								// for now only take a default_ref_field of the foreign entity (or id if none is specified)
-
-								$refDisplayFieldName = '';
-								foreach ($refEntity->field as $foreignField)
-								{
-									if ((($foreignField->field_type)=="property") && property_exists($foreignField->property,'default_ref_display'))
-									{
-										$refDisplayFieldName = $foreignField->field_name;
-										break;
-									}
-								}
-
-								// display the id if no display-field available
-								if (empty($refDisplayFieldName))
-								{
-									$refDisplayFieldName = 'id';
-								}
-
-								$foreign[] = [
-									'fieldName'        => $fieldName,
-									'columnName'       => $columnName,
-									'foreignFieldName' => $refDisplayFieldName,
-									'refEntityName'    => $refEntity->entity_name
-								];
-							}
-						}
-						$templateVariables['propertyFieldNames'] = $propertyFieldNames;
-						$templateVariables['foreign']            = $foreign;
-					}
-
-
-					// associate local field names (= field names in form) and foreign keys (= column name in db-table)
-					if ($pageType=='Details')
-					{
-						$foreign = [];
-						foreach ($entity->field as $field)
-						{
-							if (($field->field_type) == "reference")
-							{
-								$fieldName = $field->field_name;
-								$reference = $field->reference;
-
-								$refEntity_id = $reference->reference_id;
-								$refEntity    = $entityMap[$refEntity_id];
-
-								$columnName = strtolower($refEntity->entity_name) . '_id';
-
-								$foreign[] = [
-									'fieldName'  => $fieldName,
-									'columnName' => $columnName
-								];
-							}
-						}
-						$templateVariables['foreign'] = $foreign;
-
-						$templateVariables['entityName'] = $entity->entity_name;
-					}
-
 					$templateFileName = 'Admin' . $pageType . $MVCtype . '.php.twig';
 					$generatedFileName = $pageName . $MVCtype . '.php';
 					$templateFilePath = $templateFilePathRoot . 'src/' . $MVCtype . '/';

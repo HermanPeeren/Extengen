@@ -84,7 +84,6 @@ class {{ pageName }}Model extends ListModel
 				$db->quoteName('{{ reference.refEntityName|lower }}.id') . ' = ' . $db->quoteName('{{ entityName|lower }}.{{ reference.columnName|lower }}')
 		);
 {% endfor %}{% endif %}
-
 {% if filters|length > 0 %}
 		// Add filters to query
 {% for filter  in filters %}
@@ -96,9 +95,7 @@ class {{ pageName }}Model extends ListModel
 				->where($db->quoteName('{{ entityName|lower }}.{{ filter.columnName }}') . ' LIKE '
 					. $db->quote(${{ filter.fieldName }}));
 		}
-{% endfor %}
-{% endif %}
-
+{% endfor %}{% endif %}
 		return $query;
 	}
 
