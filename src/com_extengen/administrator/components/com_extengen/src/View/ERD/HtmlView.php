@@ -165,7 +165,7 @@ skinparam ClassBackgroundColor<<value object>> LightCyan
 
 		// Add the relationships
 		$umlCreate[] = implode("\n", $umlRef);
-		$umlCreate[] = "'hide <<value object>> circle";
+		$umlCreate[] = "'hide <<embedded object>> circle";
 		$umlCreate[] = '@enduml';
 
 		// Compact all lines to one file
@@ -188,7 +188,7 @@ skinparam ClassBackgroundColor<<value object>> LightCyan
 
 // functions to call plantuml
 	private function encodep($text) {
-		$data = utf8_encode($text);
+		$data = mb_convert_encoding($text, 'UTF-8');
 		$compressed = gzdeflate($data, 9);
 		return $this->encode64($compressed);
 	}
