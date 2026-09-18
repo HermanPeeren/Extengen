@@ -10,7 +10,6 @@
 	<version>0.8.0</version>
 	<description>COM_EXTENGEN_XML_DESCRIPTION</description>
 	<namespace path="src">Yepr\Component\Extengen</namespace>
-	<scriptfile>script.php</scriptfile>
 	<install> <!-- Runs on install -->
 		<sql>
 			<file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
