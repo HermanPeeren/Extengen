@@ -9,11 +9,12 @@ work, for example "1.4". Each step states what it produces and when it is done.
 
 Three decisions shape everything below.
 
-**The generator core is shared, and ships twice.** It gets its own repository and a
-composer package (`yepr/generator-core`), because that keeps it usable outside Joomla —
-Drupal, Symfony, anything PHP. It *also* ships as an installable Joomla library, because
-the Joomla installer does not use composer and not every shared host can run it. The two
-artefacts are built from one source tree.
+**What the generator projects share lives in one installable Joomla library.** Not one
+copy per extension: `lib_yepr_gen`, under the `Yepr\Gen` namespace, carrying the engine
+and the third-party packages it needs. Every extension checks for it on install and
+installs it when missing, as the Regular Labs and Akeeba libraries do. The same source
+tree also publishes a composer package, which keeps the engine usable outside Joomla -
+Drupal, Symfony, anything PHP.
 
 **Exten-gen v1 is deliberately minimal.** Joomla's built-in features — categories, tags,
 versioning, workflow, custom fields, full ACL, routing, action logs, finder — are out of
@@ -29,7 +30,7 @@ targets need not be Joomla versions at all.
 
 | Repo | Contains | Ships as |
 |---|---|---|
-| `generator-core` *(new)* | framework-agnostic generation engine | `yepr/generator-core` (composer) **+** `lib_yepr_generator` (Joomla library) |
+| `generator-core` *(new)* | framework-agnostic generation engine, at `Yepr\Gen\Core` | `yepr/generator-core` (composer) **+** `lib_yepr_gen` (Joomla library) |
 | `Exten-gen` *(new, from Extengen)* | `com_extengen` — models extensions, generates them | component package |
 | `Gen-gen` *(new, stage 2)* | models generators | component package |
 | `Meta-gen` *(new, stage 3)* | models the model language, generates forms | component package |
@@ -77,18 +78,69 @@ Independent of Extengen; can start immediately.
 dependencies), PHPUnit, PHPStan, php-cs-fixer, phpcs, `docs/`, GitHub release workflow.
 *Done when* `composer test` and `composer analyse` run green on an empty suite.
 
-**0.2 Extract the engine from plug-gen.** Move and generalise into `Yepr\GeneratorCore\`:
+**0.2 Extract the engine from plug-gen.** Move and generalise into `Yepr\Gen\Core\`:
 `FileCollection`, `ZipWriter`, `Renderer`, emitters (`PhpEmitter`, `XmlEmitter`,
 `IniEmitter`), `Pipeline`, `GeneratorInterface`, `ProtectedRegionMerger`. Port
 `NoJoomlaDependencyTest` — that rule is what keeps the core reusable.
 *Done when* the suite passes with zero Joomla or CMS imports anywhere in `src/`.
 
-**0.3 Decide the text layer.** *Decision required.* Recommended: a `RendererInterface`,
-with a plain-PHP renderer in the core and a Twig renderer available to Exten-gen during
-the port. Two reasons. Step 1.4 then does not have to rewrite 26 Twig templates while
-everything else is moving, and templates can be converted gradually or left as Twig
-permanently. And the core itself vendors no template engine, which matters when it ships
-as a Joomla library with no composer available.
+**0.3 Decide the text layer.** *Decision required.* The core defines a
+`RendererInterface` either way, so that no generator is coupled to an engine. What has to
+be decided is which renderer is the default, and whether Twig becomes a dependency of the
+library package.
+
+Measured on PHP 8.3.6 with Twig 3.29, rendering an identical Joomla Table class from a
+Twig template and from a native-PHP template (both produced byte-identical output):
+
+| | Twig | native PHP |
+|---|---|---|
+| cold, empty cache, 1 render | 2.16 ms | 0.36 ms |
+| warm, new Environment per render | 0.284 ms | — |
+| warm, one Environment reused | 0.166 ms | 0.121 ms |
+| template held as a string, cached | 0.172 ms | needs `eval()` |
+
+Performance is not a deciding factor: on a run of a few hundred files the difference is
+around ten milliseconds. Twig is consistently a little *slower*, not faster — it compiles
+to PHP and then runs it, with a thin runtime layer on top.
+
+Two commonly assumed advantages do not survive checking:
+
+- Twig does **not** avoid output buffering. `Twig\Template::render()` calls `ob_start()`
+  and `ob_get_clean()` (`src/Template.php:178-192`); the buffering is merely hidden.
+- Twig's default autoescaping is **wrong** for code generation. It HTML-escapes values
+  interpolated into PHP source — `$x = 'O&#039;Brien'` — so `autoescape => false` is
+  mandatory, and a code-aware escaper has to replace it.
+
+What genuinely favours Twig here:
+
+- **Templates as data.** Any loader — string, array, database — is first class. Native
+  PHP templates come from files; holding one in a database means `eval()` or writing a
+  temp file. This was the original reason for choosing Twig and it is a sound one.
+- **Untrusted templates.** If a generator's templates become editable (which is where
+  Gen-gen leads), a native-PHP template is arbitrary code execution. Twig's sandbox is a
+  real answer; native PHP has none.
+- **No tag collision.** A native-PHP template that generates PHP must escape its own
+  opening tag (`<?php echo "<?php\n"; ?>`), because the literal text it wants to emit is
+  also its own syntax. Twig has no such problem.
+
+Two Twig footguns to configure around, both demonstrated:
+
+- `strict_variables` is **off** by default, which is the cause of Extengen's current
+  silent-empty-variable failures. It must be `true`. Native PHP emits an "Undefined
+  variable" diagnostic by default, so as configured today native PHP is the safer of the
+  two — and configured correctly Twig is safer still, since it throws rather than warns.
+- Twig's in-process compiled-class reuse is keyed on template **source and name only, not
+  on environment options**. Two Environments with the same source and name but different
+  `autoescape` settings silently share the first one's compilation. Extengen currently
+  builds a new Environment per fragment (`Generator::renderTemplateFragment`), which makes
+  this latent rather than theoretical, and also costs the ~70% overhead visible in the
+  table above.
+
+Whichever engine wins, the escaping problem is the engine's blind spot: values
+interpolated into generated PHP, XML or INI need a format-aware escaper, and neither
+Twig's `autoescape` nor PHP's `<?= ?>` provides one. Emitters — as in plug-gen's
+`PhpEmitter` / `XmlEmitter` / `IniEmitter` — are required either way, and matter more than
+the engine choice.
 
 **0.4 Introduce the Target abstraction.** `TargetInterface` names its structure
 metamodel, its emitters and its template set. `Pipeline` becomes target-driven instead of
@@ -103,19 +155,53 @@ auto-discovery, CRLF normalisation, plus a `generate-fixture` command to accept 
 reviewed change.
 *Done when* Exten-gen and Gen-gen obtain golden tests by extending one class.
 
-**0.6 Joomla library packaging.** A `lib_yepr_generator` manifest, a build script
-producing the installable zip, and an update server.
+**0.6 The shared Joomla library.** One installable library, `lib_yepr_gen`, holding
+everything the generator extensions share: the engine and the third-party packages it
+needs. Exten-gen, Meta-gen, Gen-gen, Plug-gen and whatever follows take their shared code
+from that one copy rather than each carrying its own. The namespace prefix is `Yepr\Gen`,
+and the engine is its first occupant at `Yepr\Gen\Core`.
 
-Note a constraint discovered during analysis: a Joomla library extension provides
-installation and update management but **not** autoloading. `LibraryAdapter` supports no
-`<namespace>` element; it only drops files into `libraries/<name>/`. Registering the
-namespace is the consumer's job. JCB does exactly this, shipping `libraries/vendor_jcb/`
-and registering a PSR-4 autoloader from its component's `services/provider.php`. The core
-therefore ships a small PSR-4 registrar that each consuming component calls from its own
-service provider — replacing Extengen's current
-`require_once JPATH_LIBRARIES . '/yepr/vendor/autoload.php'`.
-*Done when* the zip installs on a clean Joomla 6 and a test component resolves a core
-class with no composer present.
+*Our own* classes need no autoloading work. Joomla registers a library's namespace
+automatically when the manifest declares one - verified in the Joomla 5 source:
+
+- `libraries/namespacemap.php` builds `administrator/cache/autoload_psr4.php` from
+  `getNamespaces('component' | 'module' | 'template' | 'plugin' | **'library'**)`.
+- For libraries, `getExtensions()` scans `JPATH_MANIFESTS/libraries/*.xml` and reads the
+  `<namespace path="...">` element, mapping it to `JPATH_LIBRARIES . '/<name>/<path>'`.
+- The `extension - namespacemap` plugin rebuilds that file on
+  `onExtensionAfterInstall`, `onExtensionAfterUninstall` and `onExtensionAfterUpdate`.
+
+So `<namespace path="src">Yepr\Gen</namespace>` is the whole job for `Yepr\Gen\*`. JCB's
+`PowerloaderHelper` and Extengen's
+`require_once JPATH_LIBRARIES . '/yepr/vendor/autoload.php'` are both working around
+something core already does, and neither pattern is carried forward.
+
+*Third-party* packages are a separate matter, because a library manifest registers one
+namespace and Twig's is not ours. They are resolved by composer at **build** time and
+ship inside the library as `vendor/`, which is ordinary Joomla practice - the installer
+not having composer is a packaging detail, not an argument against a composer dependency.
+Registering that `vendor/autoload.php` is the library's own business, done lazily from
+the one class that needs it, so no consumer ever writes a `require_once`. Regular Labs
+does exactly this: `libraries/regularlabs/src/Image.php` requires the bundled autoloader
+because it uses intervention/image, and nothing outside the library knows.
+
+That is also the rule the engine-pluggability test enforces (see 0.3): `Twig\` may be
+imported by the Twig renderer and by nothing else.
+
+**Presence checking.** Each extension verifies the library on install and installs it when
+missing or too old, from a copy carried inside its own package. This is the Regular Labs
+and Akeeba pattern, and on this machine `pkg_modals.xml` shows the shape: the package
+manifest does not declare the library at all; its `script.install.php` does the work.
+
+*Decision required:* what happens when two installed extensions want different library
+versions. Newest-wins with a minimum-version check per extension is the usual answer and
+the one to beat. Getting this wrong is how a shared library breaks a site that was
+working, so it needs deciding rather than discovering.
+
+*Done when* the zip installs on a clean Joomla 6; a test component resolves `Yepr\Gen\*`
+with no `require_once` and no composer at runtime; a test component resolves a vendored
+third-party class; and installing that component on a site without the library brings the
+library with it.
 
 **0.7 Release 0.1.0.** Tag, build both artefacts, publish the update server.
 
