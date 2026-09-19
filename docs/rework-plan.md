@@ -84,10 +84,12 @@ dependencies), PHPUnit, PHPStan, php-cs-fixer, phpcs, `docs/`, GitHub release wo
 `NoJoomlaDependencyTest` — that rule is what keeps the core reusable.
 *Done when* the suite passes with zero Joomla or CMS imports anywhere in `src/`.
 
-**0.3 Decide the text layer.** *Decision required.* The core defines a
-`RendererInterface` either way, so that no generator is coupled to an engine. What has to
-be decided is which renderer is the default, and whether Twig becomes a dependency of the
-library package.
+**0.3 The text layer.** *Decided: Twig, as a hard dependency.* The core defines a
+`RendererInterface` so that no generator is coupled to an engine, ships `TwigRenderer` as
+the default and `PhpRenderer` for a consumer that wants no engine. Twig sits in the
+composer package's `require` and ships inside the Joomla library, resolved by composer at
+build time. Exactly one class imports it, and a test enforces that, so the choice stays a
+registration rather than a rewrite.
 
 Measured on PHP 8.3.6 with Twig 3.29, rendering an identical Joomla Table class from a
 Twig template and from a native-PHP template (both produced byte-identical output):
@@ -193,10 +195,9 @@ missing or too old, from a copy carried inside its own package. This is the Regu
 and Akeeba pattern, and on this machine `pkg_modals.xml` shows the shape: the package
 manifest does not declare the library at all; its `script.install.php` does the work.
 
-*Decision required:* what happens when two installed extensions want different library
-versions. Newest-wins with a minimum-version check per extension is the usual answer and
-the one to beat. Getting this wrong is how a shared library breaks a site that was
-working, so it needs deciding rather than discovering.
+No version negotiation is needed. The library is used only within this family of
+extensions and all of it is developed in one place, so the check is simply: present and
+recent enough, or install the copy carried in the package.
 
 *Done when* the zip installs on a clean Joomla 6; a test component resolves `Yepr\Gen\*`
 with no `require_once` and no composer at runtime; a test component resolves a vendored
@@ -348,7 +349,6 @@ Each is flagged at the step where it bites.
 
 | Step | Decision |
 |---|---|
-| 0.3 | The text layer: plain-PHP renderer, Twig, or both behind an interface |
 | 1.1 | Whether to filter `testForm.json` out of the history during the mirror push |
 | 1.11 | PHPStan level |
 | 1.12 | Front-end in v1.0, or deferred to v1.1 |
