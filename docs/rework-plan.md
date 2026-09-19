@@ -294,6 +294,26 @@ with filters, detail pages with edit fields, language files, an installable pack
 *Decision required:* admin-only for 1.0 with the front-end at 1.1, or both from the start.
 Admin-only is a real scope cut.
 
+**Named gaps in the v1 model.** Three things the model cannot express, written down here
+because each is invisible until something needs it and then blocks a whole line of work.
+
+| Gap | Model today | Bites at |
+|---|---|---|
+| A custom form field type | `editfield.xml` picks among *stock* Joomla types through `htmltype`. A generated extension cannot declare a field type of its own. | 4.2 |
+| A custom validation rule | Nothing. Extengen's own `LetterRule` has no counterpart in the model. | 4.2 |
+| Tabs and subform layouts on a generated form | Nothing. Generated forms are one fieldset. | 4.2 |
+
+None of the three blocks v1, and that is worth stating rather than assuming: the current
+generator emits only stock field types - `text`, `sql` for a relation, `hidden`, `number`,
+`calendar`, `list`, `subform`, `editor` - so a generated CRUD component needs no field
+class of its own. What the gaps block is **Exten-gen generating itself**, because its own
+forms use eleven custom field classes and a rule.
+
+How many of those eleven survive is not fixed yet. Step 1.9 replaces the reference-field
+mechanism with one client-side element driven by the model, which is precisely what most
+of those eleven classes do by hand. The size of this gap should therefore be re-measured
+after 1.9 rather than estimated now.
+
 ---
 
 ## Stage 2 — Gen-gen
@@ -334,11 +354,18 @@ compare against the hand-written ones as golden files.
 
 **4.1 Plug-gen adopts the core**, dropping its private copy.
 
-**4.2 Self-hosting.** Exten-gen generates Exten-gen. This requires the model to express
-custom field types, custom rules, tabs and subform layouts, which is Meta-gen work — hence
-last.
+**4.2 Close the model gaps that block self-hosting.** The three named under Stage 1: a
+custom form field type, a custom validation rule, and tabs or subform layouts on a
+generated form. Re-measure first - 1.9 may have removed most of the need - then add only
+what is still missing.
 
-**4.3 A second target**, Drupal or WordPress, which is the real proof that 0.4 was done
+**4.3 Self-hosting.** Exten-gen generates Exten-gen. Everything it needs exists by now:
+the engine from Stage 0, working generation from Stage 1, modelled generators from Stage
+2, generated forms from Stage 3 and the model gaps closed in 4.2. The criterion is
+byte-identical output against the hand-written component, the same way 2.3 checks a
+modelled generator.
+
+**4.4 A second target**, Drupal or WordPress, which is the real proof that 0.4 was done
 correctly.
 
 ---
